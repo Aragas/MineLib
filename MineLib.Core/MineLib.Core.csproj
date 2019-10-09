@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+    <NullableReferenceTypes>true</NullableReferenceTypes>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;RCS1231;RCS1029;RCS1139</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<PackageReference Include="Iconic.Zlib.Netstandard" Version="1.0.0" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\Aragas.Network-2\src\Aragas.Network-2.Standard\Aragas.Network-2.csproj" />
+    <ProjectReference Include="..\fNbt\fNbt\fNbt.Standard.csproj" />
+  </ItemGroup>
+
+</Project>

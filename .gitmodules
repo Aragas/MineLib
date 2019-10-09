@@ -1,0 +1,9 @@
+[submodule "ProtocolModern_1.7.10"]
+	path = ProtocolModern_1.7.10
+	url = https://github.com/MineLib/ProtocolModern_1.7.10
+[submodule "Aragas.Network-2"]
+	path = Aragas.Network-2
+	url = https://github.com/Aragas/Aragas.Network-2.git
+[submodule "TinyIpc"]
+	path = TinyIpc
+	url = https://github.com/MineLib/TinyIpc

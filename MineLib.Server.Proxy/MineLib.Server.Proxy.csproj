@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Aragas.Network-2\src\Aragas.Network-2.Standard\Aragas.Network-2.csproj" />
+    <ProjectReference Include="..\MineLib.Protocol5\MineLib.Protocol5.csproj" />
+    <ProjectReference Include="..\MineLib.Protocol\MineLib.Protocol.csproj" />
+    <ProjectReference Include="..\MineLib.Server.Core\MineLib.Server.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Protocol\Legacy\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Translation\Strings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="logo-0.png"/>
+    <EmbeddedResource Include="logo-1.png"/>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Update="Translation\Strings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Translation\Strings.ru.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,9 @@
+build/
+[Bb]in/
+[Oo]bj/
+.cr/
+.vs/
+
+*.lock.json
+*.suo
+*.user

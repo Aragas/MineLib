@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+    <metadata>
+        <id>Aragas.Network-2</id>
+        <version>2.2.0.0</version>
+        <title>Aragas.Network-2</title>
+        <authors>Aragas</authors>
+        <owners>Aragas</owners>
+        <licenseUrl>https://github.com/Aragas/Aragas.Network-2/blob/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/Aragas/Aragas.Network-2</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Aragas.Network-2 is a second network library. Further description will be provided</description>
+        <summary />
+        <dependencies>
+            <group targetFramework=".NETPortable0.0-net45+netcore45+wpa81">
+				<dependency id="PCLExt.AppDomain" version="1.0.13" />
+                <dependency id="PCLExt.Network" version="1.1.2" />
+                <dependency id="Portable.BouncyCastle" version="1.8.2" />
+            </group>
+            <group targetFramework=".NETStandard2.0">
+                <dependency id="Microsoft.CSharp" version="4.4.1" />
+            </group>
+        </dependencies>
+    </metadata>
+    <files>
+		<file src="..\src\Aragas.Network-2.Standard\bin\Release\net45\Aragas.Network.dll" target="lib\net45\Aragas.Network.dll" />
+        <file src="..\src\Aragas.Network-2.Standard\bin\Release\net45\Aragas.Network.xml" target="lib\net45\Aragas.Network.xml" />
+        <file src="..\src\Aragas.Network-2.Standard\bin\Release\netstandard2.0\Aragas.Network.dll" target="lib\netstandard2.0\Aragas.Network.dll" />
+        <file src="..\src\Aragas.Network-2.Standard\bin\Release\netstandard2.0\Aragas.Network.xml" target="lib\netstandard2.0\Aragas.Network.xml" />
+        <file src="..\src\Aragas.Network-2.Portable111\bin\Release\Aragas.Network.dll" target="lib\portable-net45+win8+wpa81\Aragas.Network.dll" />
+        <file src="..\src\Aragas.Network-2.Portable111\bin\Release\Aragas.Network.XML" target="lib\portable-net45+win8+wpa81\Aragas.Network.xml" />
+    </files>
+</package>

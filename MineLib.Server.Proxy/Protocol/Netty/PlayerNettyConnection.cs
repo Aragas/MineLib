@@ -1,16 +1,16 @@
-﻿using System;
-using System.IO;
-using System.Net.Sockets;
-using System.Reflection;
-using System.Threading.Tasks;
-
-using Aragas.Network.Data;
+﻿using Aragas.Network.Data;
 using Aragas.Network.IO;
 
 using MineLib.Server.Core;
 using MineLib.Server.Proxy.Packets.Netty;
 using MineLib.Server.Proxy.Packets.Netty.Clientbound;
 using MineLib.Server.Proxy.Packets.Netty.Serverbound;
+
+using System;
+using System.IO;
+using System.Net.Sockets;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace MineLib.Server.Proxy.Protocol.Netty
 {

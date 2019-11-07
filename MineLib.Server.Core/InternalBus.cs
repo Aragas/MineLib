@@ -24,8 +24,9 @@ namespace MineLib.Server.Core
 
         public const int Timeout = 10000;
 
-        public static IMBus WorldBus { get; } = new NetworkMBus($"{Host}/minelib/server/worldbus", TimeSpan.FromMilliseconds(Timeout));
-        public static object GetWorldInfo()
+        private static IMBus? _worldBus;
+        public static IMBus WorldBus => _worldBus ?? (_worldBus = new NetworkMBus($"{Host}/minelib/server/worldbus", TimeSpan.FromMilliseconds(Timeout)));
+        public static object? GetWorldInfo()
         {
             // Spawn position (0, 0, 0)
             // World type (default, flat)
@@ -34,27 +35,44 @@ namespace MineLib.Server.Core
 
             return null;
         }
-        public static Chunk? GetChunk(in Location2D coordinates) => HandleResponse<Chunk?, ChunkRequest, ChunkResponse>(WorldBus, new ChunkRequest() { Coordinates = coordinates }, response => response.Chunk);
-        public static IEnumerable<Chunk> GetChunksInCircle(int x, int z, int radius, bool inBulk = false)
+        public static Chunk? GetChunk(in Location2D coordinates, IMBus? worldBus = null)
         {
-            return HandleResponse<Chunk, ChunksInCircleRequest, ChunkEnumerableResponse, ChunkBulkResponse>(
-                WorldBus, new ChunksInCircleRequest() { X = x, Z = z, Radius = radius, SendBulk = inBulk },
-                response => response.Chunk, response => response.ChunkBulk, inBulk);
-        }
-        public static IEnumerable<Chunk> GetChunksInSquare(int x, int z, int radius, bool inBulk = false)
-        {
-            return HandleResponse<Chunk, ChunksInSquareRequest, ChunkEnumerableResponse, ChunkBulkResponse>(
-                WorldBus, new ChunksInSquareRequest() { X = x, Z = z, Radius = radius, SendBulk = inBulk },
-                response => response.Chunk, response => response.ChunkBulk, inBulk);
+            return HandleResponse<Chunk?, ChunkRequest, ChunkResponse>(worldBus ?? WorldBus,
+                new ChunkRequest() { Coordinates = coordinates },
+                response => response.Chunk);
         }
 
-        public static IMBus EntityBus { get; } = new NetworkMBus($"{Host}/minelib/server/entitybus");
-        public static int? GetEntityID() => HandleResponse<int?, EntityIDRequest, EntityIDResponse>(EntityBus, new EntityIDRequest(), response => response.EntityID);
-
-        public static IMBus PlayerBus { get; } = new NetworkMBus($"{Host}/minelib/server/playerbus");
-        public static Socket GetFirstAvailablePlayerHandlerConnection(VarInt protocolVersion)
+        public static IEnumerable<Chunk> GetChunksInCircle(int x, int z, int radius, bool inBulk = false, IMBus? worldBus = null)
         {
-            return HandleResponse<Socket, AvailableSocketRequestPacket, AvailableSocketResponsePacket>(PlayerBus,
+            return HandleResponse<Chunk, ChunksInCircleRequest, ChunkEnumerableResponse, ChunkBulkResponse>(worldBus ?? WorldBus,
+                new ChunksInCircleRequest() { X = x, Z = z, Radius = radius, SendBulk = inBulk },
+                response => response.Chunk,
+                response => response.ChunkBulk,
+                inBulk);
+        }
+        public static IEnumerable<Chunk> GetChunksInSquare(int x, int z, int radius, bool inBulk = false, IMBus? worldBus = null)
+        {
+            return HandleResponse<Chunk, ChunksInSquareRequest, ChunkEnumerableResponse, ChunkBulkResponse>(worldBus ?? WorldBus,
+                new ChunksInSquareRequest() { X = x, Z = z, Radius = radius, SendBulk = inBulk },
+                response => response.Chunk,
+                response => response.ChunkBulk,
+                inBulk);
+        }
+
+        private static IMBus? _entityBus;
+        public static IMBus EntityBus => _entityBus ?? (_entityBus = new NetworkMBus($"{Host}/minelib/server/entitybus"));
+        public static int? GetEntityID(IMBus? entityBus = null)
+        {
+            return HandleResponse<int?, EntityIDRequest, EntityIDResponse>(entityBus ?? EntityBus,
+                new EntityIDRequest(),
+                response => response.EntityID);
+        }
+
+        private static IMBus? _playerBus;
+        public static IMBus PlayerBus => _playerBus ?? (_playerBus = new NetworkMBus($"{Host}/minelib/server/playerbus"));
+        public static Socket GetFirstAvailablePlayerHandlerConnection(VarInt protocolVersion, IMBus? playerBus = null)
+        {
+            return HandleResponse<Socket, AvailableSocketRequestPacket, AvailableSocketResponsePacket>(playerBus ?? PlayerBus,
                 new AvailableSocketRequestPacket() { ProtocolVersion = protocolVersion },
                 response =>
                 {
@@ -63,14 +81,17 @@ namespace MineLib.Server.Core
                     return conn.Client;
                 });
         }
-        public static object GetPlayerInfo()
+        public static IPlayer? GetPlayerData(string username, IMBus? playerBus = null)
         {
-            // Gamemode (Survive, Creative)
-            // X Y Z
-            // Yaw Pitch
-            // 
-
-            return null;
+            return HandleResponse<IPlayer?, GetPlayerDataRequestPacket, GetPlayerDataResponsePacket>(playerBus ?? PlayerBus,
+                new GetPlayerDataRequestPacket() { Username = username },
+                response => response.Player);
+        }
+        public static int UpdatePlayerData(Player player, IMBus? playerBus = null)
+        {
+            return HandleResponse<int, UpdatePlayerDataRequestPacket, UpdatePlayerDataResponsePacket>(playerBus ?? PlayerBus,
+                new UpdatePlayerDataRequestPacket() { Player = player },
+                response => response.ErrorEnum);
         }
         public static bool ValidatePlayerPositionAndLook(Vector3? position, Look? look)
         {
@@ -87,7 +108,8 @@ namespace MineLib.Server.Core
         }
 
 
-        public static IMBus ForgeBus { get; } = new NetworkMBus($"{Host}/minelib/server/forgebus");
+        private static IMBus? _forgeBus;
+        public static IMBus ForgeBus => _forgeBus ?? (_forgeBus = new NetworkMBus($"{Host}/minelib/server/forgebus"));
 
 
         public static int SquareSize(int radius) => (int) Math.Pow(Math.Pow(radius, 2) + 1, 2);
@@ -97,13 +119,14 @@ namespace MineLib.Server.Core
             where TPacketRequest : InternalPacket
             where TPacketResponse : InternalPacket
         {
-            TReturn @return = default;
+            var @return = default(TReturn);
             var guid = Guid.NewGuid();
 
-            var eventLock = new ManualResetEventSlim(false);
+            using var eventLock = new ManualResetEventSlim(false);
             bus.MessageReceived += (sender, args) =>
             {
-                switch (new InternalFactory().GetPacket(args.Message))
+                using var internalFactory = new InternalFactory();
+                switch (internalFactory.GetPacket(args.Message))
                 {
                     case PingPacket pingPacket:
                         break;
@@ -135,24 +158,26 @@ namespace MineLib.Server.Core
             where TPacketEnumerableResponse : InternalPacket
             where TPacketBulkResponse : InternalPacket
         {
-            TReturn[] bulk = new TReturn[0];
-            TReturn currentReturn = default;
-            var lock1 = new ManualResetEventSlim(false);
-            var lock2 = new ManualResetEventSlim(true);
+            var bulk = Array.Empty<TReturn>();
+            var currentReturn = default(TReturn);
+            using var lock1 = new ManualResetEventSlim(false);
+            using var lock2 = new ManualResetEventSlim(true);
             var lastPacket = DateTime.UtcNow;
 
             var guid = Guid.NewGuid();
 
-            var eventLock = new ManualResetEventSlim(false);
+            using var eventLock = new ManualResetEventSlim(false);
             bus.MessageReceived += (sender, args) =>
             {
-                switch (new InternalFactory().GetPacket(args.Message))
+                using var internalFactory = new InternalFactory();
+                switch (internalFactory.GetPacket(args.Message))
                 {
                     case PingPacket pingPacket:
                         break;
 
                     case TPacketEnumerableResponse response:
-                        if (!guid.Equals(response.GUID)) return;
+                        if (!guid.Equals(response.GUID))
+                            return;
 
                         lock2.Wait(); // Ждем завершения отправки данных
                         currentReturn = responseEnumerableHandler(response); // Ставим новые данные
@@ -162,7 +187,8 @@ namespace MineLib.Server.Core
                         break;
 
                     case TPacketBulkResponse response:
-                        if (!guid.Equals(response.GUID)) return;
+                        if (!guid.Equals(response.GUID))
+                            return;
 
                         bulk = responseBulkHandler(response);
                         eventLock.Set();
@@ -191,11 +217,12 @@ namespace MineLib.Server.Core
                 }
             }
         }
-        public static void HandleRequest<TPacketRequest, TPacketResponse>(IMBus bus, MBusMessageReceivedEventArgs args, Func<TPacketRequest, TPacketResponse> requestHandler, int timeout = Timeout)
+        public static void HandleRequest<TPacketRequest, TPacketResponse>(IMBus bus, MBusMessageReceivedEventArgs args, Func<TPacketRequest, TPacketResponse?> requestHandler, int timeout = Timeout)
             where TPacketRequest : InternalPacket
             where TPacketResponse : InternalPacket
         {
-            switch (new InternalFactory().GetPacket(args.Message))
+            using var internalFactory = new InternalFactory();
+            switch (internalFactory.GetPacket(args.Message))
             {
                 case TPacketRequest request:
                     var response = requestHandler(request);
@@ -205,14 +232,17 @@ namespace MineLib.Server.Core
                     break;
             }
         }
-        public static void HandleRequest<TPacketRequest, TPacketResponse>(IMBus bus, MBusMessageReceivedEventArgs args, Func<TPacketRequest, IEnumerable<TPacketResponse>> requestHandler, int timeout = Timeout)
+        public static void HandleRequest<TPacketRequest, TPacketResponse>(IMBus bus, MBusMessageReceivedEventArgs args, Func<TPacketRequest, IEnumerable<TPacketResponse>?> requestHandler, int timeout = Timeout)
             where TPacketRequest : InternalPacket
             where TPacketResponse : InternalPacket
         {
-            switch (new InternalFactory().GetPacket(args.Message))
+            using var internalFactory = new InternalFactory();
+            switch (internalFactory.GetPacket(args.Message))
             {
                 case TPacketRequest request:
-                    foreach (var response in requestHandler(request))
+                    var responseEnumerable = requestHandler(request);
+                    if (responseEnumerable == null) return;
+                    foreach (var response in responseEnumerable)
                     {
                         response.GUID = request.GUID;
                         bus.SendPacket(response);

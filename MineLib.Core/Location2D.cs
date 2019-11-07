@@ -17,7 +17,6 @@ namespace MineLib.Core
         public Location2D(int x, int z) { X = x; Z = z; }
         public Location2D(in Location2D location) { X = location.X; Z = location.Z; }
 
-
         /// <summary>
         /// Converts this Coordinates2D to a string.
         /// </summary>

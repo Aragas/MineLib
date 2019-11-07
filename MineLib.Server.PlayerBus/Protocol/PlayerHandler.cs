@@ -11,7 +11,7 @@ namespace MineLib.Server.PlayerBus.PlayerHandler
     // So here we get/set info like EntityID if the protocol requests it or other shit
     internal sealed class PlayerHandler : IDisposable
     {
-        private ProtocolConnection ProtocolConnection { get; }
+        private ProtocolConnection? ProtocolConnection { get; }
 
         public PlayerHandler(Socket socket, int protocolVersion)
         {
@@ -22,10 +22,11 @@ namespace MineLib.Server.PlayerBus.PlayerHandler
                     break;
 
                 //case 340:
-                //    Protocol = new Protocol340Connection(socket);
+                //    ProtocolConnection = new Protocol340Connection(socket);
                 //    break;
 
                 default:
+                    ProtocolConnection = null;
                     Console.WriteLine($"Protocol {protocolVersion} not available.");
                     break;
             }

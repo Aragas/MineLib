@@ -1,10 +1,10 @@
-﻿using MineLib.Server.Core;
-using MineLib.Server.Core.Protocol;
+﻿using Aragas.QServer.Core;
+using Aragas.QServer.Core.Protocol;
 
 using System;
 using System.Collections.Generic;
 
-namespace MineLib.Server.MBus
+namespace Aragas.QServer.MBus
 {
     internal sealed class MBusListener : InternalListener<MBusClient>
     {
@@ -15,22 +15,24 @@ namespace MineLib.Server.MBus
         protected override void OnClientConnected(MBusClient client)
         {
             client.StartListening();
-            client.Disconnected += Client_Disconnected;
-            client.OnMessage += Client_OnMessage;
+            client.Disconnected += (this, Client_Disconnected);
+            client.OnMessage += (this, Client_OnMessage);
 
             lock (Clients)
                 Clients.Add(client);
         }
 
-        private void Client_Disconnected(object sender, EventArgs e)
+        private void Client_Disconnected(object? sender, EventArgs e)
         {
-            var client = (MBusClient) sender;
-            lock (Clients)
-                Clients.Remove(client);
-            client.Dispose();
+            if(sender is MBusClient client)
+            {
+                lock (Clients)
+                    Clients.Remove(client);
+                client.Dispose();
+            }
         }
 
-        private void Client_OnMessage(object sender, MBusClientMessageReceivedEventArgs e)
+        private void Client_OnMessage(object? sender, MBusClientMessageReceivedEventArgs e)
         {
             lock(Clients)
             {

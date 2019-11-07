@@ -1,10 +1,10 @@
-﻿using System;
-
-using Aragas.Network.Data;
+﻿using Aragas.Network.Data;
 using Aragas.Network.IO;
 using Aragas.Network.Packets;
 
 using MineLib.Server.Proxy.Packets.Netty;
+
+using System;
 
 namespace MineLib.Server.Proxy.Protocol.Factory
 {

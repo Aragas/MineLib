@@ -15,6 +15,8 @@ namespace Aragas.Network
 
         private static readonly ConcurrentDictionary<Type, ObjectActivator> Cache = new ConcurrentDictionary<Type, ObjectActivator>();
 
+        public static TType CreateInstanceGeneric<TType>(Type type) => (TType) CreateInstance(type.GetType());
+        public static TType CreateInstanceGeneric<TType>() => (TType) CreateInstance(typeof(TType));
 
         /// <summary>
         /// Faster implementation of <see cref="Activator.CreateInstance(Type, object[])"/>.

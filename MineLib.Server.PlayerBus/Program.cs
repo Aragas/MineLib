@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
+﻿using LiteDB;
 
+using MineLib.Core;
 using MineLib.Server.Core;
 using MineLib.Server.Core.Packets.PlayerHandler;
+
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Numerics;
+using System.Threading.Tasks;
 
 namespace MineLib.Server.PlayerBus
 {
@@ -55,7 +59,35 @@ namespace MineLib.Server.PlayerBus
     /// </summary>
     internal sealed class Program : BaseProgram
     {
-        public static async Task Main(string[] args) => await Main<Program>(args).ConfigureAwait(false);
+        public static async Task Main(string[] args)
+        {
+            BsonMapper.Global.RegisterType
+            (
+                serialize: vector3 => new BsonDocument(new Dictionary<string, BsonValue>
+                {
+                    { nameof(Vector3.X), vector3.X  },
+                    { nameof(Vector3.Y), vector3.Y  },
+                    { nameof(Vector3.Z), vector3.Z  }
+                }),
+                deserialize: bson => new Vector3(
+                    (float) bson.AsDocument[nameof(Vector3.X)].AsDouble,
+                    (float) bson.AsDocument[nameof(Vector3.Y)].AsDouble,
+                    (float) bson.AsDocument[nameof(Vector3.Z)].AsDouble)
+            );
+            BsonMapper.Global.RegisterType
+            (
+                serialize: look => new BsonDocument(new Dictionary<string, BsonValue>
+                {
+                    { nameof(Look.Pitch), look.Pitch  },
+                    { nameof(Look.Yaw), look.Yaw  },
+                }),
+                deserialize: bson => new Look(
+                    (float) bson.AsDocument[nameof(Look.Pitch)].AsDouble,
+                    (float) bson.AsDocument[nameof(Look.Yaw)].AsDouble)
+            );
+
+            await Main<Program>(args).ConfigureAwait(false);
+        }
 
         public List<ProxyConnectionHandler> ProxyConnectionHandlers { get; } = new List<ProxyConnectionHandler>();
 
@@ -72,7 +104,7 @@ namespace MineLib.Server.PlayerBus
             ProxyConnectionHandlers.Add(protocol5);
             //ProxyConnectionHandlers.Add(protocol340);
 
-            InternalBus.PlayerBus.MessageReceived += PlayerHandler_MessageReceived;
+            InternalBus.PlayerBus.MessageReceived += (this, PlayerHandler_MessageReceived);
 
             Console.ReadLine();
             await StopAsync().ConfigureAwait(false);
@@ -87,25 +119,80 @@ namespace MineLib.Server.PlayerBus
                 connectionHandler.Stop();
         }
 
-        private static void PlayerHandler_MessageReceived(object sender, MBusMessageReceivedEventArgs args)
+        private static void PlayerHandler_MessageReceived(object? sender, MBusMessageReceivedEventArgs args)
         {
-            InternalBus.HandleRequest<AvailableSocketRequestPacket, AvailableSocketResponsePacket>(InternalBus.PlayerBus, args,
-                request =>
+            InternalBus.HandleRequest<AvailableSocketRequestPacket, AvailableSocketResponsePacket>(InternalBus.PlayerBus, args, request =>
+            {
+                var proxyConnectionHandler = ProxyConnectionHandler.GetProxyConnectionHandler(request.ProtocolVersion);
+                // if PlayerBus can't handle any new players, return null in Endpoint
+                //return null;
+                return new AvailableSocketResponsePacket()
                 {
-                    var proxyConnectionHandler = ProxyConnectionHandler.GetProxyConnectionHandler(request.ProtocolVersion);
-                    return new AvailableSocketResponsePacket()
+                    Endpoint = new IPEndPoint(IPAddress.Loopback, proxyConnectionHandler.Port)
+                };
+            });
+            InternalBus.HandleRequest<GetPlayerDataRequestPacket, GetPlayerDataResponsePacket>(InternalBus.PlayerBus, args, request =>
+            {
+                if (string.IsNullOrEmpty(request.Username))
+                    return new GetPlayerDataResponsePacket() { Player = null };
+
+                using var db = new LiteDatabase("Players.db");
+                var players = db.GetCollection<Player>("players");
+                if (!(players.FindOne(p => p.Username==  request.Username) is Player player))
+                {
+                    players.Insert(player = new Player
                     {
-                        AvailableSocket = true,
-                        Endpoint = new IPEndPoint(IPAddress.Loopback, proxyConnectionHandler.Port)
+                        Username = request.Username,
+                        Uuid = Guid.NewGuid()
+                    });
+                }
+
+                return new GetPlayerDataResponsePacket() { Player = player };
+            });
+            InternalBus.HandleRequest<UpdatePlayerDataRequestPacket, UpdatePlayerDataResponsePacket>(InternalBus.PlayerBus, args, request =>
+            {
+                return new UpdatePlayerDataResponsePacket()
+                {
+                    ErrorEnum = 0
+                };
+                /*
+                if (string.IsNullOrEmpty(request.Player.Username))
+                    return new UpdatePlayerDataResponsePacket()
+                    {
+                        ErrorEnum = 1
                     };
-                } );
+
+                using var db = new LiteDatabase(@"Players.db");
+                var players = db.GetCollection<Player>("players");
+                var player = new Player(request.Nickname)
+                {
+                    Position = request.Position,
+                    Look = request.Look
+                };
+                players.Upsert(player);
+                if (players.Exists(p => p.Nickname == player.Nickname))
+                    players.Upsert(player);
+                else
+                    players.Insert(player);
+
+                // Index document using a document property
+                players.EnsureIndex(x => x.Nickname);
+                return new UpdatePlayerDataResponsePacket()
+                {
+                    ErrorEnum = 0
+                };
+                */
+            });
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            base.Dispose();
+            if (disposing)
+            {
+                InternalBus.PlayerBus.Dispose();
+            }
 
-            InternalBus.PlayerBus.Dispose();
+            base.Dispose(disposing);
         }
     }
 }

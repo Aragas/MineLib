@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 
 using static Aragas.Network.IO.PacketSerializer;
 using static Aragas.Network.IO.PacketDeserializer;
+using System.Numerics;
 
 namespace MineLib.Core.Extensions
 {
@@ -32,6 +33,10 @@ namespace MineLib.Core.Extensions
             Extend<BlockListWithLight>(ReadBlockListWithLight, WriteBlockListWithLight);
             Extend<BlockStorage64>(ReadBlockStorage64, WriteBlockStorage64);
             Extend<NibbleArray>(ReadNibbleArray, WriteNibbleArray);
+            Extend<Vector3>(ReadVector3, WriteVector3);
+            Extend<Look>(ReadLook, WriteLook);
+            Extend<Rotation>(ReadRotation, WriteRotation);
+            Extend<IPlayer>(ReadIPlayer, WriteIPlayer);
         }
         private static void WriteUInt64Array(PacketSerializer serializer, ulong[] value, bool writeDefaultLength = true)
         {
@@ -180,6 +185,58 @@ namespace MineLib.Core.Extensions
         {
             return new NibbleArray(deserializer.Read<byte[]>());
             //return new NibbleArray(ZlibStream.UncompressBuffer(deserializer.Read<byte[]>()));
+        }
+
+
+        private static void WriteVector3(PacketSerializer serializer, Vector3 value, bool writeDefaultLength = true)
+        {
+            serializer.Write(value.X);
+            serializer.Write(value.Y);
+            serializer.Write(value.Z);
+        }
+        private static Vector3 ReadVector3(PacketDeserializer deserializer, int length = 0)
+        {
+            return new Vector3(deserializer.Read<float>(), deserializer.Read<float>(), deserializer.Read<float>());
+        }
+
+
+        private static void WriteLook(PacketSerializer serializer, Look value, bool writeDefaultLength = true)
+        {
+            serializer.Write(value.Pitch);
+            serializer.Write(value.Yaw);
+        }
+        private static Look ReadLook(PacketDeserializer deserializer, int length = 0)
+        {
+            return new Look(deserializer.Read<float>(), deserializer.Read<float>());
+        }
+
+        private static void WriteRotation(PacketSerializer serializer, Rotation value, bool writeDefaultLength = true)
+        {
+            serializer.Write(value.Pitch);
+            serializer.Write(value.Yaw);
+            serializer.Write(value.Roll);
+        }
+        private static Rotation ReadRotation(PacketDeserializer deserializer, int length = 0)
+        {
+            return new Rotation(deserializer.Read<float>(), deserializer.Read<float>(), deserializer.Read<float>());
+        }
+
+        private static void WriteIPlayer(PacketSerializer serializer, IPlayer value, bool writeDefaultLength = true)
+        {
+            serializer.Write(value.Username);
+            serializer.Write(value.Uuid);
+            serializer.Write(value.Position);
+            serializer.Write(value.Look);
+        }
+        private static IPlayer ReadIPlayer(PacketDeserializer deserializer, int length = 0)
+        {
+            return new Player()
+            {
+                Username = deserializer.Read<string>(),
+                Uuid = deserializer.Read<Guid>(),
+                Position = deserializer.Read<Vector3>(),
+                Look = deserializer.Read<Look>(),
+            };
         }
     }
 }

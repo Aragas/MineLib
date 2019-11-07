@@ -1,19 +1,22 @@
-﻿using MineLib.Server.Core.Packets;
-using MineLib.Server.Core.Packets.MBus;
-using MineLib.Server.Core.Protocol;
+﻿using Aragas.TupleEventSystem;
+
+using Aragas.QServer.Core.Packets;
+using Aragas.QServer.Core.Packets.MBus;
+using Aragas.QServer.Core.Protocol;
 
 using System;
 
-namespace MineLib.Server.MBus
+namespace Aragas.QServer.MBus
 {
     internal sealed class MBusClient : InternalConnectionHandler
     {
-        public event EventHandler<MBusClientMessageReceivedEventArgs> OnMessage;
+        public BaseEventHandler<MBusClientMessageReceivedEventArgs> OnMessage { get; set; } = new WeakReferenceEventHandler<MBusClientMessageReceivedEventArgs>();
+        //public event EventHandler<MBusClientMessageReceivedEventArgs>? OnMessage;
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public Guid GUID { get; set; } = Guid.NewGuid();
 
-        public MBusClient() : base() { }
+        //public MBusClient() : base() { }
 
         protected override void HandlePacket(InternalPacket packet)
         {
@@ -28,7 +31,7 @@ namespace MineLib.Server.MBus
                     break;
 
                 case Message message:
-                    OnMessage?.Invoke(this, new MBusClientMessageReceivedEventArgs() { ClientGUID = GUID, Message = message.Data });
+                    OnMessage?.Invoke(this, new MBusClientMessageReceivedEventArgs(GUID, message.Data));
                     break;
             }
         }
@@ -36,6 +39,16 @@ namespace MineLib.Server.MBus
         public void SendMessage(byte[] message)
         {
             SendPacket(new Message() { Data = message });
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                OnMessage?.Dispose();
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

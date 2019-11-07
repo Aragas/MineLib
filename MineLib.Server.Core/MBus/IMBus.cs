@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Aragas.TupleEventSystem;
+using System;
 using System.Threading.Tasks;
 
 namespace MineLib.Server.Core
 {
     public interface IMBus : IDisposable
     {
-        event EventHandler<MBusMessageReceivedEventArgs> MessageReceived;
+        //event EventHandler<MBusMessageReceivedEventArgs> MessageReceived;
+        BaseEventHandler<MBusMessageReceivedEventArgs> MessageReceived { get; set; }// = new WeakReferenceEventHandler<MBusMessageReceivedEventArgs>();
 
         void SendMessage(in ReadOnlySpan<byte> message);
         Task SendMessageAsync(ReadOnlyMemory<byte> message);

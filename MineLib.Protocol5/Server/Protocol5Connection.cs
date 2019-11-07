@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Linq;
-using System.Net.Sockets;
-using System.Threading;
-using System.Threading.Tasks;
-
-using MineLib.Protocol.Packets;
+﻿using MineLib.Protocol.Packets;
 using MineLib.Protocol5.Extensions;
 using MineLib.Protocol5.Packets.Client.Login;
 using MineLib.Protocol5.Packets.Client.Play;
@@ -14,6 +6,14 @@ using MineLib.Protocol5.Packets.Server.Login;
 using MineLib.Protocol5.Packets.Server.Play;
 using MineLib.Protocol5.Protocol;
 using MineLib.Server.Core;
+
+using System;
+using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Linq;
+using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MineLib.Protocol5.Server
 {
@@ -23,6 +23,8 @@ namespace MineLib.Protocol5.Server
         {
             PacketExtensions.Init();
         }
+
+        private string Username;
 
 
         public override string Host => Stream?.Host ?? string.Empty;
@@ -53,10 +55,17 @@ namespace MineLib.Protocol5.Server
                     {
                         case LoginStartPacket packet:
                             {
+                                var player = InternalBus.GetPlayerData(packet.Name, PlayerBus);
+                                if (player == null)
+                                {
+                                    Disconnect();
+                                    break;
+                                }
+
                                 PacketsToSend.Enqueue(new LoginSuccessPacket()
                                 {
-                                    Username = packet.Name,
-                                    UUID = Guid.NewGuid().ToString()
+                                    Username = (Username = player.Username),
+                                    UUID = player.Uuid.ToString()
                                 });
                                 PacketsToSend.Enqueue(new JoinGamePacket()
                                 {
@@ -81,7 +90,7 @@ namespace MineLib.Protocol5.Server
                                         PacketsToSend.Enqueue(new PlayerAbilitiesPacket()
                                         {
                                             Flags = 0,//1 & 2 & 4,
-                                        FlyingSpeed = 0,
+                                            FlyingSpeed = 0,
                                             WalkingSpeed = 1
                                         });
                                         PacketsToSend.Enqueue(new PlayerPositionAndLookPacket()
@@ -110,14 +119,39 @@ namespace MineLib.Protocol5.Server
                             break;
                         case PlayerPositionPacket packet:
                             {
+                                Task.Factory.StartNew(() =>
+                                {
+                                    InternalBus.UpdatePlayerData(new Core.Player()
+                                    {
+                                        Position = new System.Numerics.Vector3((float) packet.X, (float) packet.FeetY, (float) packet.Z),
+                                        Username = Username
+                                    }, PlayerBus);
+                                });
                             }
                             break;
                         case PlayerLookPacket packet:
                             {
+                                Task.Factory.StartNew(() =>
+                                {
+                                    InternalBus.UpdatePlayerData(new Core.Player()
+                                    {
+                                        Look = new Core.Look(packet.Pitch, packet.Yaw),
+                                        Username = Username
+                                    }, PlayerBus);
+                                });
                             }
                             break;
                         case PlayerPositionAndLook2Packet packet:
                             {
+                                Task.Factory.StartNew(() =>
+                                {
+                                    InternalBus.UpdatePlayerData(new Core.Player()
+                                    {
+                                        Position = new System.Numerics.Vector3((float) packet.X, (float) packet.FeetY, (float) packet.Z),
+                                        Look = new Core.Look(packet.Pitch, packet.Yaw),
+                                        Username = Username
+                                    }, PlayerBus);
+                                });
                                 /*
                                 var valid = InternalBus.ValidatePlayerPositionAndLook(
                                     new MineLib.Protocol.IPC.Packets.PlayerDataPacket()

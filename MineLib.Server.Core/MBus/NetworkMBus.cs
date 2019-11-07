@@ -1,4 +1,5 @@
-﻿using MineLib.Server.Core.Packets;
+﻿using Aragas.TupleEventSystem;
+using MineLib.Server.Core.Packets;
 using MineLib.Server.Core.Packets.MBus;
 using MineLib.Server.Core.Protocol;
 
@@ -25,13 +26,17 @@ namespace MineLib.Server.Core
             ReadOnlySpan<char> name;
             var hostDelimeterIndex = span.IndexOf('/');
             if (hostDelimeterIndex == -1)
+            {
                 return default;
+            }
             else
             {
                 host = span.Slice(0, hostDelimeterIndex);
                 var portDelimeterIndex = span.IndexOf(':');
                 if (portDelimeterIndex == -1)
+                {
                     port = DefaultValues.MBus_Port.ToString().AsSpan();
+                }
                 else
                 {
                     host = span.Slice(0, portDelimeterIndex);
@@ -47,6 +52,7 @@ namespace MineLib.Server.Core
         private static Socket Connect(string host, ushort port)
         {
             var client = new TcpClient();
+            //client.Client.DualMode = true;
             client.Connect(host, port);
             return client.Client;
         }
@@ -54,7 +60,8 @@ namespace MineLib.Server.Core
 
         public static readonly TimeSpan DefaultMessageTTL = TimeSpan.FromMilliseconds(500);
 
-        public event EventHandler<MBusMessageReceivedEventArgs> MessageReceived;
+        //public event EventHandler<MBusMessageReceivedEventArgs> MessageReceived;
+        public BaseEventHandler<MBusMessageReceivedEventArgs> MessageReceived { get; set; } = new WeakReferenceEventHandler<MBusMessageReceivedEventArgs>();
 
         public string Name { get; }
         public TimeSpan MessageTTL { get; }
@@ -82,9 +89,19 @@ namespace MineLib.Server.Core
                     break;
 
                 case Message message:
-                    MessageReceived?.Invoke(this, new MBusMessageReceivedEventArgs() { Message = message.Data });
+                    MessageReceived?.Invoke(this, new MBusMessageReceivedEventArgs(message.Data));
                     break;
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                MessageReceived?.Dispose();
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

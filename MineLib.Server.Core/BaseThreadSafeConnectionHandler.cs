@@ -1,12 +1,16 @@
-﻿using System;
+﻿using Aragas.TupleEventSystem;
+
+using System;
 using System.Threading;
 
 namespace MineLib.Server.Core
 {
     public abstract class BaseThreadSafeConnectionHandler
     {
-        public event EventHandler Ready;
-        public event EventHandler Disconnected;
+        public BaseEventHandler<EventArgs> Ready { get; set; } = new WeakReferenceEventHandler<EventArgs>();
+        public BaseEventHandler<EventArgs> Disconnected { get; set; } = new WeakReferenceEventHandler<EventArgs>();
+        //public event EventHandler Ready;
+        //public event EventHandler Disconnected;
 
         protected CancellationTokenSource UpdateToken { get; set; }
         protected ManualResetEventSlim UpdateLock { get; } = new ManualResetEventSlim(false);
@@ -24,10 +28,16 @@ namespace MineLib.Server.Core
                 new Thread(Update).Start();
             }
             else
+            {
                 throw new Exception("UpdateThread is already running!");
+            }
         }
 
-        protected void Join() => Ready?.Invoke(this, EventArgs.Empty);
+        protected void Join()
+        {
+            Ready?.Invoke(this, EventArgs.Empty);
+        }
+
         protected void Leave()
         {
             ConnectionLock.Wait(); // this should ensure we will send every packet enqueued at the moment of calling Leave()
@@ -68,6 +78,9 @@ namespace MineLib.Server.Core
 
                     UpdateLock.Dispose();
                     ConnectionLock.Dispose();
+
+                    Ready?.Dispose();
+                    Disconnected?.Dispose();
                 }
 
 

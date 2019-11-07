@@ -1,7 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Net.Sockets;
-
-using Aragas.Network.Data;
+﻿using Aragas.Network.Data;
 using Aragas.Network.IO;
 
 using MineLib.Server.Core;
@@ -11,6 +8,9 @@ using MineLib.Server.Proxy.Packets.Netty.Serverbound;
 using MineLib.Server.Proxy.Protocol.Data;
 using MineLib.Server.Proxy.Protocol.Factory.Netty;
 using MineLib.Server.Proxy.Translation;
+
+using System.Collections.Concurrent;
+using System.Net.Sockets;
 
 namespace MineLib.Server.Proxy.Protocol.Netty
 {

@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace MineLib.Core.Anvil
 {
@@ -41,5 +43,14 @@ namespace MineLib.Core.Anvil
             Data[index / 2] &= (byte) (0b00001111 << ((index + 1) % 2 * 4));
             Data[index / 2] |= (byte) (value << (index % 2 * 4));
         }
+
+        public static bool operator ==(NibbleArray left, NibbleArray right) => left.Data == right.Data;
+        public static bool operator !=(NibbleArray left, NibbleArray right) => !(left == right);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override bool Equals(object obj) => obj is NibbleArray nibbleArray && Equals(nibbleArray);
+        public bool Equals(NibbleArray other) => other.Data.Equals(Data);
+
+        public override int GetHashCode() => HashCode.Combine(Data);
     }
 }

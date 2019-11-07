@@ -1,4 +1,5 @@
 ﻿using fNbt;
+
 using System;
 using System.Runtime.CompilerServices;
 
@@ -38,7 +39,7 @@ namespace MineLib.Protocol5.Data
             }
         }
 
-        public NbtCompound Nbt { get; set; }
+        public NbtCompound? Nbt { get; set; }
 
         public bool IsEmpty => Id == -1;
 
@@ -64,9 +65,12 @@ namespace MineLib.Protocol5.Data
             }
         }
 
+        public static bool operator ==(ItemSlot left, ItemSlot right) => left._id == right._id && left._count == right._count && left.Nbt == right.Nbt;
+        public static bool operator !=(ItemSlot left, ItemSlot right) => !(left == right);
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override bool Equals(object obj) => obj is ItemSlot itemSlot && Equals(itemSlot);
-        public bool Equals(ItemSlot other) => other._id.Equals(_id) && other._count.Equals(_count) && other.Nbt.Equals(Nbt);
+        public bool Equals(ItemSlot other) => other._id.Equals(_id) && other._count.Equals(_count) && other.Nbt?.Equals(Nbt) == true;
 
         public override int GetHashCode() => HashCode.Combine(_id, _count, Nbt);
     }

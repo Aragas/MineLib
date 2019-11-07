@@ -28,7 +28,7 @@ namespace MineLib.Server.Core
         private ConcurrentQueue<TPacket> PacketsToSend { get; } = new ConcurrentQueue<TPacket>();
 
         protected DefaultConnectionHandler() { }
-        protected DefaultConnectionHandler(Socket socket, BasePacketFactory<TPacket, TIDType, TSerializer, TDeserializer> factory = null)
+        protected DefaultConnectionHandler(Socket socket, BasePacketFactory<TPacket, TIDType, TSerializer, TDeserializer>? factory = null)
             => Stream = new TPacketTransmission() { Socket = socket, Factory = factory };
 
         public sealed override void Update()

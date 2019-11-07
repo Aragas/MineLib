@@ -22,7 +22,7 @@ namespace MineLib.Server.Core
 
             AppDomain.CurrentDomain.UnhandledException += HandleException;
 
-            TProgram program = default;
+            TProgram? program = default;
             DateTime lastRunTime = default;
         Start:
             try
@@ -42,7 +42,9 @@ namespace MineLib.Server.Core
                     goto Start;
                 }
                 else
+                {
                     Environment.Exit(1);
+                }
             }
             finally
             {
@@ -117,9 +119,23 @@ InnerException:
         public virtual Task RunAsync() { Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("en-US"); return Task.CompletedTask; }
         public virtual Task StopAsync()  { CancellationTokenSource.Cancel(); return Task.CompletedTask;}
 
-        public virtual void Dispose()
+
+        private bool disposedValue = false; // To detect redundant calls
+        protected virtual void Dispose(bool disposing)
         {
-            CancellationTokenSource.Dispose();
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    CancellationTokenSource.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+        public void Dispose()
+        {
+            Dispose(true);
         }
     }
 }

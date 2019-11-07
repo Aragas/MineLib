@@ -41,7 +41,7 @@ namespace MineLib.Server.WorldBus.Generator
         protected List<GeneratorLayer> Layers;
         private string generatorOptions;
 
-        public void Initialize(Level level)
+        public void Initialize(Level? level)
         {
             if (GeneratorOptions != null)
                 return;

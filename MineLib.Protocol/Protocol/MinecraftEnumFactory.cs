@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-
-using Aragas.Network;
+﻿using Aragas.Network;
 using Aragas.Network.Data;
 using Aragas.Network.IO;
 using Aragas.Network.Packets;
 
 using MineLib.Protocol.Packets;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace MineLib.Protocol.Protocol
 {
@@ -35,9 +35,19 @@ namespace MineLib.Protocol.Protocol
 
                         foreach (var packetType in whereToFindPackets.SelectMany(asm => asm.ExportedTypes.Where(type => type.GetTypeInfo().IsSubclassOf(typeof(TPacketType)))))
                         {
-                            var p = ActivatorCached.CreateInstance(packetType) as TPacketType;
-                            Packets.Add(p.ID, packetType != null ? (Func<TPacketType>)(() => ActivatorCached.CreateInstance(packetType) as TPacketType) : null);
-                            IDTypeFromPacketType.Add(p.GetType(), p.ID);
+                            if (packetType != null && ActivatorCached.CreateInstance(packetType) is TPacketType p)
+                            {
+                                Packets.Add(p.ID, () => (TPacketType) ActivatorCached.CreateInstance(packetType));
+                                IDTypeFromPacketType.Add(p.GetType(), p.ID);
+                            }
+                            /*
+                            if (packetType != null)
+                            {
+                                var p = ActivatorCached.CreateInstanceGeneric<TPacketType>(packetType);
+                                Packets.Add(p.ID, () => ActivatorCached.CreateInstanceGeneric<TPacketType>(packetType));
+                                IDTypeFromPacketType.Add(p.GetType(), p.ID);
+                            }
+                            */
                         }
                     }
                 }
@@ -45,7 +55,7 @@ namespace MineLib.Protocol.Protocol
         }
 
         public override TPacketType Create(VarInt packetID) => Packets.TryGetValue(packetID, out var packetConstructor) ? packetConstructor() : null;
-        public override TPacketTypeCustom Create<TPacketTypeCustom>() => Packets.TryGetValue(IDTypeFromPacketType[typeof(TPacketTypeCustom)], out var packetConstructor) ? (TPacketTypeCustom)packetConstructor() : null;
+        public override TPacketTypeCustom Create<TPacketTypeCustom>() => Packets.TryGetValue(IDTypeFromPacketType[typeof(TPacketTypeCustom)], out var packetConstructor) ? (TPacketTypeCustom) packetConstructor() : null;
         public override TPacketTypeCustom Create<TPacketTypeCustom>(Func<TPacketTypeCustom> initializer) => initializer();
 
         public override void Dispose() { }

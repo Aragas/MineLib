@@ -41,7 +41,7 @@ namespace MineLib.Server.WorldBus.Generator
 
         public string GeneratorOptions { get; set; }
 
-        public long Seed { get; set; }
+        public long Seed { get; set; } = 123;
 
         public Vector3 SpawnPoint { get; set; }
 
@@ -184,7 +184,7 @@ namespace MineLib.Server.WorldBus.Generator
         /// Called after the world generator is created and
         /// all values are set.
         /// </summary>
-        public void Initialize(Level level)
+        public void Initialize(Level? level)
         {
             const double persistence = 1, frequency = 0.01, amplitude = 80;
             int octaves = 2;

@@ -19,6 +19,6 @@ namespace MineLib.Server.WorldBus.Generator
         /// Called after the world generator is created and
         /// all values are set.
         /// </summary>
-        void Initialize(Level level);
+        void Initialize(Level? level);
     }
 }

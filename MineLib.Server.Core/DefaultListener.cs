@@ -21,7 +21,8 @@ namespace MineLib.Server.Core
 
         public sealed override void Start()
         {
-            Listener = new TcpListener(new IPEndPoint(IPAddress.Any, Port));
+            Listener = new TcpListener(new IPEndPoint(IPAddress.IPv6Any, Port));
+            Listener.Server.DualMode = true;
             Listener.Server.ReceiveTimeout = 5000;
             Listener.Server.SendTimeout = 5000;
             Listener.Start();
@@ -50,7 +51,7 @@ namespace MineLib.Server.Core
         protected virtual void OnClientConnected(TConnection client)
         {
             client.StartListening();
-            client.Disconnected += Client_Disconnected;
+            client.Disconnected += (this, Client_Disconnected);
 
             lock (Connections)
                 Connections.Add(client);
@@ -64,7 +65,7 @@ namespace MineLib.Server.Core
         {
             try
             {
-                while (true) // Listener.Stop() will stop it.
+                while (Listener != null) // Listener.Stop() will stop it.
                 {
                     var client = new TConnection()
                     {
@@ -78,19 +79,23 @@ namespace MineLib.Server.Core
                 }
 
             }
-            catch (SocketException) { }
+            catch (Exception e) when (e is SocketException) { }
         }
 
         private void Client_Disconnected(object sender, EventArgs e)
         {
-            var client = (TConnection) sender;
-            lock (Connections)
-                Connections.Remove(client);
-            client.Dispose();
+            if (sender is TConnection client)
+            {
+                client.Disconnected -= Client_Disconnected;
+                lock (Connections)
+                    Connections.Remove(client);
+                client.Dispose();
 
 #if DEBUG
-            Console.WriteLine($"{client.GetType().Name} disconnected.");
+                Console.WriteLine($"{client.GetType().Name} disconnected.");
 #endif
+            }
+
         }
     }
 }

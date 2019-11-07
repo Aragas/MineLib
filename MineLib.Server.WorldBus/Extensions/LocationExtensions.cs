@@ -1,5 +1,4 @@
-﻿
-using MineLib.Core;
+﻿using MineLib.Core;
 
 namespace MineLib.Server.WorldBus
 {

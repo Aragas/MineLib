@@ -6,9 +6,6 @@ using System.Runtime.CompilerServices;
 
 namespace MineLib.Core.Anvil
 {
-    //public class BlockMeta(ulong ID, ulong Metadata);
-
-
     // 14 bit - 56kb
     public readonly struct BlockStorage64 : IEnumerable<(ulong ID, ulong Metadata)>
     {

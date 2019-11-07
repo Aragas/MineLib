@@ -1,15 +1,15 @@
-﻿using MineLib.Server.Core;
+﻿using Aragas.QServer.Core;
 
 using System;
 using System.Threading.Tasks;
 
-namespace MineLib.Server.MBus
+namespace Aragas.QServer.MBus
 {
     internal sealed class Program : BaseProgram
     {
         public static async Task Main(string[] args) => await Main<Program>(args).ConfigureAwait(false);
 
-        private MBusListener Server { get; set; }
+        private MBusListener? Server { get; set; }
 
         public override async Task RunAsync()
         {
@@ -26,7 +26,7 @@ namespace MineLib.Server.MBus
 
         public override async Task StopAsync()
         {
-            Server.Stop();
+            Server?.Stop();
 
             await base.StopAsync().ConfigureAwait(false);
         }

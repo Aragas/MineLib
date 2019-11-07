@@ -2,6 +2,7 @@
 
 namespace MineLib.Protocol.Server
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1063:Implement IDisposable Correctly", Justification = "Implementation problem")]
     public abstract class ProtocolConnection : IDisposable
     {
         public abstract string Name { get; }
@@ -11,7 +12,7 @@ namespace MineLib.Protocol.Server
         public abstract string Host { get; }
         public abstract ushort Port { get; }
         public abstract bool Connected { get; }
-        
+
         public abstract void Disconnect();
 
         public abstract void Dispose();

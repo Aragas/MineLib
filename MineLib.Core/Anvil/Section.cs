@@ -84,7 +84,7 @@ namespace MineLib.Core.Anvil
                 if (!block.Equals(ReadonlyBlock32.Empty))
                     break;
             }
-    ;
+
             return new BlockLocation(in block, in blockLocation);
         }
 
@@ -109,6 +109,12 @@ namespace MineLib.Core.Anvil
         }
 
         public override string ToString() => IsEmpty ? "Empty" : "Filled";
+
+        public static bool operator ==(Section left, Section right) => left.Location == right.Location;
+        public static bool operator !=(Section left, Section right) => !(left == right);
+
+        public override bool Equals(object obj) => obj is Section section && Equals(section);
+        public bool Equals(Section other) => Location.Equals(other.Location);
 
         public override int GetHashCode() => Location.GetHashCode();
     }

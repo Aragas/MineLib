@@ -18,7 +18,7 @@ namespace MineLib.Server.ForgeBus
 
             Console.WriteLine($"MineLib.Server.ForgeBus");
 
-            InternalBus.ForgeBus.MessageReceived += ForgeBus_MessageReceived;
+            InternalBus.ForgeBus.MessageReceived += (this, ForgeBus_MessageReceived);
 
             Console.ReadLine();
             await StopAsync().ConfigureAwait(false);
@@ -31,16 +31,18 @@ namespace MineLib.Server.ForgeBus
             InternalBus.ForgeBus.MessageReceived -= ForgeBus_MessageReceived;
         }
 
-        private void ForgeBus_MessageReceived(object sender, MBusMessageReceivedEventArgs e)
+        private void ForgeBus_MessageReceived(object? sender, MBusMessageReceivedEventArgs e)
         {
-
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            base.Dispose();
+            if (disposing)
+            {
+                InternalBus.ForgeBus.Dispose();
+            }
 
-            InternalBus.ForgeBus.Dispose();
+            base.Dispose(disposing);
         }
     }
 }

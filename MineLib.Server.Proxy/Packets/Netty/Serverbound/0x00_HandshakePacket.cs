@@ -1,8 +1,8 @@
-using System;
-
 using Aragas.Network.Attributes;
 using Aragas.Network.Data;
 using Aragas.Network.IO;
+
+using System;
 
 namespace MineLib.Server.Proxy.Packets.Netty.Serverbound
 {

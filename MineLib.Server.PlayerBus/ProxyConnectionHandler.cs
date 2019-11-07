@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Aragas.Network.Data;
+
+using MineLib.Server.Core;
+
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-
-using Aragas.Network.Data;
-
-using MineLib.Server.Core;
 
 namespace MineLib.Server.PlayerBus
 {
@@ -22,7 +22,7 @@ namespace MineLib.Server.PlayerBus
 
         public int ProtocolVersion { get; }
         public int Port { get; } = DefaultValues.Proxy_Port;
-        private TcpListener Listener { get; set; }
+        private TcpListener? Listener { get; set; }
 
         private List<PlayerHandler.PlayerHandler> Clients { get; } = new List<PlayerHandler.PlayerHandler>();
 
@@ -36,7 +36,8 @@ namespace MineLib.Server.PlayerBus
         {
             Console.WriteLine($"Starting Listener");
 
-            Listener = new TcpListener(new IPEndPoint(IPAddress.Any, Port));
+            Listener = new TcpListener(new IPEndPoint(IPAddress.IPv6Any, Port));
+            Listener.Server.DualMode = true;
             Listener.Server.ReceiveTimeout = 5000;
             Listener.Server.SendTimeout = 5000;
             Listener.Start();
@@ -61,11 +62,12 @@ namespace MineLib.Server.PlayerBus
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         private void ListenerCycle()
         {
             try
             {
-                while (true) // Listener.Stop() will stop it.
+                while (Listener != null) // Listener.Stop() will stop it.
                 {
                     var client = new PlayerHandler.PlayerHandler(Listener.AcceptSocket(), ProtocolVersion);
                     Console.WriteLine($"Proxy connected. Protocol version {ProtocolVersion}");

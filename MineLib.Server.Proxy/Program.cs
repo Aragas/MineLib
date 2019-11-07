@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-using MineLib.Server.Core;
+﻿using MineLib.Server.Core;
 using MineLib.Server.Core.Extensions;
 using MineLib.Server.Core.Packets;
+
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MineLib.Server.Proxy
 {
@@ -51,7 +51,7 @@ namespace MineLib.Server.Proxy
 
             Console.WriteLine($"MineLib.Server.Proxy");
 
-            await Task.Factory.StartNew(CycleAsync, CancellationTokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).ConfigureAwait(false);
+            //await Task.Factory.StartNew(CycleAsync, CancellationTokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).ConfigureAwait(false);
 
             PlayerListener = new PlayerNettyListener();
             PlayerListener.Start();
@@ -76,11 +76,14 @@ namespace MineLib.Server.Proxy
             }
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            base.Dispose();
+            if (disposing)
+            {
+                PlayerListener.Stop();
+            }
 
-            PlayerListener.Stop();
+            base.Dispose(disposing);
         }
     }
 }

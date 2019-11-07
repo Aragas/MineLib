@@ -7,3 +7,6 @@
 [submodule "TinyIpc"]
 	path = TinyIpc
 	url = https://github.com/MineLib/TinyIpc
+[submodule "Aragas.TupleEventSystem"]
+	path = Aragas.TupleEventSystem
+	url = https://github.com/Aragas/Aragas.TupleEventSystem

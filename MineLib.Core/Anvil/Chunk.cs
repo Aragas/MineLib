@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace MineLib.Core.Anvil
 {
@@ -56,8 +57,9 @@ namespace MineLib.Core.Anvil
         private static int GetSectionZByZ(int blockLocationZ) => (int) Math.Floor((double) blockLocationZ / (double) Depth); // Should be equal to Coordinates.Z
 
         //private static Coordinates2D GetChunkCoordinates(in Location3D blockWorldLocation) => new Location2D(blockWorldLocation.X >> 4, blockWorldLocation.Z >> 4);
-        public static Location2D GetChunkLocation(in Location3D blockWorldLocation) => 
-            new Location2D(GetSectionXByX(blockWorldLocation.X), GetSectionZByZ(blockWorldLocation.Z));
+        public static Location2D GetChunkLocation(in Location3D blockWorldLocation) => new Location2D(
+            GetSectionXByX(blockWorldLocation.X),
+            GetSectionZByZ(blockWorldLocation.Z));
 
         private Section GetSectionByY(int blockLocationY) => Sections[GetSectionYByY(blockLocationY)];
 
@@ -83,6 +85,13 @@ namespace MineLib.Core.Anvil
         #endregion
 
         public override string ToString() => $"Filled Sections: {GetFilledSectionsCount()}";
+
+        public static bool operator ==(Chunk left, Chunk right) => left.Location == right.Location;
+        public static bool operator !=(Chunk left, Chunk right) => !(left == right);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override bool Equals(object obj) => obj is Chunk chunk && Equals(chunk);
+        public bool Equals(Chunk other) => other.Location.Equals(Location);
 
         public override int GetHashCode() => Location.GetHashCode();
     }

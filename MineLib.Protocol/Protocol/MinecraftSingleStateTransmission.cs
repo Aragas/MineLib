@@ -10,7 +10,7 @@ namespace MineLib.Protocol.Protocol
         public MinecraftSingleStateTransmission() : base() { }
         //public MinecraftSingleStateTransmission(Socket socket, BasePacketFactory<TPacketType, VarInt, ProtobufSerializer, ProtobufDeserializer> factory = null) : base(socket, null, factory) { }
 
-        public bool TryReadPacket(out MinecraftPacket packet)
+        public bool TryReadPacket(out MinecraftPacket? packet)
         {
             packet = ReadPacket();
             return packet != null;

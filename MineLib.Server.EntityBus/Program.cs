@@ -18,7 +18,7 @@ namespace MineLib.Server.EntityBus
 
             Console.WriteLine($"MineLib.Server.EntityBus");
 
-            InternalBus.EntityBus.MessageReceived += EntityBusHandler_MessageReceived;
+            InternalBus.EntityBus.MessageReceived += (this, EntityBusHandler_MessageReceived);
 
             Console.ReadLine();
             await StopAsync().ConfigureAwait(false);
@@ -31,16 +31,19 @@ namespace MineLib.Server.EntityBus
             InternalBus.EntityBus.MessageReceived -= EntityBusHandler_MessageReceived;
         }
 
-        private void EntityBusHandler_MessageReceived(object sender, MBusMessageReceivedEventArgs args)
+        private void EntityBusHandler_MessageReceived(object? sender, MBusMessageReceivedEventArgs args)
         {
             InternalBus.HandleRequest<EntityIDRequest, EntityIDResponse>(InternalBus.EntityBus, args, _ => new EntityIDResponse() { EntityID = ++EntityIDCounter });
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            base.Dispose();
+            if (disposing)
+            {
+                InternalBus.EntityBus.Dispose();
+            }
 
-            InternalBus.EntityBus.Dispose();
+            base.Dispose(disposing);
         }
     }
 }

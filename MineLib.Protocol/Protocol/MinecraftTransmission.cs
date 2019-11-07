@@ -12,7 +12,7 @@ namespace MineLib.Protocol.Protocol
         //public MinecraftTransmission(Socket socket) : base(socket, null, new EmptyFactory()) { }
         public MinecraftTransmission() : base() { }
 
-        public bool TryReadPacket(out MinecraftPacket packet)
+        public bool TryReadPacket(out MinecraftPacket? packet)
         {
             packet = ReadPacket();
             return packet != null;

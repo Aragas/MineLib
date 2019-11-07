@@ -12,6 +12,7 @@ namespace MineLib.Core.Anvil
     // Section - 128kb
     // Chunk - 2048kb
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Redundancy", "RCS1032:Remove redundant parentheses.", Justification = "<Pending>")]
     public readonly struct ReadonlyBlock32 : IBlock, IComparable, IComparable<ReadonlyBlock32>, IEquatable<ReadonlyBlock32>
     {
         public static ReadonlyBlock32 Empty = new ReadonlyBlock32(0, 0, 0, 0);
@@ -92,6 +93,23 @@ namespace MineLib.Core.Anvil
                 if (Metadata < other.Metadata) return -1;
             }
             return 0;
+        }
+
+        public static bool operator <(ReadonlyBlock32 left, ReadonlyBlock32 right)
+        {
+            return left.CompareTo(right) < 0;
+        }
+        public static bool operator <=(ReadonlyBlock32 left, ReadonlyBlock32 right)
+        {
+            return left.CompareTo(right) <= 0;
+        }
+        public static bool operator >(ReadonlyBlock32 left, ReadonlyBlock32 right)
+        {
+            return left.CompareTo(right) > 0;
+        }
+        public static bool operator >=(ReadonlyBlock32 left, ReadonlyBlock32 right)
+        {
+            return left.CompareTo(right) >= 0;
         }
     }
 }

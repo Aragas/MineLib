@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MineLib.Server.EntityBus": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

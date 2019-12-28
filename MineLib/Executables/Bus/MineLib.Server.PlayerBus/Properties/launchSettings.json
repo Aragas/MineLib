@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MineLib.Server.PlayerBus": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

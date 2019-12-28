@@ -12,9 +12,5 @@
         //public static ushort PlayerHandler_Port = 0x6100;
         //public static ushort EntityHandler_Port = 0x6200;
         //public static ushort WorldHandler_Port  = 0x6300;
-
-
-        public static ushort Proxy_Netty_Port = 25565;
-        public static ushort Proxy_Legacy_Port = 25560;
     }
 }

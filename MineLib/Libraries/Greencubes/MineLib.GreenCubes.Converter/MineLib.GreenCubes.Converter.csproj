@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)\Third Party\NiclasOlofsson-fNbt\fNbt\NiclasOlofsson-fNbt.csproj" />
+    <ProjectReference Include="$(SolutionDir)\MineLib\Libraries\MineLib.Core\MineLib.Core.csproj" />
+  </ItemGroup>
+
+</Project>

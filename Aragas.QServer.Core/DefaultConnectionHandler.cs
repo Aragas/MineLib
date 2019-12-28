@@ -26,7 +26,7 @@ namespace Aragas.QServer.Core
         public TPacketTransmission Stream { get; set; }
         private ConcurrentQueue<TPacket> PacketsToSend { get; } = new ConcurrentQueue<TPacket>();
 
-        protected DefaultConnectionHandler() { }
+        protected DefaultConnectionHandler() { } // Stream is set in generic new()
         protected DefaultConnectionHandler(Socket socket, BasePacketFactory<TPacket, TIDType, TSerializer, TDeserializer>? factory = null)
             => Stream = new TPacketTransmission() { Socket = socket, Factory = factory };
 
@@ -42,13 +42,16 @@ namespace Aragas.QServer.Core
                     {
                         while (Stream.TryReadPacket(out var packetToReceive))
                         {
-                            HandlePacket(packetToReceive);
+                            if (packetToReceive != null)
+                            {
+                                HandlePacket(packetToReceive);
 
 #if DEBUG
-                            Received.Enqueue(packetToReceive);
-                            if (Received.Count >= QueueSize)
-                                Received.Dequeue();
+                                Received.Enqueue(packetToReceive);
+                                if (Received.Count >= QueueSize)
+                                    Received.Dequeue();
 #endif
+                            }
                         }
                         while (PacketsToSend.TryDequeue(out var packetToSend))
                         {

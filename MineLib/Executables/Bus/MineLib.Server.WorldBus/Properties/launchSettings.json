@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MineLib.Server.WorldBus": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

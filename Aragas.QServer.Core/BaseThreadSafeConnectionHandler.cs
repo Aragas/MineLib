@@ -12,7 +12,7 @@ namespace Aragas.QServer.Core
         //public event EventHandler Ready;
         //public event EventHandler Disconnected;
 
-        protected CancellationTokenSource UpdateToken { get; set; }
+        protected CancellationTokenSource UpdateToken { get; set; } = new CancellationTokenSource();
         protected ManualResetEventSlim UpdateLock { get; } = new ManualResetEventSlim(false);
 
         protected ManualResetEventSlim ConnectionLock { get; } = new ManualResetEventSlim(true); // Will cause deadlock if false. See Leave();
@@ -24,7 +24,7 @@ namespace Aragas.QServer.Core
         {
             if (!UpdateLock.IsSet)
             {
-                UpdateToken = new CancellationTokenSource();
+                //UpdateToken = new CancellationTokenSource();
                 new Thread(Update).Start();
             }
             else

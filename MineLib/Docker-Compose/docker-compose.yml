@@ -1,0 +1,50 @@
+version: '3.4'
+
+services:
+  minelib.nats:
+    image: 'bitnami/nats:latest'
+    ports:
+      - "8222:8222"
+    #volumes:
+    #  - /path/to/nats-server.conf:/opt/bitnami/nats/nats-server.conf
+
+  minelib.server.entitybus:
+    image: ${DOCKER_REGISTRY-}minelibserverentitybus
+    depends_on:
+      - minelib.nats
+    build:
+      context: ..
+      dockerfile: MineLib/Executables/Bus/MineLib.Server.EntityBus/Dockerfile
+  minelib.server.playerbus:
+    image: ${DOCKER_REGISTRY-}minelibserverplayerbus
+    depends_on:
+      - minelib.nats
+    build:
+      context: ..
+      dockerfile: MineLib/Executables/Bus/MineLib.Server.PlayerBus/Dockerfile
+  minelib.server.worldbus:
+    image: ${DOCKER_REGISTRY-}minelibserverworldbus
+    depends_on:
+      - minelib.nats
+    build:
+      context: ..
+      dockerfile: MineLib/Executables/Bus/MineLib.Server.WorldBus/Dockerfile
+
+  minelib.server.proxy:
+    image: ${DOCKER_REGISTRY-}minelibserverproxy
+    depends_on:
+      - minelib.nats
+      - minelib.server.entitybus
+      - minelib.server.playerbus
+      - minelib.server.worldbus
+    ports:
+      - "25565:25565"
+    build:
+      context: ..
+      dockerfile: MineLib/Executables/MineLib.Server.Proxy/Dockerfile
+  poked.server.proxy:
+    image: ${DOCKER_REGISTRY-}pokedserverproxy
+    build:
+      context: ..
+      dockerfile: PokeD/Executables/PokeD.Server.Proxy/Dockerfile
+

@@ -1,0 +1,44 @@
+version: '3.4'
+
+services:
+  poked.nats:
+    image: 'bitnami/nats:latest'
+    ports:
+      - "8222:8222"
+    #volumes:
+    #  - /path/to/nats-server.conf:/opt/bitnami/nats/nats-server.conf
+
+  poked.server.entitybus:
+    image: ${DOCKER_REGISTRY-}pokedserverentitybus
+    depends_on:
+      - poked.nats
+    build:
+      context: ..
+      dockerfile: PokeD/Executables/Bus/PokeD.Server.EntityBus/Dockerfile
+  poked.server.playerbus:
+    image: ${DOCKER_REGISTRY-}pokedserverplayerbus
+    depends_on:
+      - poked.nats
+    build:
+      context: ..
+      dockerfile: PokeD/Executables/Bus/PokeD.Server.PlayerBus/Dockerfile
+  poked.server.worldbus:
+    image: ${DOCKER_REGISTRY-}pokedserverworldbus
+    depends_on:
+      - poked.nats
+    build:
+      context: ..
+      dockerfile: PokeD/Executables/Bus/PokeD.Server.WorldBus/Dockerfile
+
+  poked.server.proxy:
+    image: ${DOCKER_REGISTRY-}pokedserverproxy
+    depends_on:
+      - poked.nats
+      - poked.server.entitybus
+      - poked.server.playerbus
+      - poked.server.worldbus
+    ports:
+      - "25565:25565"
+    build:
+      context: ..
+      dockerfile: PokeD/Executables/PokeD.Server.Proxy/Dockerfile

@@ -6,7 +6,7 @@ namespace Aragas.QServer.Core.Packets.MBus
     [Packet(0x10)]
     public sealed class SubscribeRequest : InternalPacket
     {
-        public string Name;
+        public string Name = string.Empty;
 
         public override void Deserialize(ProtobufDeserializer deserializer)
         {

@@ -4,12 +4,21 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
-    <NoWarn>1701;1702;RCS1029;RCS1139;RCS1057;RCS1036</NoWarn>
+    <NoWarn>1701;1702;RCS1029;RCS1139;RCS1057;RCS1036;CA1819</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Aragas.Network-2\src\Aragas.Network-2.Standard\Aragas.Network-2.csproj" />
-    <ProjectReference Include="..\Aragas.TupleEventSystem\src\Aragas.TupleEventSystem\Aragas.TupleEventSystem.csproj" />
+    <PackageReference Include="FirebaseStorage.net" Version="1.0.3" />
+    <PackageReference Include="Iconic.Zlib.Netstandard" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Extensions.PlatformAbstractions" Version="1.1.0" />
+    <PackageReference Include="NATS.Client" Version="0.10.1-pre2" />
+    <PackageReference Include="PCLExt.FileStorage-devel" Version="1.5.0.294" />
+    <PackageReference Include="SystemInfoLibrary-devel" Version="1.5.0.25" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)\Third Party\Aragas.Network-2\src\Aragas.Network-2.Standard\Aragas.Network-2.csproj" />
+    <ProjectReference Include="$(SolutionDir)\Third Party\Aragas.TupleEventSystem\src\Aragas.TupleEventSystem\Aragas.TupleEventSystem.csproj" />
   </ItemGroup>
 
 </Project>

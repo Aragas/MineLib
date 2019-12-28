@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "PokeD.Server.Proxy": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

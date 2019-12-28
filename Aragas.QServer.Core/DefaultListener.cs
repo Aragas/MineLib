@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace Aragas.QServer.Core
 {
-    public abstract class DefaultListener<TConnection, TFactory, TPacketTransmission, TPacket, TIDType, TSerializer, TDeserializer> : InternalListener
+    public abstract class DefaultListener<TConnection, TFactory, TPacketTransmission, TPacket, TIDType, TSerializer, TDeserializer> : BaseListener
         where TConnection : DefaultConnectionHandler<TPacketTransmission, TPacket, TIDType, TSerializer, TDeserializer>, new()
         where TFactory : BasePacketFactory<TPacket, TIDType, TSerializer, TDeserializer>, new()
         where TPacketTransmission : SocketPacketTransmission<TPacket, TIDType, TSerializer, TDeserializer>, new()
@@ -21,8 +21,12 @@ namespace Aragas.QServer.Core
 
         public sealed override void Start()
         {
+#if IPV6
             Listener = new TcpListener(new IPEndPoint(IPAddress.IPv6Any, Port));
             Listener.Server.DualMode = true;
+#else
+            Listener = new TcpListener(new IPEndPoint(IPAddress.Any, Port));
+#endif
             Listener.Server.ReceiveTimeout = 5000;
             Listener.Server.SendTimeout = 5000;
             Listener.Start();
@@ -79,21 +83,21 @@ namespace Aragas.QServer.Core
                 }
 
             }
-            catch (Exception e) when (e is SocketException) { }
+            catch (Exception e) when (e is SocketException) { /* ignore */ }
         }
 
         private void Client_Disconnected(object sender, EventArgs e)
         {
             if (sender is TConnection client)
             {
+#if DEBUG
+                Console.WriteLine($"{client.GetType().Name} disconnected.");
+#endif
+
                 client.Disconnected -= Client_Disconnected;
                 lock (Connections)
                     Connections.Remove(client);
                 client.Dispose();
-
-#if DEBUG
-                Console.WriteLine($"{client.GetType().Name} disconnected.");
-#endif
             }
 
         }

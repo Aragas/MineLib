@@ -1,12 +1,14 @@
 ﻿using Aragas.Network.Attributes;
 using Aragas.Network.IO;
 
+using System;
+
 namespace Aragas.QServer.Core.Packets.MBus
 {
     [Packet(0x11)]
     public sealed class Message : InternalPacket
     {
-        public byte[] Data;
+        public byte[] Data = Array.Empty<byte>();
 
         public override void Deserialize(ProtobufDeserializer deserializer)
         {

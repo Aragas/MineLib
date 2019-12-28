@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MineLib.Server.Proxy": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

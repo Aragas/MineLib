@@ -1,0 +1,19 @@
+language: csharp
+mono:
+  - latest
+
+solution: PokeD.BattleEngine.sln
+
+before_install:
+  - git submodule update --init --recursive
+  
+install:
+  - nuget restore PokeD.BattleEngine.sln
+
+script:
+  - xbuild /p:Configuration=Release PokeD.BattleEngine.sln
+  - xbuild /p:Configuration=Debug PokeD.BattleEngine.sln
+
+notifications:
+  email:
+    on_success: always

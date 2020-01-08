@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+
+    <AssemblyName>PokeD.Core.Test</AssemblyName>
+
+    <RootNamespace>PokeD.Core.Test</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aragas.Network-2" Version="2.2.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.2" />
+    <PackageReference Include="MSTest.TestAdapter" Version="1.3.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="1.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)\PokeD.BattleEngine\PokeD.BattleEngine.csproj" />
+    <ProjectReference Include="$(SolutionDir)\PokeD.Core\PokeD.Core.csproj" />
+  </ItemGroup>
+
+</Project>

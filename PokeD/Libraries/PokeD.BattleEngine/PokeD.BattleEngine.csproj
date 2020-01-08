@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>PokeD.BattleEngine</AssemblyName>
+    <RootNamespace>PokeD.BattleEngine</RootNamespace>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove=".git" />
+    <None Remove=".gitignore" />
+    <None Remove=".travis.yml" />
+    <None Remove="appveyor.yml" />
+    <None Remove="LICENSE" />
+    <None Remove="README.md" />
+  </ItemGroup>
+
+</Project>

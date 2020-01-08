@@ -23,6 +23,7 @@
     <ProjectReference Include="$(SolutionDir)\Third Party\Aragas.Network-2\src\Aragas.Network-2.Standard\Aragas.Network-2.csproj" />
     <ProjectReference Include="$(SolutionDir)\Third Party\Aragas.TupleEventSystem\src\Aragas.TupleEventSystem\Aragas.TupleEventSystem.csproj" />
     <ProjectReference Include="$(SolutionDir)\PokeD\Libraries\PokeD.Server.Core\PokeD.Server.Core.csproj" />
+    <ProjectReference Include="$(SolutionDir)\PokeD\Libraries\PokeD.Core\PokeD.Core\PokeD.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,46 @@
+﻿<UserControl x:Class="Aragas.QServer.GUI.Views.ServicesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Aragas.QServer.GUI.Views"
+             xmlns:main="clr-namespace:Aragas.QServer.GUI"
+             xmlns:viewmodels="clr-namespace:Aragas.QServer.GUI.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.DataContext>
+        <viewmodels:ServicesViewModel/>
+    </UserControl.DataContext>
+    <Grid>
+        <TextBox Text="{Binding Text}" Margin="10,165,10,10" IsReadOnly="True" TextWrapping="WrapWithOverflow" />
+        <ListView ItemsSource="{Binding ComboBoxItems}" SelectedItem="{Binding ComboBoxSelectedItem}" SelectionMode="Single"  Margin="10,10,0,0" Width="400" Height="150" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <ListView.Resources>
+                <main:CommandReference x:Key="MenuItemPrometheusCommandReference" Command="{Binding MenuItemPrometheusCommand}"/>
+                <main:CommandReference x:Key="MenuItemHealthCommandReference" Command="{Binding MenuItemHealthCommand}"/>
+                <main:CommandReference x:Key="MenuItemCopyCommandReference" Command="{Binding MenuItemCopyCommand}"/>
+                <ContextMenu x:Key="NewContextMenu">
+                    <MenuItem Header="Prometheus" InputGestureText="Ctrl+P" Command="{StaticResource MenuItemPrometheusCommandReference}"/>
+                    <MenuItem Header="Health" InputGestureText="Ctrl+H" Command="{StaticResource MenuItemHealthCommandReference}"/>
+                    <MenuItem Header=""/>
+                    <MenuItem Header="Copy UUID" InputGestureText="Ctrl+C" Command="{StaticResource MenuItemCopyCommandReference}"/>
+                </ContextMenu>
+            </ListView.Resources>
+            <ListView.InputBindings>
+                <KeyBinding Key="P" Modifiers="Control" Command="{StaticResource MenuItemPrometheusCommandReference}" />
+                <KeyBinding Key="H" Modifiers="Control" Command="{StaticResource MenuItemHealthCommandReference}" />
+                <KeyBinding Key="C" Modifiers="Control" Command="{StaticResource MenuItemCopyCommandReference}" />
+            </ListView.InputBindings>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}" >
+                    <Setter Property="ContextMenu" Value="{StaticResource NewContextMenu}" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="100"  DisplayMemberBinding="{Binding Path=ServiceType, Mode=TwoWay}">Сервис</GridViewColumn>
+                    <GridViewColumn Width="250" DisplayMemberBinding="{Binding Path=ServiceId, Mode=TwoWay}">UUID</GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</UserControl>

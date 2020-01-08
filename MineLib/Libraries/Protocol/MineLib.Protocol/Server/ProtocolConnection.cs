@@ -8,6 +8,7 @@ namespace MineLib.Protocol.Server
         public abstract string Name { get; }
         public abstract string Version { get; }
         public abstract int NetworkVersion { get; }
+        public abstract int State { get; }
 
         public abstract string Host { get; }
         public abstract ushort Port { get; }

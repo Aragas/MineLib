@@ -13,9 +13,9 @@ using System.Threading.Tasks;
 
 namespace Aragas.QServer.Core
 {
-    public class BaseProgram : IDisposable
+    public partial class BaseProgram : IDisposable
     {
-        public static TimeSpan RestartAfter { get; } = TimeSpan.FromSeconds(10);
+        public static TimeSpan RestartAfter { get; protected set; } = TimeSpan.FromSeconds(10);
         public static CancellationTokenSource GlobalCancellationTokenSource { get; } = new CancellationTokenSource();
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Redundancy", "RCS1163:Unused parameter.", Justification = "<Pending>")]
@@ -172,14 +172,23 @@ InnerException:
                     .Child($"{DateTime.UtcNow:yyyy-MM-dd_HH.mm.ss}.log")
                     .PutAsync(ms, cts.Token, "text/plain").GetAwaiter().GetResult();
             }
-            catch (FirebaseStorageException) { }
+            catch (Exception e) when (e is FirebaseStorageException) { }
         }
 
 
-        public static CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
+        protected CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
+        protected Guid ProgramGuid { get; } = Guid.NewGuid();
 
-        public virtual Task RunAsync() { Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("en-US"); return Task.CompletedTask; }
-        public virtual Task StopAsync()  { CancellationTokenSource.Cancel(); return Task.CompletedTask;}
+        public virtual Task RunAsync()
+        {
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("en-US");
+            return Task.CompletedTask;
+        }
+        public virtual Task StopAsync()
+        {
+            CancellationTokenSource.Cancel();
+            return Task.CompletedTask;
+        }
 
 
         private bool disposedValue = false; // To detect redundant calls
@@ -190,6 +199,9 @@ InnerException:
                 if (disposing)
                 {
                     CancellationTokenSource.Dispose();
+                    AppMetricsPrometheusEvent.Dispose();
+                    AppMetricsHealthEvent.Dispose();
+                    AppDomain.CurrentDomain.FirstChanceException -= CurrentDomain_FirstChanceException;
                 }
 
                 disposedValue = true;

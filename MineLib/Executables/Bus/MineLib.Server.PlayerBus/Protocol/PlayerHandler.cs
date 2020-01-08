@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Net.Sockets;
 
 using MineLib.Protocol.Server;
-using MineLib.Protocol5.Protocol;
 using MineLib.Protocol5.Server;
 
 namespace MineLib.Server.PlayerBus.PlayerHandler
@@ -11,14 +9,22 @@ namespace MineLib.Server.PlayerBus.PlayerHandler
     // So here we get/set info like EntityID if the protocol requests it or other shit
     internal sealed class PlayerHandler : IDisposable
     {
+        public Guid PlayerId { get; }
+        public int ProtocolVersion { get; }
+
+        public int? State => ProtocolConnection?.State;
+
         private ProtocolConnection? ProtocolConnection { get; }
 
-        public PlayerHandler(Socket socket, int protocolVersion)
+        public PlayerHandler(Guid playerId, int protocolVersion)
         {
+            PlayerId = playerId;
+            ProtocolVersion = protocolVersion;
+
             switch (protocolVersion)
             {
                 case 5:
-                    ProtocolConnection = new Protocol5Connection(socket, State.Login);
+                    ProtocolConnection = new Protocol5Connection(playerId, Protocol5.Protocol.State.Login);
                     break;
 
                 //case 340:

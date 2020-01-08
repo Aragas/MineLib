@@ -80,8 +80,10 @@ namespace Aragas.QServer.Core
             SendPacket(new SubscribeRequest() { Name = Name });
         }
 
-        public void SendMessage(in ReadOnlySpan<byte> message) => SendPacket(new Message() { Data = message.ToArray() });
-        public Task SendMessageAsync(ReadOnlyMemory<byte> message) => Task.Factory.StartNew(() => SendMessage(message.Span));
+        public void SendMessage(in ReadOnlySpan<byte> message) =>
+            SendPacket(new Message() { Data = message.ToArray() });
+        public Task SendMessageAsync(ReadOnlyMemory<byte> message) => Task.Run(() =>
+            SendPacket(new Message() { Data = message.ToArray() }));
 
         protected override void HandlePacket(InternalPacket packet)
         {

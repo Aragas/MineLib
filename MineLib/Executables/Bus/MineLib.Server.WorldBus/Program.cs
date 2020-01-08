@@ -1,14 +1,24 @@
-﻿using Aragas.QServer.Core;
+﻿using App.Metrics.Health;
+using App.Metrics.Health.Checks.Sql;
+
+using Aragas.QServer.Core;
+using Aragas.QServer.Core.Extensions;
+using Aragas.QServer.Core.IO;
+using Aragas.QServer.Core.NetworkBus.Messages;
 
 using MineLib.Core;
 using MineLib.Core.Anvil;
 using MineLib.Server.Core;
+using MineLib.Server.Core.NetworkBus.Messages;
 using MineLib.Server.Core.Packets.WorldBus;
+
+using Npgsql;
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Reactive.Disposables;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MineLib.Server.WorldBus
@@ -19,16 +29,46 @@ namespace MineLib.Server.WorldBus
 
         public IWorldHandler WorldHandler { get; } = new StandardWorldHandler();
 
+        private ManualResetEvent Waiter { get; } = new ManualResetEvent(false);
+        private CompositeDisposable Events { get; } = new CompositeDisposable();
+
+        public Program() : base(healthConfigure: ConfigureHealth)
+        {
+            Events.Add(BaseSingleton.Instance.SubscribeAndReply<ServicesPingMessage>(_ =>
+                new ServicesPongMessage() { ServiceId = ProgramGuid, ServiceType = "WorldBus" }));
+
+            IEnumerable<ChunksInCircleResponseMessage> GetChunksInCircleRequestEnumerable(ChunksInCircleRequestMessage message)
+            {
+                foreach (var chunkElement in GetChunksInCircleRequest(message.X, message.Z, message.Radius).Detailed())
+                {
+                    var serializer = new CompressedProtobufSerializer();
+                    serializer.Write(chunkElement.Value);
+                    yield return new ChunksInCircleResponseMessage(chunkElement.IsLast) { Data = serializer.GetData().ToArray() };
+                }
+            }
+            Events.Add(BaseSingleton.Instance.SubscribeAndReplyEnumerable<ChunksInCircleRequestMessage, ChunksInCircleResponseMessage>(GetChunksInCircleRequestEnumerable));
+
+            IEnumerable<ChunksInSquareResponseMessage> GetChunksInSquareRequestEnumerable(ChunksInSquareRequestMessage message)
+            {
+                foreach (var chunkElement in GetChunksInSquareRequest(message.X, message.Z, message.Radius).Detailed())
+                {
+                    var serializer = new CompressedProtobufSerializer();
+                    serializer.Write(chunkElement.Value);
+                    yield return new ChunksInSquareResponseMessage(chunkElement.IsLast) { Data = serializer.GetData().ToArray() };
+                }
+            }
+            Events.Add(BaseSingleton.Instance.SubscribeAndReplyEnumerable<ChunksInSquareRequestMessage, ChunksInSquareResponseMessage>(GetChunksInSquareRequestEnumerable));
+        }
+        public static IHealthBuilder ConfigureHealth(IHealthBuilder builder) => builder
+            .HealthChecks.AddProcessPhysicalMemoryCheck("Process Working Set Size", 100 * 1024 * 1024)
+            .HealthChecks.AddProcessPrivateMemorySizeCheck("Process Private Memory Size", 100 * 1024 * 1024)
+            .HealthChecks.AddSqlCheck("PosgreSQL Connection", () => new NpgsqlConnection(MineLibSingleton.PostgreSQLConnectionString), TimeSpan.FromMilliseconds(500));
+
         public override async Task RunAsync()
         {
             await base.RunAsync().ConfigureAwait(false);
 
-            Console.WriteLine($"MineLib.Server.WorldBus");
-
-            InternalBus.WorldBus.MessageReceived += (this, WorldBus_MessageReceived);
-
-            Console.ReadLine();
-            await StopAsync().ConfigureAwait(false);
+            Waiter.WaitOne();
         }
 
         public override async Task StopAsync()
@@ -36,6 +76,8 @@ namespace MineLib.Server.WorldBus
             await base.StopAsync().ConfigureAwait(false);
 
             InternalBus.WorldBus.MessageReceived -= WorldBus_MessageReceived;
+
+            Waiter.Set();
         }
 
         private IEnumerable<Chunk> GetChunksInCircleRequest(int x0, int z0, int radius)
@@ -142,7 +184,8 @@ namespace MineLib.Server.WorldBus
         {
             if (disposing)
             {
-                InternalBus.WorldBus.Dispose();
+                Waiter.Dispose();
+                Events.Dispose();
             }
 
             base.Dispose(disposing);

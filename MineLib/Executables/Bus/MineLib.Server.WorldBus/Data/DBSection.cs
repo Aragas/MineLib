@@ -1,6 +1,5 @@
-﻿using Aragas.QServer.Core.IO;
-
-using LiteDB;
+﻿/*
+using Aragas.QServer.Core.IO;
 
 using MineLib.Core.Anvil;
 
@@ -8,9 +7,8 @@ namespace MineLib.Server.WorldBus
 {
     public sealed class DBSection
     {
-        [BsonId]
-        public long Location { get; set; } // Chunk X, Section Y, Chunk Z
-        public byte[] SerializedSection { get; set; }
+        public long Location { get; set; } = default!; // Chunk X, Section Y, Chunk Z
+        public byte[] SerializedSection { get; set; } = default!;
 
         public DBSection() { }
         public DBSection(in Section section)
@@ -28,3 +26,4 @@ namespace MineLib.Server.WorldBus
         }
     }
 }
+*/

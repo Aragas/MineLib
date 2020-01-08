@@ -4,8 +4,11 @@ namespace Aragas.QServer.Core
 {
     public class MBusMessageReceivedEventArgs : EventArgs
     {
-        public byte[] Message { get; set; }
+        public byte[] Message { get; }
 
-        public MBusMessageReceivedEventArgs(byte[] message) => Message = message;
+        public MBusMessageReceivedEventArgs(byte[] message)
+        {
+            Message = message;
+        }
     }
 }

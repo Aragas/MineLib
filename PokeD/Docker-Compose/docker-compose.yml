@@ -1,44 +1,54 @@
 version: '3.4'
 
 services:
-  poked.nats:
-    image: 'bitnami/nats:latest'
+  aragas.db:
+    image: postgres
+    #restart: always
+    environment:
+     POSTGRES_DB: poked
+     POSTGRES_USER: poked
+     POSTGRES_PASSWORD: poked
+  aragas.nats:
+    image: 'nats-streaming:latest'
     ports:
+      - "4222:4222"
+      - "6222:6222"
       - "8222:8222"
     #volumes:
     #  - /path/to/nats-server.conf:/opt/bitnami/nats/nats-server.conf
 
-  poked.server.entitybus:
-    image: ${DOCKER_REGISTRY-}pokedserverentitybus
+  #poked.server.entitybus:
+  #  image: ${DOCKER_REGISTRY-}pokedserverentitybus
+  #  depends_on:
+  #    - poked.nats
+  #  build:
+  #    context: ../..
+  #    dockerfile: PokeD/Executables/Bus/PokeD.Server.EntityBus/Dockerfile
+  poked.server.playerbus.p3d:
+    image: ${DOCKER_REGISTRY-}pokedserverplayerbusp3d
     depends_on:
-      - poked.nats
+      - aragas.db
+      - aragas.nats
     build:
-      context: ..
-      dockerfile: PokeD/Executables/Bus/PokeD.Server.EntityBus/Dockerfile
-  poked.server.playerbus:
-    image: ${DOCKER_REGISTRY-}pokedserverplayerbus
-    depends_on:
-      - poked.nats
-    build:
-      context: ..
-      dockerfile: PokeD/Executables/Bus/PokeD.Server.PlayerBus/Dockerfile
-  poked.server.worldbus:
-    image: ${DOCKER_REGISTRY-}pokedserverworldbus
-    depends_on:
-      - poked.nats
-    build:
-      context: ..
-      dockerfile: PokeD/Executables/Bus/PokeD.Server.WorldBus/Dockerfile
+      context: ../..
+      dockerfile: PokeD/Executables/Bus/PokeD.Server.PlayerBus.P3D/Dockerfile
+  #poked.server.worldbus:
+  #  image: ${DOCKER_REGISTRY-}pokedserverworldbus
+  #  depends_on:
+  #    - poked.nats
+  #  build:
+  #    context: ../..
+  #    dockerfile: PokeD/Executables/Bus/PokeD.Server.WorldBus/Dockerfile
 
   poked.server.proxy:
     image: ${DOCKER_REGISTRY-}pokedserverproxy
     depends_on:
-      - poked.nats
-      - poked.server.entitybus
-      - poked.server.playerbus
-      - poked.server.worldbus
+      - aragas.nats
+     # - poked.server.entitybus
+      - poked.server.playerbus.p3d
+     # - poked.server.worldbus
     ports:
-      - "25565:25565"
+      - "15124:15124"
     build:
-      context: ..
+      context: ../..
       dockerfile: PokeD/Executables/PokeD.Server.Proxy/Dockerfile

@@ -9,14 +9,17 @@
     <DockerfileContext>..\..\..\..</DockerfileContext>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-  </PropertyGroup>
-
   <ItemGroup>
+    <PackageReference Include="App.Metrics" Version="4.0.0-preview1.0.3" />
+    <PackageReference Include="App.Metrics.Health" Version="3.2.0" />
+    <PackageReference Include="App.Metrics.Health.Checks.Network" Version="3.2.0" />
+    <PackageReference Include="App.Metrics.Health.Checks.Process" Version="3.2.0" />
+    <PackageReference Include="App.Metrics.Health.Checks.Sql" Version="3.2.0" />
     <PackageReference Include="Iconic.Zlib.Netstandard" Version="1.0.0" />
-    <PackageReference Include="LiteDB" Version="4.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
+    <PackageReference Include="Npgsql" Version="4.1.2" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,9 @@
-﻿using MineLib.Protocol.Packets;
+﻿using Aragas.QServer.Core;
+using Aragas.QServer.Core.IO;
+
+using MineLib.Core;
+using MineLib.Core.Anvil;
+using MineLib.Protocol.Packets;
 using MineLib.Protocol5.Extensions;
 using MineLib.Protocol5.Packets.Client.Login;
 using MineLib.Protocol5.Packets.Client.Play;
@@ -6,12 +11,12 @@ using MineLib.Protocol5.Packets.Server.Login;
 using MineLib.Protocol5.Packets.Server.Play;
 using MineLib.Protocol5.Protocol;
 using MineLib.Server.Core;
+using MineLib.Server.Core.NetworkBus.Messages;
 
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,30 +29,33 @@ namespace MineLib.Protocol5.Server
             PacketExtensions.Init();
         }
 
+        private Guid PlayerId;
         private string Username;
 
+        public override int State => (int) Stream.State;
 
-        public override string Host => Stream?.Host ?? string.Empty;
-        public override ushort Port => Stream?.Port ?? 0;
-        public override bool Connected => Stream?.IsConnected ?? false;
+        public override string Host => string.Empty;
+        public override ushort Port => 0;
+        public override bool Connected => true;
 
         private Protocol5Transmission Stream { get; }
         private ConcurrentQueue<MinecraftPacket> PacketsToSend { get; } = new ConcurrentQueue<MinecraftPacket>();
 
-        public Protocol5Connection(Socket proxyConnection, State state = State.Handshake)
+        public Protocol5Connection(Guid playerId, State state = Protocol.State.Handshake)
         {
+            PlayerId = playerId;
             Stream = new Protocol5Transmission()
             {
                 State = state,
-                Socket = proxyConnection
+                PlayerId = playerId
             };
             new Thread(PacketReceiver).Start();
         }
 
-        private Stopwatch Stopwatch { get; set; }
+        private Stopwatch? Stopwatch { get; set; }
         private void PacketReceiver()
         {
-            while (Stream.IsConnected)
+            while (true)
             {
                 while (Stream.TryReadPacket(out var packetToReceive) && packetToReceive != null)
                 {
@@ -55,12 +63,19 @@ namespace MineLib.Protocol5.Server
                     {
                         case LoginStartPacket packet:
                             {
+                                var player = new Player()
+                                {
+                                    Username = "sdfs",
+                                    Uuid = Guid.NewGuid()
+                                };
+                                /*
                                 var player = InternalBus.GetPlayerData(packet.Name, PlayerBus);
                                 if (player == null)
                                 {
                                     Disconnect();
                                     break;
                                 }
+                                */
 
                                 PacketsToSend.Enqueue(new LoginSuccessPacket()
                                 {
@@ -72,7 +87,8 @@ namespace MineLib.Protocol5.Server
                                     Difficulty = 0,
                                     Dimension = 0,
                                     //EntityID = ProtocolBus.GetEntityID() ?? 1,
-                                    EntityID = InternalBus.GetEntityID() ?? 1,
+                                    //EntityID = InternalBus.GetEntityID() ?? 1,
+                                    EntityID = 1,
                                     GameMode = 1,
                                     LevelType = "flat",
                                     MaxPlayers = 10
@@ -80,11 +96,24 @@ namespace MineLib.Protocol5.Server
 
                                 //PacketsToSend.Enqueue(Forge.)
 
-                                Task.Factory.StartNew(() =>
+                                Task.Factory.StartNew(async () =>
                                 {
-                                    PacketsToSend.Enqueue(InternalBus.GetChunksInSquare(0, 0, 3, true).ToArray().MapChunkBulk());
+                                    var response = BaseSingleton.Instance
+                                    .PublishAndWaitForReplyEnumerableAsync<ChunksInSquareRequestMessage, ChunksInSquareResponseMessage>(
+                                        new ChunksInSquareRequestMessage() { X = 0, Z = 0, Radius = 5 });
+                                    var chunks = response.Select(r =>
+                                    {
+                                        var deserializer = new CompressedProtobufDeserializer(r.Data);
+                                        return deserializer.Read<Chunk>();
+                                    });
+                                    //foreach (var chunk in chunks)
+                                    //    PacketsToSend.Enqueue(chunk.CreatePacket());
+                                    var array = await chunks.ToArrayAsync();
+                                    var bulk = array.MapChunkBulk();
+                                    PacketsToSend.Enqueue(bulk);
 
-                                    Task.Factory.StartNew(() =>
+
+                                    await Task.Factory.StartNew(() =>
                                     {
                                         PacketsToSend.Enqueue(new SpawnPositionPacket() { X = 7, Y = 62, Z = 7 });
                                         PacketsToSend.Enqueue(new PlayerAbilitiesPacket()
@@ -104,9 +133,9 @@ namespace MineLib.Protocol5.Server
                                         });
                                     });
 
-                                //PacketsToSend.Enqueue(InternalBus.GetChunk(new Coordinates2D(0, 0))?.CreatePacket());
-                                //PacketsToSend.Enqueue(InternalBus.GetChunksInSquare(0, 0, 12, true).ToArray().MapChunkBulk());
-                            });
+                                    //PacketsToSend.Enqueue(InternalBus.GetChunk(new Coordinates2D(0, 0))?.CreatePacket());
+                                    //PacketsToSend.Enqueue(InternalBus.GetChunksInSquare(0, 0, 12, true).ToArray().MapChunkBulk());
+                                });
 
                                 /*
                                 PacketsToSend.Enqueue(InternalBus.GetChunk(new Coordinates2D(0, 0))?.CreatePacket());
@@ -123,7 +152,7 @@ namespace MineLib.Protocol5.Server
                                 {
                                     InternalBus.UpdatePlayerData(new Core.Player()
                                     {
-                                        Position = new System.Numerics.Vector3((float) packet.X, (float) packet.FeetY, (float) packet.Z),
+                                        Position = new System.Numerics.Vector3((float)packet.X, (float)packet.FeetY, (float)packet.Z),
                                         Username = Username
                                     }, PlayerBus);
                                 });
@@ -147,7 +176,7 @@ namespace MineLib.Protocol5.Server
                                 {
                                     InternalBus.UpdatePlayerData(new Core.Player()
                                     {
-                                        Position = new System.Numerics.Vector3((float) packet.X, (float) packet.FeetY, (float) packet.Z),
+                                        Position = new System.Numerics.Vector3((float)packet.X, (float)packet.FeetY, (float)packet.Z),
                                         Look = new Core.Look(packet.Pitch, packet.Yaw),
                                         Username = Username
                                     }, PlayerBus);
@@ -221,7 +250,7 @@ namespace MineLib.Protocol5.Server
 #endif
                 }
 
-                if (Stream.State == State.Play)
+                if (Stream.State == Protocol.State.Play)
                 {
                     if (Stopwatch is null)
                         Stopwatch = Stopwatch.StartNew();

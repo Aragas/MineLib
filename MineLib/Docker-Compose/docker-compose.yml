@@ -1,50 +1,62 @@
 version: '3.4'
 
 services:
-  minelib.nats:
-    image: 'bitnami/nats:latest'
+  aragas.db:
+    image: postgres
+    #restart: always
+    environment:
+     POSTGRES_DB: minelib
+     POSTGRES_USER: minelib
+     POSTGRES_PASSWORD: minelib
+
+  aragas.nats:
+    image: 'nats-streaming:latest'
+    #restart: always
     ports:
+      - "4222:4222"
+      - "6222:6222"
       - "8222:8222"
     #volumes:
     #  - /path/to/nats-server.conf:/opt/bitnami/nats/nats-server.conf
 
   minelib.server.entitybus:
     image: ${DOCKER_REGISTRY-}minelibserverentitybus
+    #restart: always
     depends_on:
-      - minelib.nats
+      - aragas.db
+      - aragas.nats
     build:
-      context: ..
+      context: ../..
       dockerfile: MineLib/Executables/Bus/MineLib.Server.EntityBus/Dockerfile
   minelib.server.playerbus:
     image: ${DOCKER_REGISTRY-}minelibserverplayerbus
+    #restart: always
     depends_on:
-      - minelib.nats
+      - aragas.db
+      - aragas.nats
     build:
-      context: ..
+      context: ../..
       dockerfile: MineLib/Executables/Bus/MineLib.Server.PlayerBus/Dockerfile
   minelib.server.worldbus:
     image: ${DOCKER_REGISTRY-}minelibserverworldbus
+    #restart: always
     depends_on:
-      - minelib.nats
+      - aragas.db
+      - aragas.nats
     build:
-      context: ..
+      context: ../..
       dockerfile: MineLib/Executables/Bus/MineLib.Server.WorldBus/Dockerfile
 
   minelib.server.proxy:
     image: ${DOCKER_REGISTRY-}minelibserverproxy
+    #restart: always
     depends_on:
-      - minelib.nats
+      - aragas.nats
       - minelib.server.entitybus
       - minelib.server.playerbus
       - minelib.server.worldbus
     ports:
       - "25565:25565"
     build:
-      context: ..
+      context: ../..
       dockerfile: MineLib/Executables/MineLib.Server.Proxy/Dockerfile
-  poked.server.proxy:
-    image: ${DOCKER_REGISTRY-}pokedserverproxy
-    build:
-      context: ..
-      dockerfile: PokeD/Executables/PokeD.Server.Proxy/Dockerfile
-

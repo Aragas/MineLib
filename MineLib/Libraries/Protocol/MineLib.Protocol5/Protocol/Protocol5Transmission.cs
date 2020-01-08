@@ -1,6 +1,4 @@
-﻿using System.Net.Sockets;
-
-using Aragas.Network.Data;
+﻿using Aragas.Network.Data;
 using Aragas.Network.IO;
 
 using MineLib.Protocol.Packets;
@@ -10,7 +8,7 @@ using MineLib.Protocol5.Packets.Server.Handshake;
 
 namespace MineLib.Protocol5.Protocol
 {
-    public class Protocol5Transmission : MinecraftTransmission
+    public class Protocol5Transmission : MinecraftINetworkBusTransmission
     {
         public State State { get; set; }
 
@@ -22,41 +20,30 @@ namespace MineLib.Protocol5.Protocol
         //public Protocol5Transmission(Socket socket, State state = State.Handshake) : base(socket) { State = state; }
         public Protocol5Transmission() : base() { }
 
-        public override MinecraftPacket ReadPacket()
+        public override MinecraftPacket? ReadPacket()
         {
-            if (Socket.Available > 0)
+            var data = Receive(0);
+            if (data.IsEmpty)
+                return null;
+
+            using var deserializer = new ProtobufDeserializer(data);
+            var id = deserializer.Read<VarInt>();
+            MinecraftPacket? packet = State switch
             {
-                using var deserializer = new ProtobufDeserializer(Stream);
-                var id = deserializer.Read<VarInt>();
-                MinecraftPacket packet;
-                switch (State)
-                {
-                    case State.Handshake:
-                        packet = HandshakeFactory.Create(id);
-                        break;
-                    case State.Status:
-                        packet = StatusFactory.Create(id);
-                        break;
-                    case State.Login:
-                        packet = LoginFactory.Create(id);
-                        break;
-                    case State.Play:
-                        packet = PlayFactory.Create(id);
-                        break;
-                    default:
-                        packet = null;
-                        break;
-                }
+                State.Handshake => HandshakeFactory.Create(id),
+                State.Status => StatusFactory.Create(id),
+                State.Login => LoginFactory.Create(id),
+                State.Play => PlayFactory.Create(id),
+                _ => null,
+            };
+            if (packet != null)
+            {
+                packet.Deserialize(deserializer);
 
-                if (packet != null)
-                {
-                    packet.Deserialize(deserializer);
+                if (packet is HandshakePacket handshakePacket)
+                    State = (State) (byte) handshakePacket.NextState;
 
-                    if (packet is HandshakePacket handshakePacket)
-                        State = (State) (byte) handshakePacket.NextState;
-
-                    return packet;
-                }
+                return packet;
             }
 
             return null;

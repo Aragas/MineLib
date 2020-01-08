@@ -1,11 +1,14 @@
-﻿using Aragas.QServer.Core.Extensions;
-using Aragas.QServer.Core.Packets;
+﻿using App.Metrics.Health;
+
+using Aragas.QServer.Core;
+using Aragas.QServer.Core.NetworkBus.Messages;
 
 using MineLib.Server.Core;
 
 using System;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Threading;
+using System.Reactive.Disposables;
 
 namespace MineLib.Server.Proxy
 {
@@ -46,17 +49,29 @@ namespace MineLib.Server.Proxy
 
         public PlayerNettyListener? PlayerListener { get; private set; }
 
+        private ManualResetEvent Waiter { get; } = new ManualResetEvent(false);
+        private CompositeDisposable Events { get; } = new CompositeDisposable();
+
+        public Program() : base(healthConfigure: ConfigureHealth)
+        {
+            Events.Add(BaseSingleton.Instance.SubscribeAndReply<ServicesPingMessage>(_ =>
+                new ServicesPongMessage() { ServiceId = ProgramGuid, ServiceType = "Proxy" }));
+        }
+        public static IHealthBuilder ConfigureHealth(IHealthBuilder builder) => builder
+            .HealthChecks.AddPingCheck("Internet Connection (Google)", "google.com", TimeSpan.FromSeconds(10))
+            .HealthChecks.AddProcessPhysicalMemoryCheck("Process Working Set Size", 100 * 1024 * 1024)
+            .HealthChecks.AddProcessPrivateMemorySizeCheck("Process Private Memory Size", 100 * 1024 * 1024);
+
         public override async Task RunAsync()
         {
             await base.RunAsync().ConfigureAwait(false);
 
             Console.WriteLine($"MineLib.Server.Proxy");
 
-            PlayerListener = new PlayerNettyListener();
+            PlayerListener = new PlayerNettyListener(Metrics.Measure);
             PlayerListener.Start();
 
-            Console.ReadLine();
-            await StopAsync().ConfigureAwait(false);
+            Waiter.WaitOne();
         }
 
         public override async Task StopAsync()
@@ -65,6 +80,8 @@ namespace MineLib.Server.Proxy
 
             PlayerListener?.Stop();
             PlayerListener = null;
+
+            Waiter.Set();
         }
 
         protected override void Dispose(bool disposing)
@@ -74,11 +91,8 @@ namespace MineLib.Server.Proxy
                 PlayerListener?.Stop();
                 PlayerListener = null;
 
-                InternalBus.ProxyBus.Dispose();
-                InternalBus.PlayerBus.Dispose();
-                InternalBus.EntityBus.Dispose();
-                InternalBus.WorldBus.Dispose();
-                InternalBus.ForgeBus.Dispose();
+                Waiter.Dispose();
+                Events.Dispose();
             }
 
             base.Dispose(disposing);

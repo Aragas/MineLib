@@ -55,7 +55,7 @@ namespace Aragas.QServer.Core
         protected virtual void OnClientConnected(TConnection client)
         {
             client.StartListening();
-            client.Disconnected += (this, Client_Disconnected);
+            client.Disconnected += (this, OnClientDisconnected);
 
             lock (Connections)
                 Connections.Add(client);
@@ -63,6 +63,21 @@ namespace Aragas.QServer.Core
 #if DEBUG
             Console.WriteLine($"{client.GetType().Name} connected.");
 #endif
+        }
+
+        protected virtual void OnClientDisconnected(object sender, EventArgs e)
+        {
+            if (sender is TConnection client)
+            {
+#if DEBUG
+                Console.WriteLine($"{client.GetType().Name} disconnected.");
+#endif
+
+                client.Disconnected -= OnClientDisconnected;
+                lock (Connections)
+                    Connections.Remove(client);
+                client.Dispose();
+            }
         }
 
         private void ListenerCycle()
@@ -84,22 +99,6 @@ namespace Aragas.QServer.Core
 
             }
             catch (Exception e) when (e is SocketException) { /* ignore */ }
-        }
-
-        private void Client_Disconnected(object sender, EventArgs e)
-        {
-            if (sender is TConnection client)
-            {
-#if DEBUG
-                Console.WriteLine($"{client.GetType().Name} disconnected.");
-#endif
-
-                client.Disconnected -= Client_Disconnected;
-                lock (Connections)
-                    Connections.Remove(client);
-                client.Dispose();
-            }
-
         }
     }
 }

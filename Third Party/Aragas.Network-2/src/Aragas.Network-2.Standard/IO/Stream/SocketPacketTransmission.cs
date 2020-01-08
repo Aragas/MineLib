@@ -12,8 +12,8 @@ namespace Aragas.Network.IO
         where TSerializer : StreamSerializer, new()
         where TDeserializer : StreamDeserializer, new()
     {
-        private Socket? _socket;
-        public Socket Socket
+        protected Socket? _socket;
+        public virtual Socket Socket
         {
             get => _socket!; // Because we can't create a Generic with new() with properties
             set
@@ -59,6 +59,11 @@ namespace Aragas.Network.IO
             Send(serializer.GetData());
         }
 
+        public virtual bool TryReadPacket(out TPacketType? packet)
+        {
+            packet = ReadPacket();
+            return packet != null;
+        }
         public override TPacketType? ReadPacket()
         {
             if (Factory == null)

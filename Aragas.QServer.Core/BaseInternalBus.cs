@@ -33,9 +33,6 @@ namespace Aragas.QServer.Core
                     var sock = new Socket(SocketType.Stream, ProtocolType.Tcp);
                     sock.Connect(response.Endpoint);
                     return sock;
-                    //var conn = new TcpClient();
-                    //conn.Connect();
-                    //return conn.Client;
                 });
         }
 

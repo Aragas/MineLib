@@ -1,9 +1,10 @@
-﻿using Aragas.TupleEventSystem;
+﻿using Aragas.QServer.Core.Extensions;
+using Aragas.TupleEventSystem;
+
+using NATS.Client;
 
 using System;
 using System.Threading.Tasks;
-
-using NATS.Client;
 
 namespace Aragas.QServer.Core
 {
@@ -11,37 +12,28 @@ namespace Aragas.QServer.Core
     {
         public BaseEventHandler<MBusMessageReceivedEventArgs> MessageReceived { get; set; } = new WeakReferenceEventHandler<MBusMessageReceivedEventArgs>();
 
-        private string BusName { get; }
-        private IConnection Connection { get; set; }
+        private string Name { get; }
+        private IConnection Connection { get; }
         private IAsyncSubscription Subscription { get; }
 
-        public NatsMBus(string busName, TimeSpan? messageTTL = null)
+        public NatsMBus(string name, TimeSpan? messageTTL = null)
         {
-            BusName = busName;
-
-            var opts = ConnectionFactory.GetDefaultOptions();
-            opts.Timeout = (int) messageTTL.GetValueOrDefault(TimeSpan.FromMilliseconds(10000)).TotalMilliseconds;
-            opts.Url = "minelib.nats:4222";
-            Connection = new ConnectionFactory().CreateConnection(opts);
-            Subscription = Connection.SubscribeAsync(BusName, (s, e) => MessageReceived?.Invoke(this, new MBusMessageReceivedEventArgs(e.Message.Data)));
+            Name = name;
+            Connection = new ConnectionFactory().CreateConnection(ConnectionFactory.GetDefaultOptions().SetDefaultArgs(messageTTL));
+            Subscription = Connection.SubscribeAsync(name, (s, e) => MessageReceived?.Invoke(this, new MBusMessageReceivedEventArgs(e.Message.Data)));
         }
 
-        public void SendMessage(in ReadOnlySpan<byte> message)
-        {
-            Connection.Publish(BusName, message.ToArray());
-        }
+        public void SendMessage(in ReadOnlySpan<byte> message) =>
+            Connection.Publish(Name, message.ToArray());
 
-        public Task SendMessageAsync(ReadOnlyMemory<byte> message)
-        {
-            Connection.Publish(BusName, message.ToArray());
-            return Task.CompletedTask;
-        }
+        public Task SendMessageAsync(ReadOnlyMemory<byte> message) => Task.Run(() =>
+            Connection.Publish(Name, message.ToArray()));
 
         public void Dispose()
         {
-            Subscription.Dispose();
-            MessageReceived.Dispose();
-            Connection.Dispose();
+            Subscription?.Dispose();
+            MessageReceived?.Dispose();
+            Connection?.Dispose();
         }
     }
 }

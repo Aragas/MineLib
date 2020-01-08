@@ -8,11 +8,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="App.Metrics" Version="4.0.0-preview1.0.3" />
+    <PackageReference Include="App.Metrics.Formatters.Prometheus" Version="4.0.0-preview1.0.3" />
+    <PackageReference Include="App.Metrics.Health" Version="3.2.0" />
     <PackageReference Include="FirebaseStorage.net" Version="1.0.3" />
     <PackageReference Include="Iconic.Zlib.Netstandard" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.PlatformAbstractions" Version="1.1.0" />
     <PackageReference Include="NATS.Client" Version="0.10.1-pre2" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Nito.AsyncEx.Coordination" Version="5.0.0" />
     <PackageReference Include="PCLExt.FileStorage-devel" Version="1.5.0.294" />
+    <PackageReference Include="STAN.Client" Version="0.2.1" />
+    <PackageReference Include="System.Linq.Async" Version="4.0.0" />
+    <PackageReference Include="System.Reactive" Version="4.3.2" />
     <PackageReference Include="SystemInfoLibrary-devel" Version="1.5.0.25" />
   </ItemGroup>
 

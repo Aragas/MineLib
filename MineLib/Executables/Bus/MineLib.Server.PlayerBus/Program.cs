@@ -1,18 +1,19 @@
-﻿using Aragas.QServer.Core;
-using Aragas.QServer.Core.Packets.PlayerHandler;
+﻿using App.Metrics.Health;
+using App.Metrics.Health.Checks.Sql;
 
-using LiteDB;
+using Aragas.QServer.Core;
+using Aragas.QServer.Core.Extensions;
+using Aragas.QServer.Core.NetworkBus.Messages;
 
-using MineLib.Core;
 using MineLib.Server.Core;
-using MineLib.Server.Core.Packets.PlayerHandler;
+using MineLib.Server.Core.NetworkBus.Messages;
+
+using Npgsql;
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Numerics;
+using System.Collections.Concurrent;
+using System.Reactive.Disposables;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MineLib.Server.PlayerBus
@@ -64,85 +65,58 @@ namespace MineLib.Server.PlayerBus
     /// </summary>
     internal sealed class Program : MineLibProgram
     {
-        public static async Task Main(string[] args)
+        public static async Task Main(string[] args) => await Main<Program>(args).ConfigureAwait(false);
+
+        private ManualResetEvent Waiter { get; } = new ManualResetEvent(false);
+        private CompositeDisposable Events { get; } = new CompositeDisposable();
+        private ConcurrentDictionary<Guid, PlayerHandler.PlayerHandler> PlayerHanlders { get; } = new ConcurrentDictionary<Guid, PlayerHandler.PlayerHandler>();
+
+        public Program() : base(healthConfigure: ConfigureHealth)
         {
-            BsonMapper.Global.RegisterType
-            (
-                serialize: vector3 => new BsonDocument(new Dictionary<string, BsonValue>
-                {
-                    { nameof(Vector3.X), vector3.X  },
-                    { nameof(Vector3.Y), vector3.Y  },
-                    { nameof(Vector3.Z), vector3.Z  }
-                }),
-                deserialize: bson => new Vector3(
-                    (float) bson.AsDocument[nameof(Vector3.X)].AsDouble,
-                    (float) bson.AsDocument[nameof(Vector3.Y)].AsDouble,
-                    (float) bson.AsDocument[nameof(Vector3.Z)].AsDouble)
-            );
-            BsonMapper.Global.RegisterType
-            (
-                serialize: look => new BsonDocument(new Dictionary<string, BsonValue>
-                {
-                    { nameof(Look.Pitch), look.Pitch  },
-                    { nameof(Look.Yaw), look.Yaw  },
-                }),
-                deserialize: bson => new Look(
-                    (float) bson.AsDocument[nameof(Look.Pitch)].AsDouble,
-                    (float) bson.AsDocument[nameof(Look.Yaw)].AsDouble)
-            );
+            Events.Add(BaseSingleton.Instance.SubscribeAndReply<ServicesPingMessage>(_ =>
+                new ServicesPongMessage() { ServiceId = ProgramGuid, ServiceType = "PlayerBus" }));
 
-            await Main<Program>(args).ConfigureAwait(false);
+            Events.Add(BaseSingleton.Instance.SubscribeAndReply<GetExistingPlayerHandlerRequestMessage>(
+                message =>
+                {
+                    if (PlayerHanlders.TryGetValue(message.PlayerId, out var playerHandler) && playerHandler.ProtocolVersion == message.ProtocolVersion)
+                        return new GetExistingPlayerHandlerResponseMessage() { ServiceId = ProgramGuid, State = playerHandler.State!.Value };
+                    else
+                        return new GetExistingPlayerHandlerResponseMessage() { ServiceId = null };
+                }));
+            Events.Add(BaseSingleton.Instance.SubscribeAndReplyToExclusive<GetNewPlayerHandlerRequestMessage, GetNewPlayerHandlerResponseMessage>(
+                message =>
+                {
+                    return true;
+                },
+                message =>
+                {
+                    var stuff = new PlayerHandler.PlayerHandler(message.PlayerId, message.ProtocolVersion);
+                    PlayerHanlders.TryAdd(message.PlayerId, stuff);
+
+                    return new GetNewPlayerHandlerResponseMessage() { ServiceId = ProgramGuid };
+                }, ProgramGuid));
         }
-
-        public List<ProxyConnectionHandler> ProxyConnectionHandlers { get; } = new List<ProxyConnectionHandler>();
+        public static IHealthBuilder ConfigureHealth(IHealthBuilder builder) => builder
+            .HealthChecks.AddProcessPhysicalMemoryCheck("Process Working Set Size", 100 * 1024 * 1024)
+            .HealthChecks.AddProcessPrivateMemorySizeCheck("Process Private Memory Size", 100 * 1024 * 1024)
+            .HealthChecks.AddSqlCheck("PosgreSQL Connection", () => new NpgsqlConnection(MineLibSingleton.PostgreSQLConnectionString), TimeSpan.FromMilliseconds(500));
 
         public override async Task RunAsync()
         {
             await base.RunAsync().ConfigureAwait(false);
 
-            Console.WriteLine($"MineLib.Server.PlayerBus");
-
-            var protocol5 = ProxyConnectionHandler.GetProxyConnectionHandler(5);
-            protocol5.Start();
-            //var protocol340 = ProxyConnectionHandler.GetProxyConnectionHandler(340);
-            //protocol340.Start();
-            ProxyConnectionHandlers.Add(protocol5);
-            //ProxyConnectionHandlers.Add(protocol340);
-
-            InternalBus.ProxyBus.MessageReceived += (this, ProxyBus_MessageReceived);
-            InternalBus.PlayerBus.MessageReceived += (this, PlayerBus_MessageReceived);
-
-            Console.ReadLine();
-            await StopAsync().ConfigureAwait(false);
+            Waiter.WaitOne();
         }
 
         public override async Task StopAsync()
         {
             await base.StopAsync().ConfigureAwait(false);
 
-            InternalBus.ProxyBus.MessageReceived -= ProxyBus_MessageReceived;
-            InternalBus.PlayerBus.MessageReceived -= PlayerBus_MessageReceived;
-            foreach (var connectionHandler in ProxyConnectionHandlers)
-                connectionHandler.Stop();
+            Waiter.Set();
         }
 
-        private void ProxyBus_MessageReceived(object? sender, MBusMessageReceivedEventArgs args)
-        {
-            InternalBus.HandleRequest<AvailableSocketRequestPacket, AvailableSocketResponsePacket>(InternalBus.ProxyBus, args, request =>
-            {
-                var proxyConnectionHandler = ProxyConnectionHandler.GetProxyConnectionHandler(request.ProtocolVersion);
-                // if ProxyBus can't handle any new players, return null in Endpoint
-                //return null;
-
-                var host = Dns.GetHostEntry(Dns.GetHostName());
-                var ip = host.AddressList.First(ip => ip.AddressFamily == AddressFamily.InterNetwork);
-
-                return new AvailableSocketResponsePacket()
-                {
-                    Endpoint = new IPEndPoint(ip, proxyConnectionHandler.Port)
-                };
-            });
-        }
+        /*
         private void PlayerBus_MessageReceived(object? sender, MBusMessageReceivedEventArgs args)
         {
             InternalBus.HandleRequest<GetPlayerDataRequestPacket, GetPlayerDataResponsePacket>(InternalBus.PlayerBus, args, request =>
@@ -163,48 +137,18 @@ namespace MineLib.Server.PlayerBus
 
                 return new GetPlayerDataResponsePacket() { Player = player };
             });
-            InternalBus.HandleRequest<UpdatePlayerDataRequestPacket, UpdatePlayerDataResponsePacket>(InternalBus.PlayerBus, args, request =>
-            {
-                return new UpdatePlayerDataResponsePacket()
-                {
-                    ErrorEnum = 0
-                };
-                /*
-                if (string.IsNullOrEmpty(request.Player.Username))
-                    return new UpdatePlayerDataResponsePacket()
-                    {
-                        ErrorEnum = 1
-                    };
-
-                using var db = new LiteDatabase(@"Players.db");
-                var players = db.GetCollection<Player>("players");
-                var player = new Player(request.Nickname)
-                {
-                    Position = request.Position,
-                    Look = request.Look
-                };
-                players.Upsert(player);
-                if (players.Exists(p => p.Nickname == player.Nickname))
-                    players.Upsert(player);
-                else
-                    players.Insert(player);
-
-                // Index document using a document property
-                players.EnsureIndex(x => x.Nickname);
-                return new UpdatePlayerDataResponsePacket()
-                {
-                    ErrorEnum = 0
-                };
-                */
-            });
         }
+        */
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                InternalBus.ProxyBus.Dispose();
-                InternalBus.PlayerBus.Dispose();
+                foreach (var playerHandler in PlayerHanlders)
+                    playerHandler.Value.Dispose();
+
+                Waiter.Dispose();
+                Events.Dispose();
             }
 
             base.Dispose(disposing);

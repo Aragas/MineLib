@@ -1,6 +1,43 @@
 version: '3.4'
 
+volumes:
+    prometheus_data: {}
+    grafana_data: {}
+
 services:
+  prometheus:
+    image: prom/prometheus:v2.1.0
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - 9090:9090
+#    networks:
+#      - back-tier
+#    restart: always
+
+  grafana:
+    image: grafana/grafana
+    user: "104"
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    env_file:
+      - ./grafana/config.monitoring
+#    networks:
+#      - back-tier
+#      - front-tier
+#    restart: always
+
   aragas.db:
     image: postgres
     #restart: always
@@ -10,6 +47,7 @@ services:
      POSTGRES_PASSWORD: minelib
 
   aragas.nats:
+    container_name: 'minelib.nats'
     image: 'nats-streaming:latest'
     #restart: always
     ports:

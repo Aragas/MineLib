@@ -36,6 +36,8 @@ namespace Aragas.QServer.Core
             var metricsBuilder = new MetricsBuilder()
                 .Configuration.Configure(options => options
                     .AddMachineNameTag()
+                    .AddGitTag()
+                    .AddRuntimeTag()
                     .AddAppTag()
                     .AddUUIDTag(ProgramGuid)
                     .AddEnvTag())

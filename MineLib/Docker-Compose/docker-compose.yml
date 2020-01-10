@@ -47,7 +47,6 @@ services:
      POSTGRES_PASSWORD: minelib
 
   aragas.nats:
-    container_name: 'minelib.nats'
     image: 'nats-streaming:latest'
     #restart: always
     ports:
@@ -56,6 +55,16 @@ services:
       - "8222:8222"
     #volumes:
     #  - /path/to/nats-server.conf:/opt/bitnami/nats/nats-server.conf
+
+
+  aragas.qserver.nats.metrics:
+    image: ${DOCKER_REGISTRY-}aragasqservernatsmetrics
+    #restart: always
+    build:
+      context: ../..
+      dockerfile: Aragas.QServer.NATS.Metrics/Dockerfile
+    ports:
+      - "9000:80"
 
   minelib.server.entitybus:
     image: ${DOCKER_REGISTRY-}minelibserverentitybus
@@ -75,6 +84,9 @@ services:
     build:
       context: ../..
       dockerfile: MineLib/Executables/Bus/MineLib.Server.PlayerBus/Dockerfile
+    deploy:
+      mode: replicated
+      replicas: 6
   minelib.server.worldbus:
     image: ${DOCKER_REGISTRY-}minelibserverworldbus
     #restart: always

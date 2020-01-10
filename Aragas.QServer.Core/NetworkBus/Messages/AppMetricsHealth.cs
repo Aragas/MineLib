@@ -8,7 +8,7 @@
     {
         public override string Name => "services.metrics.health.response";
 
-        public string Report { get; private set; } = default!;
+        public string Report { get; set; } = default!;
 
         public AppMetricsHealthResponseMessage() { }
         public AppMetricsHealthResponseMessage(string report) => Report = report;

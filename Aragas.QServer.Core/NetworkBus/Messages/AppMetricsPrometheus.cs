@@ -8,7 +8,7 @@
     {
         public override string Name => "services.metrics.prometheus.response";
 
-        public string Report { get; private set; } = default!;
+        public string Report { get; set; } = default!;
 
         public AppMetricsPrometheusResponseMessage() { }
         public AppMetricsPrometheusResponseMessage(string report) => Report = report;

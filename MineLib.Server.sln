@@ -87,6 +87,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokeD.Core", "PokeD\Librari
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokeD.BattleEngine", "PokeD\Libraries\PokeD.BattleEngine\PokeD.BattleEngine.csproj", "{7E77C8A5-5222-4B2F-8F11-20886D483D07}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aragas.QServer.NATS.Metrics", "Aragas.QServer.NATS.Metrics\Aragas.QServer.NATS.Metrics.csproj", "{293DB50D-DF18-45D0-B349-E611C4907244}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -319,6 +321,14 @@ Global
 		{7E77C8A5-5222-4B2F-8F11-20886D483D07}.LinuxRelease|Any CPU.Build.0 = Release|Any CPU
 		{7E77C8A5-5222-4B2F-8F11-20886D483D07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E77C8A5-5222-4B2F-8F11-20886D483D07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{293DB50D-DF18-45D0-B349-E611C4907244}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{293DB50D-DF18-45D0-B349-E611C4907244}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{293DB50D-DF18-45D0-B349-E611C4907244}.LinuxDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{293DB50D-DF18-45D0-B349-E611C4907244}.LinuxDebug|Any CPU.Build.0 = Debug|Any CPU
+		{293DB50D-DF18-45D0-B349-E611C4907244}.LinuxRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{293DB50D-DF18-45D0-B349-E611C4907244}.LinuxRelease|Any CPU.Build.0 = Release|Any CPU
+		{293DB50D-DF18-45D0-B349-E611C4907244}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{293DB50D-DF18-45D0-B349-E611C4907244}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

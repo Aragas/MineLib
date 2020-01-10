@@ -83,7 +83,7 @@ namespace Aragas.QServer.Core.Extensions
         }
 
         private static Task? CpuUsageHealthTask;
-        private static double CurrentCpuUsagePercent;
+        public static double CurrentCpuUsagePercent;
 
         public static IHealthBuilder AddCpuUsageHealthCheck(this IHealthCheckBuilder healthCheckBuilder,
             string name,

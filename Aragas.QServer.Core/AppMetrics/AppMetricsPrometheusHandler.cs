@@ -2,7 +2,7 @@
 using App.Metrics.Formatters;
 using App.Metrics.Formatters.Prometheus;
 using App.Metrics.Gauge;
-
+using Aragas.QServer.Core.Extensions;
 using Aragas.QServer.Core.NetworkBus;
 using Aragas.QServer.Core.NetworkBus.Messages;
 
@@ -17,6 +17,11 @@ namespace Aragas.QServer.Core.AppMetrics
 {
     public class AppMetricsPrometheusHandler : IMessageHandler<AppMetricsPrometheusRequestMessage>
     {
+        protected static GaugeOptions ProcessCpuUsageGauge = new GaugeOptions
+        {
+            Name = "Process Cpu Usage",
+            MeasurementUnit = Unit.Percent,
+        };
         protected static GaugeOptions ProcessWorkingSetSizeGauge = new GaugeOptions
         {
             Name = "Process Working Set",
@@ -48,6 +53,7 @@ namespace Aragas.QServer.Core.AppMetrics
             var process = Process.GetCurrentProcess();
             _metricsRoot.Measure.Gauge.SetValue(ProcessWorkingSetSizeGauge, () => process.WorkingSet64);
             _metricsRoot.Measure.Gauge.SetValue(ProcessPrivateMemorySizeGauge, () => process.PrivateMemorySize64);
+            _metricsRoot.Measure.Gauge.SetValue(ProcessCpuUsageGauge, () => HealthCheckBuilderExtensions.CurrentCpuUsagePercent);
 
             var snapshot = _metricsRoot.Snapshot.Get();
             using var stream = new MemoryStream();

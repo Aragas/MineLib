@@ -78,6 +78,11 @@ namespace MineLib.Server.WorldBus
         {
             Chunk chunk;
 
+
+            chunk = Generator.GenerateChunk(location);
+            return chunk;
+
+            /*
             var sectionLocation = new List<long>();
             for (var i = 0; i < Chunk.SectionCount; i++)
                 sectionLocation.Add(new Location3D(location.X, i, location.Z).GetDatabaseIndex());
@@ -100,6 +105,7 @@ namespace MineLib.Server.WorldBus
             for (var i = 0; i < Chunk.SectionCount; i++)
                 chunk.Sections[i] = result[i];
             return chunk;
+            */
         }
         public void SetChunk(in Chunk chunk)
         {

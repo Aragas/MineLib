@@ -88,25 +88,25 @@ namespace MineLib.Server.WorldBus.Generator
                         var worldLocation = new Location3D((location.X * Chunk.Width) + x, y, (location.Z * Chunk.Depth) + z);
 
                         if (y == 0) // if at the bottom then set block to bedrock
-                            chunk.SetBlock(worldLocation, new ReadonlyBlock32(7));
+                            chunk.SetBlock(in worldLocation, new ReadonlyBlock32(7));
                         else if (y < height - 1) // if not at the top set the block to dirt or stone depending on height
                         {
                             if (!(y < (height / 4) * 3))
-                                chunk.SetBlock(worldLocation, new ReadonlyBlock32(3));
+                                chunk.SetBlock(in worldLocation, new ReadonlyBlock32(3));
                             else
-                                chunk.SetBlock(worldLocation, new ReadonlyBlock32(1));
+                                chunk.SetBlock(in worldLocation, new ReadonlyBlock32(1));
                         }
                         else if (y < waterLevel) // if below the water set to sand or clay
                         {
                             if (new Random().Next(1, 40) < 5 && y < waterLevel - 4)
-                                chunk.SetBlock(worldLocation, new ReadonlyBlock32(82));
+                                chunk.SetBlock(in worldLocation, new ReadonlyBlock32(82));
                             else
-                                chunk.SetBlock(worldLocation, new ReadonlyBlock32(12));
+                                chunk.SetBlock(in worldLocation, new ReadonlyBlock32(12));
                         }
                         else
                         {
                             // otherwise set the block to grass or gravel rarely
-                            chunk.SetBlock(worldLocation, new ReadonlyBlock32(2));
+                            chunk.SetBlock(in worldLocation, new ReadonlyBlock32(2));
                         }
                         chunk.SetBlockBiome(new Location2D(x, z), (byte) Biome.ExtremeHills);
                         if (y < waterLevel + 17)
@@ -114,6 +114,8 @@ namespace MineLib.Server.WorldBus.Generator
                         if (y < waterLevel + 10)
                             chunk.SetBlockBiome(new Location2D(x, z), (byte) Biome.Beach);
 
+                        chunk.SetBlockLight(in worldLocation, 15);
+                        chunk.SetBlockSkylight(in worldLocation, 15);
                         //if(y == height - 1)
                         //{
                         //    chunk.SetBlockSkylight(worldLocation, 15);
@@ -127,9 +129,9 @@ namespace MineLib.Server.WorldBus.Generator
                         for (int w = 0; w < waterLevel - 3; w++)
                         {
                             var worldLocation = new Location3D((location.X * Chunk.Width) + x, w, (location.Z * Chunk.Depth) + z);
-                            if (chunk.GetBlock(worldLocation).ID == 0)
+                            if (chunk.GetBlock(in worldLocation).ID == 0)
                             {
-                                chunk.SetBlock(worldLocation, new ReadonlyBlock32(8));
+                                chunk.SetBlock(in worldLocation, new ReadonlyBlock32(8));
                             }
                         }
                     }
@@ -177,6 +179,7 @@ namespace MineLib.Server.WorldBus.Generator
                     }
                 }
             }
+
             return chunk;
         }
 

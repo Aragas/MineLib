@@ -6,6 +6,7 @@ using MineLib.Server.Proxy.Packets.Netty.Serverbound;
 using MineLib.Server.Proxy.Protocol.Factory.Netty;
 
 using System;
+using System.Collections.Concurrent;
 using System.Net.Sockets;
 
 namespace MineLib.Server.Proxy.Protocol.Netty
@@ -15,7 +16,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty
     /// </summary>
     internal sealed class ProxyNettyTransmission : ProtobufTransmission<ProxyNettyPacket>
     {
-        public event Action<byte[]> OnDataReceived;
+        public ConcurrentQueue<byte[]> DataToSend { get; } = new ConcurrentQueue<byte[]>();
 
         public VarInt ProtocolVersion { get; set; }
         public Data.State State { get; set; } = Data.State.Handshake;
@@ -37,7 +38,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty
                 {
                     var buffer = new byte[Socket.Available];
                     Socket.Receive(buffer);
-                    OnDataReceived?.Invoke(buffer);
+                    DataToSend.Enqueue(buffer);
                     return null;
                 }
 
@@ -65,6 +66,16 @@ namespace MineLib.Server.Proxy.Protocol.Netty
             }
 
             return null;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                DataToSend.Clear();
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

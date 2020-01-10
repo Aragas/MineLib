@@ -64,8 +64,6 @@ namespace MineLib.Server.Proxy.Protocol.Netty
 
         private Guid PlayerId { get; } = Guid.NewGuid();
 
-        private ConcurrentQueue<byte[]> DataToSend { get; } = new ConcurrentQueue<byte[]>();
-
         private IDisposable PlayerBusDataEvent { get; set; }
 
         /// <summary>
@@ -92,13 +90,6 @@ namespace MineLib.Server.Proxy.Protocol.Netty
         private bool HasInit = false;
         protected override void AdditionalWork()
         {
-            if(Stream != null && !HasInit)
-            {
-                HasInit = true;
-
-                Stream.OnDataReceived += data => DataToSend.Enqueue(data);
-            }
-
             if (Stream.State == Data.State.Handshake || Stream.State == Data.State.Status)
                 return;
 
@@ -164,7 +155,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty
             }
             else
             {
-                while (DataToSend.TryDequeue(out var data))
+                while (Stream.DataToSend.TryDequeue(out var data))
                     BaseSingleton.Instance.Publish(new PlayerDataToBusMessage() { Data = data }, PlayerId);
             }
         }
@@ -174,7 +165,6 @@ namespace MineLib.Server.Proxy.Protocol.Netty
             if (disposing)
             {
                 PlayerBusDataEvent?.Dispose();
-                DataToSend.Clear();
             }
 
             base.Dispose(disposing);

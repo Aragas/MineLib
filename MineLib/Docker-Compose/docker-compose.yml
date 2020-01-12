@@ -1,26 +1,28 @@
-version: '3.4'
+version: '3.7'
 
 volumes:
-    prometheus_data: {}
-    grafana_data: {}
+  prometheus_data: {}
+  grafana_data: {}
+  postgresql_data: {}
+
+networks:
+  metrics:
+  internal:
 
 services:
-  prometheus:
-    image: prom/prometheus:v2.1.0
+#Network Bus
+  nats:
+    image: nats-streaming
     volumes:
-      - ./prometheus/:/etc/prometheus/
-      - prometheus_data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - ./nats/nats-server.conf:/opt/bitnami/nats/nats-server.conf
     ports:
-      - 9090:9090
-#    networks:
-#      - back-tier
-#    restart: always
+      - 4222:4222
+      #- 6222:6222
+      #- 8222:8222
+    networks:
+      - internal
 
+#Metrics
   grafana:
     image: grafana/grafana
     user: "104"
@@ -28,85 +30,118 @@ services:
       - prometheus
     ports:
       - 3000:3000
+    env_file:
+      - ./grafana/config.monitoring
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning/:/etc/grafana/provisioning/
-    env_file:
-      - ./grafana/config.monitoring
-#    networks:
-#      - back-tier
-#      - front-tier
-#    restart: always
+    networks:
+      - metrics
+  prometheus:
+    image: prom/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    ports:
+      - 9090:9090
+    networks:
+      - metrics
+  prometheus.aragas_qserver_exporter:
+    image: ${DOCKER_REGISTRY-}aragasqserverexporter
+    build:
+      context: ../..
+      dockerfile: Aragas.QServer.Prometheus.Exporter/Dockerfile
+    depends_on:
+      - nats
+    networks:
+      - internal
+      - metrics
+  prometheus.postgres_exporter:
+    image: wrouesnel/postgres_exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://minelib:minelib@postgres:5432/?sslmode=disable"
+    depends_on:
+      - postgres
+    networks:
+      - internal
+      - metrics
+  prometheus.nats_exporter:
+    image: synadia/prometheus-nats-exporter
+    command: "-varz http://nats:8222"
+    depends_on:
+      - nats
+    networks:
+      - internal
+      - metrics
+  prometheus.docker_exporter:
+    image: prometheusnet/docker_exporter
+    user: root
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - internal
+      - metrics
 
-  aragas.db:
+#Database
+  postgres:
     image: postgres
-    #restart: always
     environment:
      POSTGRES_DB: minelib
      POSTGRES_USER: minelib
      POSTGRES_PASSWORD: minelib
+    volumes:
+      - postgresql_data:/var/lib/postgresql
+    networks:
+      - internal
 
-  aragas.nats:
-    image: 'nats-streaming:latest'
-    #restart: always
-    ports:
-      - "4222:4222"
-      - "6222:6222"
-      - "8222:8222"
-    #volumes:
-    #  - /path/to/nats-server.conf:/opt/bitnami/nats/nats-server.conf
-
-
-  aragas.qserver.nats.metrics:
-    image: ${DOCKER_REGISTRY-}aragasqservernatsmetrics
-    #restart: always
-    build:
-      context: ../..
-      dockerfile: Aragas.QServer.NATS.Metrics/Dockerfile
-    ports:
-      - "9000:80"
-
+#Server
   minelib.server.entitybus:
     image: ${DOCKER_REGISTRY-}minelibserverentitybus
-    #restart: always
     depends_on:
-      - aragas.db
-      - aragas.nats
+      - postgres
+      - nats
     build:
       context: ../..
       dockerfile: MineLib/Executables/Bus/MineLib.Server.EntityBus/Dockerfile
+    networks:
+      - internal
   minelib.server.playerbus:
     image: ${DOCKER_REGISTRY-}minelibserverplayerbus
-    #restart: always
-    depends_on:
-      - aragas.db
-      - aragas.nats
     build:
       context: ../..
       dockerfile: MineLib/Executables/Bus/MineLib.Server.PlayerBus/Dockerfile
-    deploy:
-      mode: replicated
-      replicas: 6
+    depends_on:
+      - postgres
+      - nats
+    networks:
+      - internal
   minelib.server.worldbus:
     image: ${DOCKER_REGISTRY-}minelibserverworldbus
-    #restart: always
-    depends_on:
-      - aragas.db
-      - aragas.nats
     build:
       context: ../..
       dockerfile: MineLib/Executables/Bus/MineLib.Server.WorldBus/Dockerfile
+    depends_on:
+      - postgres
+      - nats
+    networks:
+      - internal
 
   minelib.server.proxy:
     image: ${DOCKER_REGISTRY-}minelibserverproxy
-    #restart: always
+    build:
+      context: ../..
+      dockerfile: MineLib/Executables/MineLib.Server.Proxy/Dockerfile
     depends_on:
-      - aragas.nats
+      - nats
       - minelib.server.entitybus
       - minelib.server.playerbus
       - minelib.server.worldbus
     ports:
-      - "25565:25565"
-    build:
-      context: ../..
-      dockerfile: MineLib/Executables/MineLib.Server.Proxy/Dockerfile
+      - 25565:25565
+    networks:
+      - internal

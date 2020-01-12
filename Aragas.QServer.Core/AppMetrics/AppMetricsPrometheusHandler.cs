@@ -2,6 +2,7 @@
 using App.Metrics.Formatters;
 using App.Metrics.Formatters.Prometheus;
 using App.Metrics.Gauge;
+
 using Aragas.QServer.Core.Extensions;
 using Aragas.QServer.Core.NetworkBus;
 using Aragas.QServer.Core.NetworkBus.Messages;
@@ -17,6 +18,17 @@ namespace Aragas.QServer.Core.AppMetrics
 {
     public class AppMetricsPrometheusHandler : IMessageHandler<AppMetricsPrometheusRequestMessage>
     {
+        protected static GaugeOptions NATSPingGauge = new GaugeOptions
+        {
+            Name = "NATS Ping",
+            MeasurementUnit = Unit.Custom("Milliseconds"),
+        };
+        protected static GaugeOptions PostgreSQLPingGauge = new GaugeOptions
+        {
+            Name = "PostgreSQL Ping",
+            MeasurementUnit = Unit.Custom("Milliseconds"),
+        };
+
         protected static GaugeOptions ProcessCpuUsageGauge = new GaugeOptions
         {
             Name = "Process Cpu Usage",
@@ -50,6 +62,9 @@ namespace Aragas.QServer.Core.AppMetrics
 
         public async Task<IMessage> HandleAsync(AppMetricsPrometheusRequestMessage message)
         {
+            //_metricsRoot.Measure.Gauge.SetValue(NATSPingGauge, () => GetNATSPing(ConnectionFactory.GetDefaultOptions().SetDefaultArgs()));
+            //_metricsRoot.Measure.Gauge.SetValue(PostgreSQLPingGauge, () => ExecuteSqlCheck(() => new NpgsqlConnection("Host=postgres;Port=5432;Database=minelib;Username=minelib;Password=minelib")));
+
             var process = Process.GetCurrentProcess();
             _metricsRoot.Measure.Gauge.SetValue(ProcessWorkingSetSizeGauge, () => process.WorkingSet64);
             _metricsRoot.Measure.Gauge.SetValue(ProcessPrivateMemorySizeGauge, () => process.PrivateMemorySize64);

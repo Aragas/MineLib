@@ -3,13 +3,13 @@ using Aragas.QServer.Core.IO;
 
 using MineLib.Core;
 using MineLib.Core.Anvil;
+using MineLib.Protocol.Netty;
 using MineLib.Protocol.Packets;
 using MineLib.Protocol5.Extensions;
 using MineLib.Protocol5.Packets.Client.Login;
 using MineLib.Protocol5.Packets.Client.Play;
 using MineLib.Protocol5.Packets.Server.Login;
 using MineLib.Protocol5.Packets.Server.Play;
-using MineLib.Protocol5.Protocol;
 using MineLib.Server.Core;
 using MineLib.Server.Core.NetworkBus.Messages;
 
@@ -22,7 +22,8 @@ using System.Threading.Tasks;
 
 namespace MineLib.Protocol5.Server
 {
-    public partial class Protocol5Connection : BaseProtocol5Connection
+
+    public class Protocol5Connection : BaseProtocol5Connection
     {
         static Protocol5Connection()
         {
@@ -41,7 +42,7 @@ namespace MineLib.Protocol5.Server
         private Protocol5Transmission Stream { get; }
         private ConcurrentQueue<MinecraftPacket> PacketsToSend { get; } = new ConcurrentQueue<MinecraftPacket>();
 
-        public Protocol5Connection(Guid playerId, State state = Protocol.State.Handshake)
+        public Protocol5Connection(Guid playerId, State state = Protocol.Netty.State.Handshake)
         {
             PlayerId = playerId;
             Stream = new Protocol5Transmission()
@@ -250,7 +251,7 @@ namespace MineLib.Protocol5.Server
 #endif
                 }
 
-                if (Stream.State == Protocol.State.Play)
+                if (Stream.State == Protocol.Netty.State.Play)
                 {
                     if (Stopwatch is null)
                         Stopwatch = Stopwatch.StartNew();

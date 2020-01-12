@@ -5,8 +5,9 @@ using App.Metrics.Health.Formatters.Json;
 
 using Aragas.QServer.Core.NetworkBus;
 using Aragas.QServer.Core.NetworkBus.Messages;
-
+using NATS.Client;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;

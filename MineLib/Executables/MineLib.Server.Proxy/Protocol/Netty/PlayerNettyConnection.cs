@@ -87,7 +87,6 @@ namespace MineLib.Server.Proxy.Protocol.Netty
             }
         }
 
-        private bool HasInit = false;
         protected override void AdditionalWork()
         {
             if (Stream.State == Data.State.Handshake || Stream.State == Data.State.Status)

@@ -15,7 +15,7 @@ namespace Aragas.QServer.Core.Extensions
             options.AllowReconnect = true;
             options.MaxReconnect = Options.ReconnectForever;
             if (InContainer)
-                options.Url = "aragas.nats:4222";
+                options.Url = "nats:4222";
             else
                 options.Url = "localhost:4222";
             return options;

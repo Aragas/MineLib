@@ -12,9 +12,8 @@ using System.Reflection;
 
 namespace MineLib.Protocol.Protocol
 {
-    public class MinecraftEnumFactory<TPacketType, TEnum> : BasePacketFactory<TPacketType, VarInt, ProtobufSerializer, ProtobufDeserializer> 
-        where TPacketType : MinecraftPacket 
-        where TEnum : Enum
+    public class MinecraftEnumFactory<TPacketType> : BasePacketFactory<TPacketType, VarInt, ProtobufSerializer, ProtobufDeserializer> 
+        where TPacketType : MinecraftPacket
     {
         private static Dictionary<Type, VarInt> IDTypeFromPacketType { get; } = new Dictionary<Type, VarInt>();
         private static Dictionary<VarInt, Func<TPacketType>> Packets { get; } = new Dictionary<VarInt, Func<TPacketType>>();
@@ -33,7 +32,8 @@ namespace MineLib.Protocol.Protocol
 
                         var whereToFindPackets = AppDomain.CurrentDomain.GetAssemblies().Where(asm => !asm.IsDynamic);
 
-                        foreach (var packetType in whereToFindPackets.SelectMany(asm => asm.ExportedTypes.Where(type => type.GetTypeInfo().IsSubclassOf(typeof(TPacketType)))))
+                        var list = whereToFindPackets.SelectMany(asm => asm.ExportedTypes.Where(type => !type.IsAbstract && type.IsSubclassOf(typeof(TPacketType)))).ToList();
+                        foreach (var packetType in list)
                         {
                             if (packetType != null && ActivatorCached.CreateInstance(packetType) is TPacketType p)
                             {

@@ -16,10 +16,10 @@ COPY ["Third Party/Aragas.TupleEventSystem/src/Aragas.TupleEventSystem/Aragas.Tu
 RUN dotnet restore "MineLib/Executables/Bus/MineLib.Server.EntityBus/MineLib.Server.EntityBus.csproj"
 COPY . .
 WORKDIR "/src/MineLib/Executables/Bus/MineLib.Server.EntityBus"
-RUN dotnet build "MineLib.Server.EntityBus.csproj" -c Release -o /app/build
+RUN dotnet build "MineLib.Server.EntityBus.csproj" -c Release -o /app/build -p:SolutionDir='/src'
 
 FROM build AS publish
-RUN dotnet publish "MineLib.Server.EntityBus.csproj" -c Release -o /app/publish
+RUN dotnet publish "MineLib.Server.EntityBus.csproj" -c Release -o /app/publish -p:SolutionDir='/src'
 
 FROM base AS final
 

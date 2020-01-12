@@ -25,9 +25,12 @@ namespace Aragas.QServer.Core.Extensions
         }
         public static MetricsOptions AddGitTag(this MetricsOptions options)
         {
-            options.GlobalTags["branch"] = ThisAssembly.Git.Branch;
-            options.GlobalTags["sha"] = ThisAssembly.Git.Sha;
-            options.GlobalTags["is_dirty"] = ThisAssembly.Git.IsDirtyString;
+            options.GlobalTags["branch"] = "PLACEHOLDER";
+            options.GlobalTags["sha"] = "PLACEHOLDER";
+            options.GlobalTags["is_dirty"] = "PLACEHOLDER";
+            //options.GlobalTags["branch"] = ThisAssembly.Git.Branch;
+            //options.GlobalTags["sha"] = ThisAssembly.Git.Sha;
+            //options.GlobalTags["is_dirty"] = ThisAssembly.Git.IsDirtyString;
 
             return options;
         }

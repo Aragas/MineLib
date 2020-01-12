@@ -18,10 +18,10 @@ COPY ["MineLib/Libraries/Protocol/MineLib.Protocol5/MineLib.Protocol5.csproj", "
 RUN dotnet restore "MineLib/Executables/MineLib.Server.Proxy/MineLib.Server.Proxy.csproj"
 COPY . .
 WORKDIR "/src/MineLib/Executables/MineLib.Server.Proxy"
-RUN dotnet build "MineLib.Server.Proxy.csproj" -c Release -o /app/build
+RUN dotnet build "MineLib.Server.Proxy.csproj" -c Release -o /app/build -p:SolutionDir='/src'
 
 FROM build AS publish
-RUN dotnet publish "MineLib.Server.Proxy.csproj" -c Release -o /app/publish
+RUN dotnet publish "MineLib.Server.Proxy.csproj" -c Release -o /app/publish -p:SolutionDir='/src'
 
 FROM base AS final
 

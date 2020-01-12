@@ -24,7 +24,7 @@ namespace MineLib.Server.PlayerBus.PlayerHandler
             switch (protocolVersion)
             {
                 case 5:
-                    ProtocolConnection = new Protocol5Connection(playerId, Protocol5.Protocol.State.Login);
+                    ProtocolConnection = new Protocol5Connection(playerId, Protocol.Netty.State.Login);
                     break;
 
                 //case 340:

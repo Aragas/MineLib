@@ -2,6 +2,7 @@
 using App.Metrics.Infrastructure;
 
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -25,12 +26,10 @@ namespace Aragas.QServer.Core.Extensions
         }
         public static MetricsOptions AddGitTag(this MetricsOptions options)
         {
-            options.GlobalTags["branch"] = "PLACEHOLDER";
-            options.GlobalTags["sha"] = "PLACEHOLDER";
-            options.GlobalTags["is_dirty"] = "PLACEHOLDER";
-            //options.GlobalTags["branch"] = ThisAssembly.Git.Branch;
-            //options.GlobalTags["sha"] = ThisAssembly.Git.Sha;
-            //options.GlobalTags["is_dirty"] = ThisAssembly.Git.IsDirtyString;
+            var metadatas = Assembly.GetEntryAssembly().GetCustomAttributes<AssemblyMetadataAttribute>();
+            options.GlobalTags["branch"] = metadatas.SingleOrDefault(a => a.Key == "GitInfo.Branch")?.Value ?? "unknown";
+            options.GlobalTags["sha"] = metadatas.SingleOrDefault(a => a.Key == "GitInfo.Sha")?.Value ?? "unknown";
+            options.GlobalTags["is_dirty"] = metadatas.SingleOrDefault(a => a.Key == "GitInfo.IsDirty")?.Value ?? "unknown";
 
             return options;
         }

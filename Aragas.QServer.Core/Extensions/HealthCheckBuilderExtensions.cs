@@ -94,15 +94,18 @@ namespace Aragas.QServer.Core.Extensions
                 CpuUsageHealthTask?.Dispose();
                 CpuUsageHealthTask = Task.Factory.StartNew(async () =>
                 {
+                    var process = Process.GetCurrentProcess();
                     while (true)
                     {
                         var startTime = DateTime.UtcNow;
-                        var startCpuUsage = Process.GetCurrentProcess().TotalProcessorTime;
+                        process.Refresh();
+                        var startCpuUsage = process.TotalProcessorTime;
 
                         await Task.Delay(1000);
 
                         var endTime = DateTime.UtcNow;
-                        var endCpuUsage = Process.GetCurrentProcess().TotalProcessorTime;
+                        process.Refresh();
+                        var endCpuUsage = process.TotalProcessorTime;
 
                         var cpuUsedMs = (endCpuUsage - startCpuUsage).TotalMilliseconds;
                         var totalMsPassed = (endTime - startTime).TotalMilliseconds;

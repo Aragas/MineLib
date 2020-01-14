@@ -48,6 +48,7 @@ namespace Aragas.QServer.Core.AppMetrics
 
         private readonly IMetricsRoot _metricsRoot;
         private readonly IMetricsOutputFormatter _formatter;
+        private readonly Process _process;
 
         public AppMetricsPrometheusHandler(IMetricsRoot metricsRoot)
         {
@@ -58,6 +59,8 @@ namespace Aragas.QServer.Core.AppMetrics
                 .SingleOrDefault();
             if (_formatter == null)
                 throw new ArgumentException("Include App.Metrics.Formatters.Prometheus!", nameof(metricsRoot));
+
+            _process = Process.GetCurrentProcess();
         }
 
         public async Task<IMessage> HandleAsync(AppMetricsPrometheusRequestMessage message)
@@ -65,10 +68,10 @@ namespace Aragas.QServer.Core.AppMetrics
             //_metricsRoot.Measure.Gauge.SetValue(NATSPingGauge, () => GetNATSPing(ConnectionFactory.GetDefaultOptions().SetDefaultArgs()));
             //_metricsRoot.Measure.Gauge.SetValue(PostgreSQLPingGauge, () => ExecuteSqlCheck(() => new NpgsqlConnection("Host=postgres;Port=5432;Database=minelib;Username=minelib;Password=minelib")));
 
-            var process = Process.GetCurrentProcess();
-            _metricsRoot.Measure.Gauge.SetValue(ProcessWorkingSetSizeGauge, () => process.WorkingSet64);
-            _metricsRoot.Measure.Gauge.SetValue(ProcessPrivateMemorySizeGauge, () => process.PrivateMemorySize64);
-            _metricsRoot.Measure.Gauge.SetValue(ProcessCpuUsageGauge, () => HealthCheckBuilderExtensions.CurrentCpuUsagePercent);
+            _process.Refresh();
+            _metricsRoot.Measure.Gauge.SetValue(ProcessWorkingSetSizeGauge, _process.WorkingSet64);
+            _metricsRoot.Measure.Gauge.SetValue(ProcessPrivateMemorySizeGauge, _process.PrivateMemorySize64);
+            _metricsRoot.Measure.Gauge.SetValue(ProcessCpuUsageGauge, HealthCheckBuilderExtensions.CurrentCpuUsagePercent);
 
             var snapshot = _metricsRoot.Snapshot.Get();
             using var stream = new MemoryStream();

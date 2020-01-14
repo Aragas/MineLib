@@ -2,7 +2,7 @@
 using App.Metrics.Histogram;
 
 using Microsoft.Extensions.Hosting;
-
+using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -92,16 +92,20 @@ namespace Aragas.QServer.Prometheus
         };
 
         private readonly IMetrics _metrics;
+        private readonly ILogger _logger;
         private readonly int _delay;
 
-        public MemoryUsageMetricsService(IMetrics metrics, int delay = 3000)
+        public MemoryUsageMetricsService(IMetrics metrics, ILogger<CpuUsageMetricsService> logger, int delay = 3000)
         {
             _metrics = metrics;
+            _logger = logger;
             _delay = delay;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            _logger.LogInformation("{TypeName}: Starting reporting. Delay:{Delay}", GetType().Name, _delay);
+
             var client = new MemoryMetricsClient();
             while (!stoppingToken.IsCancellationRequested)
             {

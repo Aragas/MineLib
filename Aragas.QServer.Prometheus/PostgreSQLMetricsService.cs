@@ -3,7 +3,7 @@ using App.Metrics.Gauge;
 using App.Metrics.Histogram;
 
 using Microsoft.Extensions.Hosting;
-
+using Microsoft.Extensions.Logging;
 using Npgsql;
 
 using System;
@@ -17,12 +17,14 @@ namespace Aragas.QServer.Prometheus
     public class PostgreSQLMetricsService : BackgroundService
     {
         private readonly IMetrics _metrics;
+        private readonly ILogger _logger;
         private readonly int _delay;
         private readonly List<(string ConnectionString, HistogramOptions Histogram, GaugeOptions Gauge)> _connectionsDictionary = new List<(string, HistogramOptions, GaugeOptions)>();
 
-        public PostgreSQLMetricsService(IMetrics metrics, (string ConnectionName, string ConnectionString)[] connections, int delay = 3000)
+        public PostgreSQLMetricsService(IMetrics metrics, (string ConnectionName, string ConnectionString)[] connections, ILogger<CpuUsageMetricsService> logger, int delay = 3000)
         {
             _metrics = metrics;
+            _logger = logger;
             _delay = delay;
 
             foreach (var (ConnectionName, ConnectionString) in connections)
@@ -44,6 +46,8 @@ namespace Aragas.QServer.Prometheus
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            _logger.LogInformation("{TypeName}: Starting reporting. Delay:{Delay}", GetType().Name, _delay);
+
             var stopwatch = new Stopwatch();
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -63,8 +67,9 @@ namespace Aragas.QServer.Prometheus
                         _metrics.Measure.Histogram.Update(keyValue.Histogram, response);
                         _metrics.Measure.Gauge.SetValue(keyValue.Gauge, response);
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
+                        _logger.LogWarning(ex, "{TypeName}: Exception catched!", GetType().Name);
                         _metrics.Measure.Gauge.SetValue(keyValue.Gauge, double.PositiveInfinity);
                     }
                 }

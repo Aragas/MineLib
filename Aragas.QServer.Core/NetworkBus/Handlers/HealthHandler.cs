@@ -3,7 +3,6 @@ using App.Metrics.Health.Formatters;
 using App.Metrics.Health.Formatters.Ascii;
 using App.Metrics.Health.Formatters.Json;
 
-using Aragas.QServer.Core.NetworkBus;
 using Aragas.QServer.Core.NetworkBus.Messages;
 
 using System;
@@ -12,14 +11,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aragas.QServer.Core.AppMetrics
+namespace Aragas.QServer.Core.NetworkBus.Handlers
 {
-    public class AppMetricsHealthHandler : IMessageHandler<AppMetricsHealthRequestMessage>
+    public class HealthHandler : IMessageHandler<AppMetricsHealthRequestMessage>
     {
         private readonly IHealthRoot _healthRoot;
         private readonly IHealthOutputFormatter _formatter;
 
-        public AppMetricsHealthHandler(IHealthRoot healthRoot)
+        public HealthHandler(IHealthRoot healthRoot)
         {
             _healthRoot = healthRoot;
             _formatter = _healthRoot.DefaultOutputHealthFormatter;

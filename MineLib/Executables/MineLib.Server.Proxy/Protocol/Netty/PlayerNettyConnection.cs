@@ -2,18 +2,21 @@
 using Aragas.Network.IO;
 using Aragas.QServer.Core;
 using Aragas.QServer.Core.Extensions;
+using Aragas.QServer.Core.NetworkBus;
 using Aragas.QServer.Core.NetworkBus.Messages;
 
+using Microsoft.Extensions.Localization;
+
 using MineLib.Server.Core.NetworkBus.Messages;
+using MineLib.Server.Proxy.Data;
 using MineLib.Server.Proxy.Packets.Netty;
 using MineLib.Server.Proxy.Packets.Netty.Clientbound;
 using MineLib.Server.Proxy.Packets.Netty.Serverbound;
-using MineLib.Server.Proxy.Translation;
 
 using System;
-using System.Collections.Concurrent;
 using System.IO;
 using System.Net.Sockets;
+using System.Reactive.Disposables;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,30 +25,6 @@ namespace MineLib.Server.Proxy.Protocol.Netty
 {
     internal sealed class PlayerNettyConnection : DefaultConnectionHandler<ProxyNettyTransmission, ProxyNettyPacket, VarInt, ProtobufSerializer, ProtobufDeserializer>
     {
-        private static string GetJSONResponse() => @$"
-{{
-    ""version"":
-    {{
-        ""name"": ""Any Version"",
-        ""protocol"": 0
-    }},
-    ""players"":
-    {{
-        ""max"": {Program.MaxConnections},
-        ""online"": {Program.CurrentConnections}
-    }},	
-    ""description"": 
-    {{
-        ""text"": ""{Program.Description}""
-    }},
-    ""favicon"": ""{GetFavicon()}"",
-    ""modinfo"":
-    {{
-        ""type"": ""FML"",
-        ""modList"": []
-    }}
-}}
-";
         private static string GetFavicon()
         {
             using var ms = new MemoryStream();
@@ -59,18 +38,50 @@ namespace MineLib.Server.Proxy.Protocol.Netty
             }
             return string.Empty;
         }
+        private string GetJSONResponse() => @$"
+{{
+    ""version"":
+    {{
+        ""name"": ""Any Version"",
+        ""protocol"": 0
+    }},
+    ""players"":
+    {{
+        ""max"": {ServerInfo.MaxConnections},
+        ""online"": {ServerInfo.CurrentConnections}
+    }},
+    ""name"":
+    {{
+        ""text"": ""{ServerInfo.Name}""
+    }},
+    ""description"":
+    {{
+        ""text"": ""{ServerInfo.Description}""
+    }},
+    ""favicon"": ""{GetFavicon()}"",
+    ""modinfo"":
+    {{
+        ""type"": ""FML"",
+        ""modList"": []
+    }}
+}}
+";
 
         private Guid? PlayerBusId { get; set; }
 
         private Guid PlayerId { get; } = Guid.NewGuid();
 
-        private IDisposable PlayerBusDataEvent { get; set; }
+        private CompositeDisposable Events { get; } = new CompositeDisposable();
+        private INetworkBus NetworkBus { get; }
+        private ServerInfo ServerInfo { get; }
+        private IStringLocalizer Localizer { get; }
 
-        /// <summary>
-        /// For internal use only.
-        /// </summary>
-        public PlayerNettyConnection() { }
-        public PlayerNettyConnection(Socket socket) : base(socket) { }
+        public PlayerNettyConnection(ServerInfo serverInfo, Socket socket, INetworkBus networkBus, IStringLocalizer<PlayerNettyConnection> localizer) : base(socket)
+        {
+            ServerInfo = serverInfo;
+            NetworkBus = networkBus;
+            Localizer = localizer;
+        }
 
         protected override void HandlePacket(ProxyNettyPacket packet)
         {
@@ -97,7 +108,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty
                 Guid? playerBusId = null;
 
                 var awaiter = new ManualResetEvent(true);
-                using var _ = BaseSingleton.Instance.Subscribe<GetExistingPlayerHandlerResponseMessage>(message =>
+                using var _ = NetworkBus.Subscribe<GetExistingPlayerHandlerResponseMessage>(message =>
                 {
                     if (message.ServiceId != null)
                     {
@@ -105,7 +116,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty
                         Stream.State = (Data.State) message.State;
                     }
                 });
-                BaseSingleton.Instance.Publish(new GetExistingPlayerHandlerRequestMessage()
+                NetworkBus.Publish(new GetExistingPlayerHandlerRequestMessage()
                 {
                     PlayerId = PlayerId,
                     ProtocolVersion = Stream.ProtocolVersion
@@ -114,7 +125,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty
 
                 if (playerBusId == null)
                 {
-                    var response = BaseSingleton.Instance.PublishAndWaitForExclusiveResponse<GetNewPlayerHandlerRequestMessage, GetNewPlayerHandlerResponseMessage>(
+                    var response = NetworkBus.PublishAndWaitForExclusiveResponse<GetNewPlayerHandlerRequestMessage, GetNewPlayerHandlerResponseMessage>(
                         new GetNewPlayerHandlerRequestMessage()
                         {
                             PlayerId = PlayerId,
@@ -131,7 +142,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty
                     {
                         SendPacket(new Disconnect2Packet()
                         {
-                            JSONData = $@"{{ ""text"": ""{Strings.LoginKicked}"" }}"
+                            JSONData = $@"{{ ""text"": ""{Localizer.GetString("login.kicked")}"" }}"
                         });
                     }
                     Disconnect();
@@ -139,7 +150,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty
                 else
                 {
                     PlayerBusId = playerBusId;
-                    PlayerBusDataEvent = BaseSingleton.Instance.Subscribe<PlayerDataToProxyMessage>(message =>
+                    Events.Add(NetworkBus.Subscribe<PlayerDataToProxyMessage>(message =>
                     {
                         try
                         {
@@ -147,15 +158,15 @@ namespace MineLib.Server.Proxy.Protocol.Netty
                         }
                         catch (Exception e) when (e is SocketException)
                         {
-                            PlayerBusDataEvent.Dispose();
+                            Events.Dispose();
                         }
-                    }, PlayerId);
+                    }, PlayerId));
                 }
             }
             else
             {
                 while (Stream.DataToSend.TryDequeue(out var data))
-                    BaseSingleton.Instance.Publish(new PlayerDataToBusMessage() { Data = data }, PlayerId);
+                    NetworkBus.Publish(new PlayerDataToBusMessage() { Data = data }, PlayerId);
             }
         }
 
@@ -163,7 +174,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty
         {
             if (disposing)
             {
-                PlayerBusDataEvent?.Dispose();
+                Events?.Dispose();
             }
 
             base.Dispose(disposing);

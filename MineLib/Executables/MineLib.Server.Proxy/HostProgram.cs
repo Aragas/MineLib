@@ -1,147 +1,117 @@
 ﻿using App.Metrics;
-using App.Metrics.Formatters;
-using App.Metrics.Formatters.Prometheus;
 using App.Metrics.Health;
 
 using Aragas.QServer.Core;
-using Aragas.QServer.Core.AppMetrics;
 using Aragas.QServer.Core.Extensions;
 using Aragas.QServer.Core.NetworkBus;
-using Aragas.QServer.Core.NetworkBus.Messages;
+using Aragas.QServer.Core.NetworkBus.Handlers;
+
+using I18Next.Net.Backends;
+using I18Next.Net.Extensions;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 using MineLib.Server.Proxy.BackgroundServices;
+using MineLib.Server.Proxy.Data;
 
 using Serilog;
 
-using System;
-using System.IO;
-using System.Linq;
 using System.Reactive.Disposables;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MineLib.Server.Proxy
 {
-    public class ServiceDiscoveryHandler : IMessageHandler<ServicesPingMessage, ServicesPongMessage>
-    {
-        private Guid ServiceId { get; }
-        private string ServiceType { get; }
-
-        public ServiceDiscoveryHandler(Guid serviceId, string serviceType)
-        {
-            ServiceId = serviceId;
-            ServiceType = serviceType;
-        }
-
-        public Task<ServicesPongMessage> HandleAsync(ServicesPingMessage message) => Task.FromResult(new ServicesPongMessage() { ServiceId = ServiceId, ServiceType = ServiceType });
-    }
-    public class AppMetricsPrometheusHandler : IMessageHandler<AppMetricsPrometheusRequestMessage, AppMetricsPrometheusResponseMessage>
-    {
-        private readonly IMetricsRoot _metricsRoot;
-        private readonly IMetricsOutputFormatter _formatter;
-
-        public AppMetricsPrometheusHandler(IMetricsRoot metricsRoot)
-        {
-            _metricsRoot = metricsRoot;
-            _formatter = _metricsRoot.OutputMetricsFormatters
-                .OfType<MetricsPrometheusTextOutputFormatter>()
-                .SingleOrDefault();
-            if (_formatter == null)
-                throw new ArgumentException("Include App.Metrics.Formatters.Prometheus!", nameof(metricsRoot));
-        }
-
-        public async Task<AppMetricsPrometheusResponseMessage> HandleAsync(AppMetricsPrometheusRequestMessage message)
-        {
-            var snapshot = _metricsRoot.Snapshot.Get();
-            using var stream = new MemoryStream();
-            await _formatter.WriteAsync(stream, snapshot);
-            return new AppMetricsPrometheusResponseMessage(Encoding.UTF8.GetString(stream.ToArray()));
-        }
-    }
-    public class PlayerDataToProxyReceiver : IMessageReceiver<PlayerDataToProxyMessage>
-    {
-        public Task HandleAsync(PlayerDataToProxyMessage message)
-        {
-            ;
-
-            return Task.CompletedTask;
-        }
-    }
-    public class PlayerDataToBusReceiver : IMessageReceiver<PlayerDataToBusMessage>
-    {
-        public Task HandleAsync(PlayerDataToBusMessage message)
-        {
-            ;
-
-            return Task.CompletedTask;
-        }
-    }
-
+    /// <summary>
+    /// Handles connection to Player
+    /// Proxy the Player connection to MineLib.Server.PlayerHandler
+    /// ---
+    /// Proxy is used to hide the fact that we distribute Players to multiple
+    /// PlayerHandler instances. It's like BungeeCord, but internally it's
+    /// one big server, not multiple small servers.
+    /// ---
+    /// Responses to Server List Ping (The Netty should respond to both Legacy and Netty)
+    /// ---
+    /// When the Player starts to Login, find first available PlayerHandler and
+    /// create a Proxy connection (Player<-->Proxy<-->PlayerHandler)
+    /// Send every Login/Play state packet to PlayerHandler
+    /// Else, abort connection with Player
+    /// If Player disconnected, disconnect PlayerHandler too.
+    /// ---
+    /// Because of possible encryption and compression, do not attempt
+    /// to read Login/Player state packets.
+    /// ---
+    /// If MineLib.Proxy is down, after creating a new MineLib.Proxy process,
+    /// send to the PlayerHandlerBus via broadcast to get rid of every player
+    /// ---
+    /// To find an available PlayerHandler, send a broadcast message
+    /// that you need a connection and (maybe?) wait for every response.
+    /// Based on that response, either attempt to fill the biggest PlayerHandler
+    /// or fill the smallest one (Player.Count context).
+    /// </summary>
     public class HostProgram : BaseHostProgram
     {
         public static async Task Main(string[] args) => await Main<HostProgram>(args);
 
         protected CompositeDisposable Events { get; } = new CompositeDisposable();
 
-        public void ConfugureSubscribtions(IServiceProvider sp)
-        {
-            var networkBus = sp.GetRequiredService<IAsyncNetworkBus>();
-
-            Events.Add(networkBus.RegisterHandler(new ServiceDiscoveryHandler(ProgramGuid, "Proxy")));
-            Events.Add(networkBus.RegisterHandler(new AppMetricsPrometheusHandler(sp.GetRequiredService<IMetricsRoot>()), ProgramGuid));
-            Events.Add(networkBus.RegisterHandler(new AppMetricsHealthHandler(sp.GetRequiredService<IHealthRoot>()), ProgramGuid));
-            Events.Add(networkBus.RegisterReceiver(new PlayerDataToProxyReceiver(), ProgramGuid));
-            Events.Add(networkBus.RegisterReceiver(new PlayerDataToBusReceiver(), ProgramGuid));
-        }
-
         public override IHostBuilder CreateHostBuilder(string[] args) => Host
             .CreateDefaultBuilder(args)
-            // Metrics
+
+            // Options
             .ConfigureServices((hostContext, services) =>
+            {
+                services.Configure<MineLibOptions>(hostContext.Configuration.GetSection("MineLib"));
+                var mineLib = services.BuildServiceProvider().GetRequiredService<IOptions<MineLibOptions>>();
+                services.AddSingleton<ServerInfo>(new ServerInfo
+                {
+                    Name = mineLib.Value.Name,
+                    Description = mineLib.Value.Description,
+                    MaxConnections = mineLib.Value.MaxConnections,
+                    CurrentConnections = 0
+                });
+            })
+
+            // Localization
+            .ConfigureServices(services =>
+            {
+                services.AddI18NextLocalization(i18N => i18N.AddBackend(new JsonFileBackend("locales")));
+            })
+
+            // Metrics
+            .ConfigureServices(services =>
             {
                 services.AddPrometheusEndpoint();
                 services.AddDefaultMetrics();
             })
             // HealthCheck
-            .ConfigureServices((hostContext, services) =>
+            .ConfigureServices(services =>
             {
                 services.AddHealthCheckPublisher();
             })
 
-            .ConfigureServices((hostContext, services) =>
+            // NATS
+            .ConfigureServices(services =>
             {
                 services.AddSingleton<IAsyncNetworkBus>(new AsyncNATSBus());
                 services.AddSingleton<INetworkBus>(sp => sp.GetRequiredService<IAsyncNetworkBus>());
-                ConfugureSubscribtions(services.BuildServiceProvider());
-            })
 
-            /*
-            // Metrics and Health HTTP Endpoints
-            .ConfigureWebHost(webBuilder =>
-            {
-                webBuilder
-                    .UseKestrel(o => o.AllowSynchronousIO = true)
-                    .Configure(app =>
-                    {
-                        app.UseMetricsEndpoint();
-                        app.UseHealthEndpoint();
-                    })
-                    .ConfigureServices((hostContext, services) =>
-                    {
-                        services.AddMetricsEndpoints();
-                    });
+                var sp = services.BuildServiceProvider();
+                var networkBus = sp.GetRequiredService<IAsyncNetworkBus>();
+
+                Events.Add(networkBus.RegisterHandler(new ServiceDiscoveryHandler(ProgramGuid, "Proxy")));
+                Events.Add(networkBus.RegisterHandler(new MetricsPrometheusHandler(sp.GetRequiredService<IMetricsRoot>()), ProgramGuid));
+                Events.Add(networkBus.RegisterHandler(new HealthHandler(sp.GetRequiredService<IHealthRoot>()), ProgramGuid));
             })
-            */
 
             // Netty Listener
-            .ConfigureServices((hostContext, services) =>
+            .ConfigureServices(services  =>
             {
                 services.AddHostedService<ProxyNettyListenerService>();
             })
-            .UseSerilog();
+            .UseSerilog()
+            .UseConsoleLifetime();
 
 
         protected override void Dispose(bool disposing)

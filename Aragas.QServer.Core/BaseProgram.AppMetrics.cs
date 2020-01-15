@@ -6,8 +6,8 @@ using App.Metrics.Health.Builder;
 using App.Metrics.Health.Formatters.Ascii;
 using App.Metrics.Health.Formatters.Json;
 
-using Aragas.QServer.Core.AppMetrics;
 using Aragas.QServer.Core.Extensions;
+using Aragas.QServer.Core.NetworkBus.Handlers;
 
 using NATS.Client;
 
@@ -74,7 +74,7 @@ namespace Aragas.QServer.Core
             Health = healthBuilder.Build();
 
             AppMetricsPrometheusEvent = BaseSingleton.Instance.RegisterHandler(new AppMetricsPrometheusHandler(Metrics), ProgramGuid);
-            AppMetricsHealthEvent = BaseSingleton.Instance.RegisterHandler(new AppMetricsHealthHandler(Health), ProgramGuid);
+            AppMetricsHealthEvent = BaseSingleton.Instance.RegisterHandler(new HealthHandler(Health), ProgramGuid);
 
             AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
 

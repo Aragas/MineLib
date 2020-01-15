@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MineLib.Server.Proxy.Data
+﻿namespace MineLib.Server.Proxy.Data
 {
     public class ServerInfo
     {
-        public int MaxConnections { get; set; } = 1000;
-        public int CurrentConnections { get; set; }
-        public string Description { get; set; } = "Scalable C# Server";
+        public string Name { get; set; } = default!;
+        public string Description { get; set; } = default!;
+        public int MaxConnections { get; set; } = default!;
+        public int CurrentConnections { get; set; } = default!;
     }
 }

@@ -16,7 +16,7 @@ using System;
 namespace MineLib.Server.Proxy.BackgroundServices
 {
     internal sealed class ProxyNettyListenerService :
-        ListenerService<PlayerNettyConnection, EmptyFactory, ProxyNettyTransmission, ProxyNettyPacket, VarInt, ProtobufSerializer, ProtobufDeserializer>
+        ListenerService<PlayerNettyConnection, ProxyNettyTransmission, ProxyNettyPacket, VarInt, ProtobufSerializer, ProtobufDeserializer>
     {
         public override int Port { get; } = 25565;
         private IMetrics Metrics { get; }
@@ -26,13 +26,12 @@ namespace MineLib.Server.Proxy.BackgroundServices
             MeasurementUnit = Unit.Connections
         };
 
-        public ProxyNettyListenerService(IMetrics metrics, ILogger<ProxyNettyListenerService> logger) : base(logger)
+        public ProxyNettyListenerService(IMetrics metrics, IServiceProvider serviceProvider, ILogger<ProxyNettyListenerService> logger) : base(serviceProvider, logger)
         {
             Metrics = metrics;
             Metrics.Measure.Counter.Increment(PlayersConnectedCounter);
             Metrics.Measure.Counter.Decrement(PlayersConnectedCounter);
         }
-
 
         protected override void OnClientConnected(PlayerNettyConnection client)
         {
@@ -40,7 +39,6 @@ namespace MineLib.Server.Proxy.BackgroundServices
 
             base.OnClientConnected(client);
         }
-
         protected override void OnClientDisconnected(object sender, EventArgs e)
         {
             Metrics.Measure.Counter.Decrement(PlayersConnectedCounter);

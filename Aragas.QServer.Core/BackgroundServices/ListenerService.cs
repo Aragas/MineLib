@@ -14,32 +14,8 @@ using System.Threading.Tasks;
 
 namespace Aragas.QServer.Core.BackgroundServices
 {
-    /*
-    public interface ClientFactory<TConnection, TFactory, TPacketTransmission, TPacket, TIDType, TSerializer, TDeserializer>
-        where TConnection : DefaultConnectionHandler<TPacketTransmission, TPacket, TIDType, TSerializer, TDeserializer>, new()
-        where TFactory : BasePacketFactory<TPacket, TIDType, TSerializer, TDeserializer>, new()
-        where TPacketTransmission : SocketPacketTransmission<TPacket, TIDType, TSerializer, TDeserializer>, new()
-        where TPacket : Packet<TIDType, TSerializer, TDeserializer>
-        where TSerializer : StreamSerializer, new()
-        where TDeserializer : StreamDeserializer, new()
-    {
-        TConnection GetClient(Socket socket)
-        {
-            return new TConnection()
-            {
-                Stream = new TPacketTransmission()
-                {
-                    Socket = socket,
-                    Factory = new TFactory()
-                }
-            };
-        }
-    }
-    */
-
-    public abstract class ListenerService<TConnection, TFactory, TPacketTransmission, TPacket, TIDType, TSerializer, TDeserializer> : BackgroundService
-        where TConnection : DefaultConnectionHandler<TPacketTransmission, TPacket, TIDType, TSerializer, TDeserializer>, new()
-        where TFactory : BasePacketFactory<TPacket, TIDType, TSerializer, TDeserializer>, new()
+    public abstract class ListenerService<TConnection, TPacketTransmission, TPacket, TIDType, TSerializer, TDeserializer> : BackgroundService
+        where TConnection : DefaultConnectionHandler<TPacketTransmission, TPacket, TIDType, TSerializer, TDeserializer>
         where TPacketTransmission : SocketPacketTransmission<TPacket, TIDType, TSerializer, TDeserializer>, new()
         where TPacket : Packet<TIDType, TSerializer, TDeserializer>
         where TSerializer : StreamSerializer, new()
@@ -49,17 +25,17 @@ namespace Aragas.QServer.Core.BackgroundServices
             Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") is string str && str.Equals("true", StringComparison.OrdinalIgnoreCase);
 
         public abstract int Port { get; }
-        protected TcpListener Listener { get; set; } = default!;
+        protected TcpListener Listener { get; }
         protected ConcurrentDictionary<TConnection, object?> Connections { get; } = new ConcurrentDictionary<TConnection, object?>();
+        protected IServiceProvider ServiceProvider { get; }
         protected ILogger Logger { get; }
+        protected ObjectFactory ClientFactory { get; } = ActivatorUtilities.CreateFactory(typeof(TConnection), new[] { typeof(Socket) });
 
-        protected ListenerService(ILogger logger)
+        protected ListenerService(IServiceProvider serviceProvider, ILogger logger)
         {
+            ServiceProvider = serviceProvider;
             Logger = logger;
-        }
 
-        public override Task StartAsync(CancellationToken cancellationToken)
-        {
             if (IPv4)
             {
                 Listener = new TcpListener(new IPEndPoint(IPAddress.Any, Port));
@@ -71,33 +47,18 @@ namespace Aragas.QServer.Core.BackgroundServices
             }
             Listener.Server.ReceiveTimeout = 5000;
             Listener.Server.SendTimeout = 5000;
-            Logger.LogInformation("{TypeName}: Starting Listener.", GetType().Name);
-            Listener.Start();
-
-            return base.StartAsync(cancellationToken);
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            Listener.Start();
             stoppingToken.Register(() => Listener.Stop());
 
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
-                    //IServiceProvider sp = null;
-                    //var socket = await Listener.AcceptSocketAsync();
-                    //
-                    //var client = sp.GetRequiredService<TConnection>();
-
-                    var client = new TConnection()
-                    {
-                        Stream = new TPacketTransmission()
-                        {
-                            Socket = await Listener.AcceptSocketAsync(),
-                            Factory = new TFactory()
-                        }
-                    };
+                    var client = (TConnection) ClientFactory(ServiceProvider, new[] { await Listener.AcceptSocketAsync() });
                     OnClientConnected(client);
                 }
                 catch (Exception ex) when (ex is SocketException)

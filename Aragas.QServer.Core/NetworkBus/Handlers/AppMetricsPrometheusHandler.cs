@@ -4,7 +4,6 @@ using App.Metrics.Formatters.Prometheus;
 using App.Metrics.Gauge;
 
 using Aragas.QServer.Core.Extensions;
-using Aragas.QServer.Core.NetworkBus;
 using Aragas.QServer.Core.NetworkBus.Messages;
 
 using System;
@@ -14,7 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aragas.QServer.Core.AppMetrics
+namespace Aragas.QServer.Core.NetworkBus.Handlers
 {
     public class AppMetricsPrometheusHandler : IMessageHandler<AppMetricsPrometheusRequestMessage>
     {

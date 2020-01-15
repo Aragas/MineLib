@@ -1,0 +1,6 @@
+{
+  "login": {
+    "kicked": "Server can't accept new players.",
+    "banned": "You are banned."
+  }
+}

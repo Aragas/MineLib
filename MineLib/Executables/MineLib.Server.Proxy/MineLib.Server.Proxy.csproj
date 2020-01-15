@@ -10,6 +10,20 @@
     <StartupObject>MineLib.Server.Proxy.HostProgram</StartupObject>
   </PropertyGroup>
 
+  <ItemGroup Condition="$(USE_ASPNETCORE) != ''">
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="App.Metrics.AspNetCore.Endpoints" Version="4.0.0-preview1.0.3" />
+    <PackageReference Include="App.Metrics.AspNetCore.Health.Endpoints" Version="3.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="App.Metrics.Abstractions" Version="4.0.0-preview1.0.3" />
+    <PackageReference Include="I18Next.Net" Version="0.7.1" />
+    <PackageReference Include="I18Next.Net.Extensions" Version="0.7.1" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
+  </ItemGroup>
+  
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Core\Aragas.QServer.Core.csproj" />
     <ProjectReference Include="$(SolutionDir)\Third Party\Aragas.Network-2\src\Aragas.Network-2.Standard\Aragas.Network-2.csproj" />
@@ -23,43 +37,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Protocol\Legacy\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Translation\Strings.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Strings.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
+    <None Update="appsettings.Development.json">
+      <DependentUpon>appsettings.json</DependentUpon>
+    </None>
+    
+    <None Update="locales\en\translation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="locales\ru\translation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    
     <EmbeddedResource Include="logo-0.png" />
-    <EmbeddedResource Include="logo-1.png" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$(USE_ASPNETCORE) != ''">
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="App.Metrics.AspNetCore.Endpoints" Version="4.0.0-preview1.0.3" />
-    <PackageReference Include="App.Metrics.AspNetCore.Health.Endpoints" Version="3.2.0" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="App.Metrics.Abstractions" Version="4.0.0-preview1.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="3.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <EmbeddedResource Update="Translation\Strings.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    <EmbeddedResource Include="logo-1.png">
+      <DependentUpon>logo-0.png</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="Translation\Strings.ru.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
+    
+    <Folder Include="Protocol\Legacy\" />
   </ItemGroup>
 
 </Project>

@@ -18,10 +18,27 @@ namespace Aragas.QServer.Core.Extensions
         {
             return bus.SubscribeAndReply<TMessageRequest>(message => func(message).GetAwaiter().GetResult(), referenceId);
         }
-        public static IDisposable SubscribeAndReply<TMessageRequest>(this INetworkBus bus, IMessageHandler<TMessageRequest> handler, Guid? referenceId = null)
+        public static IDisposable SubscribeAndReply<TMessageRequest, TMessageResponse>(this INetworkBus bus, Func<TMessageRequest, Task<TMessageResponse>> func, Guid? referenceId)
+            where TMessageRequest : notnull, IMessage, new()
+            where TMessageResponse : notnull, IMessage, new()
+        {
+            return bus.SubscribeAndReply<TMessageRequest>(message => func(message).GetAwaiter().GetResult(), referenceId);
+        }
+        public static IDisposable RegisterReceiver<TMessageRequest>(this INetworkBus bus, IMessageReceiver<TMessageRequest> handler, Guid? referenceId = null)
+            where TMessageRequest : notnull, IMessage, new()
+        {
+            return bus.Subscribe<TMessageRequest>(message => handler.HandleAsync(message), referenceId);
+        }
+        public static IDisposable RegisterHandler<TMessageRequest>(this INetworkBus bus, IMessageHandler<TMessageRequest> handler, Guid? referenceId = null)
             where TMessageRequest : notnull, IMessage, new()
         {
             return bus.SubscribeAndReply<TMessageRequest>(message => handler.HandleAsync(message), referenceId);
+        }
+        public static IDisposable RegisterHandler<TMessageRequest, TMessageResponse>(this INetworkBus bus, IMessageHandler<TMessageRequest, TMessageResponse> handler, Guid? referenceId = null)
+            where TMessageRequest : notnull, IMessage, new()
+            where TMessageResponse : notnull, IMessage, new()
+        {
+            return bus.SubscribeAndReply<TMessageRequest, TMessageResponse>(message => handler.HandleAsync(message), referenceId);
         }
         public static IDisposable SubscribeAndReplyEnumerable<TMessageRequest, TMessageResponse>(this INetworkBus bus, Func<TMessageRequest, IAsyncEnumerable<TMessageResponse>> func, Guid? referenceId)
             where TMessageRequest : notnull, IMessage, new()

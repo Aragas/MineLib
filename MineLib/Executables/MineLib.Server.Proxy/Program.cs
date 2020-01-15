@@ -1,4 +1,5 @@
-﻿using App.Metrics.Health;
+﻿/*
+//using App.Metrics.Health;
 
 using Aragas.QServer.Core;
 using Aragas.QServer.Core.NetworkBus.Messages;
@@ -52,15 +53,20 @@ namespace MineLib.Server.Proxy
         private ManualResetEvent Waiter { get; } = new ManualResetEvent(false);
         private CompositeDisposable Events { get; } = new CompositeDisposable();
 
-        public Program() : base(healthConfigure: ConfigureHealth)
+        public Program()
         {
             Events.Add(BaseSingleton.Instance.SubscribeAndReply<ServicesPingMessage>(_ =>
                 new ServicesPongMessage() { ServiceId = ProgramGuid, ServiceType = "Proxy" }));
         }
-        public static IHealthBuilder ConfigureHealth(IHealthBuilder builder) => builder
-            .HealthChecks.AddPingCheck("Internet Connection (Google)", "google.com", TimeSpan.FromSeconds(10))
-            .HealthChecks.AddProcessPhysicalMemoryCheck("Process Working Set Size", 100 * 1024 * 1024)
-            .HealthChecks.AddProcessPrivateMemorySizeCheck("Process Private Memory Size", 100 * 1024 * 1024);
+        //public Program() : base(healthConfigure: ConfigureHealth)
+        //{
+        //    Events.Add(BaseSingleton.Instance.SubscribeAndReply<ServicesPingMessage>(_ =>
+        //        new ServicesPongMessage() { ServiceId = ProgramGuid, ServiceType = "Proxy" }));
+        //}
+        //public static IHealthBuilder ConfigureHealth(IHealthBuilder builder) => builder
+        //    .HealthChecks.AddPingCheck("Internet Connection (Google)", "google.com", TimeSpan.FromSeconds(10))
+        //    .HealthChecks.AddProcessPhysicalMemoryCheck("Process Working Set Size", 100 * 1024 * 1024)
+        //    .HealthChecks.AddProcessPrivateMemorySizeCheck("Process Private Memory Size", 100 * 1024 * 1024);
 
         public override async Task RunAsync()
         {
@@ -99,3 +105,4 @@ namespace MineLib.Server.Proxy
         }
     }
 }
+*/

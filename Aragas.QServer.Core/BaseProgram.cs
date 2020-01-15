@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace Aragas.QServer.Core
 {
+    [Obsolete]
     public partial class BaseProgram : IDisposable
     {
         public static TimeSpan RestartAfter { get; protected set; } = TimeSpan.FromSeconds(10);

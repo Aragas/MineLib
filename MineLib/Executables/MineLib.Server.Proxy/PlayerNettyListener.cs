@@ -1,4 +1,5 @@
-﻿using App.Metrics;
+﻿/*
+using App.Metrics;
 using App.Metrics.Counter;
 
 using Aragas.Network.Data;
@@ -46,3 +47,4 @@ namespace MineLib.Server.Proxy
         }
     }
 }
+*/

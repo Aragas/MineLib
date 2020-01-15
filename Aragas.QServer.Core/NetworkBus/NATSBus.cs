@@ -20,6 +20,10 @@ namespace Aragas.QServer.Core.NetworkBus
     {
         protected IConnection _connection;
 
+        public NATSBus(Options options)
+        {
+            _connection = new ConnectionFactory().CreateConnection(options);
+        }
         public NATSBus()
         {
             _connection = new ConnectionFactory().CreateConnection(ConnectionFactory.GetDefaultOptions().SetDefaultArgs());
@@ -97,6 +101,9 @@ namespace Aragas.QServer.Core.NetworkBus
 
     public sealed class AsyncNATSBus : NATSBus, IAsyncNetworkBus
     {
+        public AsyncNATSBus(Options options) : base(options) { }
+        public AsyncNATSBus() : base() { }
+
         public Task PublishAsync<TMessage>(TMessage message, Guid? referenceId) where TMessage : notnull, IMessage =>
             Task.Run(() => _connection.Publish(GetSubject(message, referenceId), message.GetData().ToArray()));
         async Task<TMessageResponse> IAsyncNetworkBus.PublishAndWaitForReplyAsync<TMessageRequest, TMessageResponse>(TMessageRequest message, Guid? referenceId, int timeout)

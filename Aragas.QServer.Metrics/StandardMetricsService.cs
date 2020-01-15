@@ -4,12 +4,13 @@ using App.Metrics.Gauge;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+
 using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Aragas.QServer.Prometheus
+namespace Aragas.QServer.Metrics
 {
     public class StandardMetricsService : BackgroundService
     {
@@ -49,7 +50,7 @@ namespace Aragas.QServer.Prometheus
         private readonly int _delay;
         private readonly Process _process;
 
-        public StandardMetricsService(IMetrics metrics, ILogger<CpuUsageMetricsService> logger, int delay = 3000)
+        public StandardMetricsService(IMetrics metrics, ILogger<StandardMetricsService> logger, int delay = 3000)
         {
             _metrics = metrics;
             _logger = logger;
@@ -79,7 +80,7 @@ namespace Aragas.QServer.Prometheus
                 _metrics.Measure.Gauge.SetValue(process_private_memory_bytes, _process.PrivateMemorySize64);
                 _metrics.Measure.Gauge.SetValue(process_working_set_bytes, _process.WorkingSet64);
 
-                await Task.Delay(_delay);
+                await Task.Delay(_delay, stoppingToken);
             }
         }
     }

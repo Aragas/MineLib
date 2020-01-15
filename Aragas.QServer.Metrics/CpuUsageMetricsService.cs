@@ -3,12 +3,13 @@ using App.Metrics.Histogram;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+
 using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Aragas.QServer.Prometheus
+namespace Aragas.QServer.Metrics
 {
     public class CpuUsageMetricsService : BackgroundService
     {
@@ -43,7 +44,7 @@ namespace Aragas.QServer.Prometheus
                 var startTime = DateTime.UtcNow;
                 var startCpuUsage = _process.TotalProcessorTime;
 
-                await Task.Delay(_delay);
+                await Task.Delay(_delay, stoppingToken);
 
                 var endTime = DateTime.UtcNow;
                 var endCpuUsage = _process.TotalProcessorTime;

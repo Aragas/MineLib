@@ -73,8 +73,8 @@ namespace Aragas.QServer.Core
                 healthBuilder = healthConfigure(healthBuilder);
             Health = healthBuilder.Build();
 
-            AppMetricsPrometheusEvent = BaseSingleton.Instance.SubscribeAndReply(new AppMetricsPrometheusHandler(Metrics), ProgramGuid);
-            AppMetricsHealthEvent = BaseSingleton.Instance.SubscribeAndReply(new AppMetricsHealthHandler(Health), ProgramGuid);
+            AppMetricsPrometheusEvent = BaseSingleton.Instance.RegisterHandler(new AppMetricsPrometheusHandler(Metrics), ProgramGuid);
+            AppMetricsHealthEvent = BaseSingleton.Instance.RegisterHandler(new AppMetricsHealthHandler(Health), ProgramGuid);
 
             AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
 

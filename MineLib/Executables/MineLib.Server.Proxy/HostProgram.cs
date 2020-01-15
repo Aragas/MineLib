@@ -1,189 +1,157 @@
 ﻿using App.Metrics;
+using App.Metrics.Formatters;
+using App.Metrics.Formatters.Prometheus;
+using App.Metrics.Health;
 
-using Aragas.Network.Data;
-using Aragas.Network.IO;
-using Aragas.Network.Packets;
 using Aragas.QServer.Core;
-using Aragas.QServer.Prometheus;
+using Aragas.QServer.Core.AppMetrics;
+using Aragas.QServer.Core.Extensions;
+using Aragas.QServer.Core.NetworkBus;
+using Aragas.QServer.Core.NetworkBus.Messages;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using MineLib.Server.Proxy.Packets.Netty;
-using MineLib.Server.Proxy.Protocol.Factory;
-using MineLib.Server.Proxy.Protocol.Netty;
+
+using MineLib.Server.Proxy.BackgroundServices;
 
 using Serilog;
-using Serilog.Events;
 
 using System;
-using System.Collections.Concurrent;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading;
+using System.IO;
+using System.Linq;
+using System.Reactive.Disposables;
+using System.Text;
 using System.Threading.Tasks;
-
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace MineLib.Server.Proxy
 {
-    internal sealed class ProxyNettyListenerService : ListenerService<PlayerNettyConnection, EmptyFactory, ProxyNettyTransmission, ProxyNettyPacket, VarInt, ProtobufSerializer, ProtobufDeserializer>
+    public class ServiceDiscoveryHandler : IMessageHandler<ServicesPingMessage, ServicesPongMessage>
     {
-        public ProxyNettyListenerService(ILogger<ProxyNettyListenerService> logger) : base(logger) { }
+        private Guid ServiceId { get; }
+        private string ServiceType { get; }
 
-        public override int Port { get; } = 25565;
+        public ServiceDiscoveryHandler(Guid serviceId, string serviceType)
+        {
+            ServiceId = serviceId;
+            ServiceType = serviceType;
+        }
+
+        public Task<ServicesPongMessage> HandleAsync(ServicesPingMessage message) => Task.FromResult(new ServicesPongMessage() { ServiceId = ServiceId, ServiceType = ServiceType });
     }
-
-    public abstract class ListenerService<TConnection, TFactory, TPacketTransmission, TPacket, TIDType, TSerializer, TDeserializer> : BackgroundService
-        where TConnection : DefaultConnectionHandler<TPacketTransmission, TPacket, TIDType, TSerializer, TDeserializer>, new()
-        where TFactory : BasePacketFactory<TPacket, TIDType, TSerializer, TDeserializer>, new()
-        where TPacketTransmission : SocketPacketTransmission<TPacket, TIDType, TSerializer, TDeserializer>, new()
-        where TPacket : Packet<TIDType, TSerializer, TDeserializer>
-        where TSerializer : StreamSerializer, new()
-        where TDeserializer : StreamDeserializer, new()
+    public class AppMetricsPrometheusHandler : IMessageHandler<AppMetricsPrometheusRequestMessage, AppMetricsPrometheusResponseMessage>
     {
-        private static bool IPv4 { get; } =
-            Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") is string str && str.Equals("true", StringComparison.OrdinalIgnoreCase);
+        private readonly IMetricsRoot _metricsRoot;
+        private readonly IMetricsOutputFormatter _formatter;
 
-        public abstract int Port { get; }
-        protected TcpListener? Listener { get; set; }
-        protected ConcurrentDictionary<TConnection, object?> Connections { get; } = new ConcurrentDictionary<TConnection, object?>();
-        protected ILogger Logger { get; }
-
-        protected ListenerService(ILogger logger)
+        public AppMetricsPrometheusHandler(IMetricsRoot metricsRoot)
         {
-            Logger = logger;
+            _metricsRoot = metricsRoot;
+            _formatter = _metricsRoot.OutputMetricsFormatters
+                .OfType<MetricsPrometheusTextOutputFormatter>()
+                .SingleOrDefault();
+            if (_formatter == null)
+                throw new ArgumentException("Include App.Metrics.Formatters.Prometheus!", nameof(metricsRoot));
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        public async Task<AppMetricsPrometheusResponseMessage> HandleAsync(AppMetricsPrometheusRequestMessage message)
         {
-            if (IPv4)
-            {
-                Listener = new TcpListener(new IPEndPoint(IPAddress.Any, Port));
-            }
-            else
-            {
-                Listener = new TcpListener(new IPEndPoint(IPAddress.IPv6Any, Port));
-                Listener.Server.DualMode = true;
-            }
-            Listener.Server.ReceiveTimeout = 5000;
-            Listener.Server.SendTimeout = 5000;
-            Logger.LogInformation("{TypeName}: Starting Listener.", GetType().Name);
-            Listener.Start();
-
-
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                try
-                {
-                    var client = new TConnection()
-                    {
-                        Stream = new TPacketTransmission()
-                        {
-                            Socket = await Listener.AcceptSocketAsync(),
-                            Factory = new TFactory()
-                        }
-                    };
-                    OnClientConnected(client);
-                }
-                catch (Exception ex) when (ex is SocketException)
-                {
-                    Logger.LogWarning(ex, "{TypeName}: SocketException.", GetType().Name);
-                }
-            }
-
-
-            Logger.LogInformation("{TypeName}: Stopping Listener.", GetType().Name);
-            Listener?.Stop();
-        }
-
-        protected virtual void OnClientConnected(TConnection client)
-        {
-            client.StartListening();
-            client.Disconnected += (this, OnClientDisconnected);
-
-            Connections.TryAdd(client, null);
-
-            Logger.LogInformation("{ClientTypeName}: Connected.", client.GetType().Name);
-        }
-        protected virtual void OnClientDisconnected(object sender, EventArgs e)
-        {
-            if (sender is TConnection client)
-            {
-                Logger.LogInformation("{ClientTypeName}: Disconnected.", client.GetType().Name);
-
-                client.Disconnected -= OnClientDisconnected;
-                lock (Connections)
-                    Connections.TryRemove(client, out _);
-                client.Dispose();
-            }
-        }
-
-        public override void Dispose()
-        {
-            base.Dispose();
-
-            foreach (var keyValue in Connections)
-                keyValue.Key?.Dispose();
-            Connections?.Clear();
+            var snapshot = _metricsRoot.Snapshot.Get();
+            using var stream = new MemoryStream();
+            await _formatter.WriteAsync(stream, snapshot);
+            return new AppMetricsPrometheusResponseMessage(Encoding.UTF8.GetString(stream.ToArray()));
         }
     }
-
-    public abstract class BaseHostProgram
+    public class PlayerDataToProxyReceiver : IMessageReceiver<PlayerDataToProxyMessage>
     {
-        public static async Task Main<TProgram>(string[] args) where TProgram : BaseHostProgram, new()
+        public Task HandleAsync(PlayerDataToProxyMessage message)
         {
-            Aragas.Network.Extensions.PacketExtensions.Init();
-            //MineLib.Core.Extensions.PacketExtensions.Init();
-            //MineLib.Server.Core.Extensions.PacketExtensions.Init();
+            ;
 
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .CreateLogger();
-
-            try
-            {
-                Log.Information("{TypeName}: Starting.", typeof(TProgram).Name);
-                var program = new TProgram();
-                await program.CreateHostBuilder(args).Build().RunAsync();
-            }
-            catch (Exception ex)
-            {
-                Log.Fatal(ex, "{TypeName}: Fatal exception.", typeof(TProgram).Name);
-            }
-            finally
-            {
-                Log.CloseAndFlush();
-            }
+            return Task.CompletedTask;
         }
+    }
+    public class PlayerDataToBusReceiver : IMessageReceiver<PlayerDataToBusMessage>
+    {
+        public Task HandleAsync(PlayerDataToBusMessage message)
+        {
+            ;
 
-        public abstract IHostBuilder CreateHostBuilder(string[] args);
+            return Task.CompletedTask;
+        }
     }
 
     public class HostProgram : BaseHostProgram
     {
         public static async Task Main(string[] args) => await Main<HostProgram>(args);
 
-        public override IHostBuilder CreateHostBuilder(string[] args) => Host.CreateDefaultBuilder(args)
+        protected CompositeDisposable Events { get; } = new CompositeDisposable();
+
+        public void ConfugureSubscribtions(IServiceProvider sp)
+        {
+            var networkBus = sp.GetRequiredService<IAsyncNetworkBus>();
+
+            Events.Add(networkBus.RegisterHandler(new ServiceDiscoveryHandler(ProgramGuid, "Proxy")));
+            Events.Add(networkBus.RegisterHandler(new AppMetricsPrometheusHandler(sp.GetRequiredService<IMetricsRoot>()), ProgramGuid));
+            Events.Add(networkBus.RegisterHandler(new AppMetricsHealthHandler(sp.GetRequiredService<IHealthRoot>()), ProgramGuid));
+            Events.Add(networkBus.RegisterReceiver(new PlayerDataToProxyReceiver(), ProgramGuid));
+            Events.Add(networkBus.RegisterReceiver(new PlayerDataToBusReceiver(), ProgramGuid));
+        }
+
+        public override IHostBuilder CreateHostBuilder(string[] args) => Host
+            .CreateDefaultBuilder(args)
+            // Metrics
             .ConfigureServices((hostContext, services) =>
             {
-                services.AddMetrics(metricsBuilder =>
-                {
-                    metricsBuilder
-                        .OutputMetrics.AsPrometheusPlainText();
+                services.AddPrometheusEndpoint();
+                services.AddDefaultMetrics();
+            })
+            // HealthCheck
+            .ConfigureServices((hostContext, services) =>
+            {
+                services.AddHealthCheckPublisher();
+            })
 
-                });
-                services.AddMetricsReportingHostedService();
+            .ConfigureServices((hostContext, services) =>
+            {
+                services.AddSingleton<IAsyncNetworkBus>(new AsyncNATSBus());
+                services.AddSingleton<INetworkBus>(sp => sp.GetRequiredService<IAsyncNetworkBus>());
+                ConfugureSubscribtions(services.BuildServiceProvider());
+            })
 
-                services.AddHostedService<CpuUsageMetricsService>();
-                services.AddHostedService<MemoryUsageMetricsService>();
-                services.AddHostedService<StandardMetricsService>();
+            /*
+            // Metrics and Health HTTP Endpoints
+            .ConfigureWebHost(webBuilder =>
+            {
+                webBuilder
+                    .UseKestrel(o => o.AllowSynchronousIO = true)
+                    .Configure(app =>
+                    {
+                        app.UseMetricsEndpoint();
+                        app.UseHealthEndpoint();
+                    })
+                    .ConfigureServices((hostContext, services) =>
+                    {
+                        services.AddMetricsEndpoints();
+                    });
+            })
+            */
 
+            // Netty Listener
+            .ConfigureServices((hostContext, services) =>
+            {
                 services.AddHostedService<ProxyNettyListenerService>();
             })
             .UseSerilog();
+
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Events.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
     }
 }

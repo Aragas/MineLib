@@ -5,7 +5,6 @@ using MineLib.Server.Proxy.Packets.Netty;
 using MineLib.Server.Proxy.Packets.Netty.Serverbound;
 using MineLib.Server.Proxy.Protocol.Factory.Netty;
 
-using System;
 using System.Collections.Concurrent;
 using System.Net.Sockets;
 

@@ -12,10 +12,28 @@ namespace Aragas.QServer.Core.Extensions
 {
     public static class IAsyncNetworkBusExtensions
     {
-        public static IDisposable SubscribeAndReply<TMessageRequest>(this IAsyncNetworkBus bus, IMessageHandler<TMessageRequest> handler, Guid? referenceId = null)
+        public static Task<IDisposable> RegisterReceiverAsync<TMessageRequest>(this IAsyncNetworkBus bus, IMessageReceiver<TMessageRequest> handler, Guid? referenceId = null)
             where TMessageRequest : notnull, IMessage, new()
         {
-            return bus.SubscribeAndReply<TMessageRequest>(message => handler.HandleAsync(message), referenceId);
+            return bus.SubscribeAsync<TMessageRequest>(message => handler.HandleAsync(message), referenceId);
+        }
+        public static Task<IDisposable> RegisterHandlerAsync<TMessageRequest>(this IAsyncNetworkBus bus, IMessageHandler<TMessageRequest> handler, Guid? referenceId = null)
+            where TMessageRequest : notnull, IMessage, new()
+        {
+            return bus.SubscribeAndReplyAsync<TMessageRequest>(message => handler.HandleAsync(message), referenceId);
+        }
+        public static Task<IDisposable> RegisterHandlerAsync<TMessageRequest, TMessageResponse>(this IAsyncNetworkBus bus, IMessageHandler<TMessageRequest, TMessageResponse> handler, Guid? referenceId = null)
+            where TMessageRequest : notnull, IMessage, new()
+            where TMessageResponse : notnull, IMessage, new()
+        {
+            return bus.SubscribeAndReplyAsync<TMessageRequest, TMessageResponse>(message => handler.HandleAsync(message), referenceId);
+        }
+
+        public static Task<IDisposable> SubscribeAndReplyAsync<TMessageRequest, TMessageResponse>(this IAsyncNetworkBus bus, Func<TMessageRequest, Task<TMessageResponse>> func, Guid? referenceId)
+            where TMessageRequest : notnull, IMessage, new()
+            where TMessageResponse : notnull, IMessage, new()
+        {
+            return bus.SubscribeAndReplyAsync<TMessageRequest>(async message => await func(message), referenceId);
         }
 
         public static async Task<TMessageResponse?> PublishAndWaitForExclusiveResponseAsync<TMessageRequest, TMessageResponse>(this IAsyncNetworkBus bus, TMessageRequest message, int timeout = -1)

@@ -19,7 +19,7 @@
     <ProjectReference Include="$(SolutionDir)\MineLib\Libraries\MineLib.Server.Core\MineLib.Server.Core.csproj" />
     <ProjectReference Include="$(SolutionDir)\MineLib\Libraries\Protocol\MineLib.Protocol5\MineLib.Protocol5.csproj" />
     <ProjectReference Include="$(SolutionDir)\MineLib\Libraries\Protocol\MineLib.Protocol\MineLib.Protocol.csproj" />
-    <ProjectReference Include="..\..\..\Aragas.QServer.Prometheus\Aragas.QServer.Prometheus.csproj" />
+    <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Metrics\Aragas.QServer.Metrics.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,21 +39,17 @@
     <EmbeddedResource Include="logo-1.png" />
   </ItemGroup>
 
+  <ItemGroup Condition="$(USE_ASPNETCORE) != ''">
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="App.Metrics.AspNetCore.Endpoints" Version="4.0.0-preview1.0.3" />
+    <PackageReference Include="App.Metrics.AspNetCore.Health.Endpoints" Version="3.2.0" />
+  </ItemGroup>
+  
   <ItemGroup>
-    <PackageReference Include="App.Metrics" Version="4.0.0-preview1.0.3" />
-    <PackageReference Include="App.Metrics.Extensions.DependencyInjection" Version="4.0.0-preview1.0.3" />
-    <PackageReference Include="App.Metrics.Extensions.Hosting" Version="4.0.0-preview1.0.3" />
-    <PackageReference Include="App.Metrics.Formatters.Prometheus" Version="4.0.0-preview1.0.3" />
-    <PackageReference Include="App.Metrics.Health" Version="3.2.0" />
-    <PackageReference Include="App.Metrics.Health.Checks.Network" Version="3.2.0" />
-    <PackageReference Include="App.Metrics.Health.Checks.Process" Version="3.2.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.0" />
+    <PackageReference Include="App.Metrics.Abstractions" Version="4.0.0-preview1.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
-    <PackageReference Include="Serilog" Version="2.9.1-dev-01154" />
-    <PackageReference Include="Serilog.Extensions.Hosting" Version="3.0.0" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0-dev-00834" />
   </ItemGroup>
   
   <ItemGroup>

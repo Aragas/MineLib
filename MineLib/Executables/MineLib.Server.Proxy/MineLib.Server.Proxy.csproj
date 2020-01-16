@@ -7,7 +7,7 @@
     <Nullable>enable</Nullable>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..\..</DockerfileContext>
-    <StartupObject>MineLib.Server.Proxy.HostProgram</StartupObject>
+    <StartupObject>MineLib.Server.Proxy.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup Condition="$(USE_ASPNETCORE) != ''">

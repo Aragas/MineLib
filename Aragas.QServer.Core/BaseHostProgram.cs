@@ -4,13 +4,14 @@ using Serilog;
 using Serilog.Events;
 
 using System;
+using System.Reactive.Disposables;
 using System.Threading.Tasks;
 
 namespace Aragas.QServer.Core
 {
-    public abstract class BaseHostProgram : IDisposable
+    public class BaseHostProgram
     {
-        public static async Task Main<TProgram>(string[] args) where TProgram : BaseHostProgram, new()
+        public static async Task Main<TProgram>(Func<IHostBuilder> hostBuilder) where TProgram : BaseHostProgram
         {
             Aragas.Network.Extensions.PacketExtensions.Init();
             //MineLib.Core.Extensions.PacketExtensions.Init();
@@ -26,8 +27,9 @@ namespace Aragas.QServer.Core
             try
             {
                 Log.Information("{TypeName}: Starting.", typeof(TProgram).Name);
-                using var program = new TProgram();
-                await program.CreateHostBuilder(args)
+                //using var program = new TProgram();
+
+                await hostBuilder()
                     .UseSerilog()
                     .Build()
                     .RunAsync();
@@ -40,42 +42,6 @@ namespace Aragas.QServer.Core
             {
                 Log.CloseAndFlush();
             }
-        }
-
-        protected Guid ProgramGuid { get; } = Guid.NewGuid();
-
-        public abstract IHostBuilder CreateHostBuilder(string[] args);
-
-
-        private bool disposedValue = false; // To detect redundant calls
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: dispose managed state (managed objects).
-                }
-
-                disposedValue = true;
-            }
-        }
-
-        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-        // ~BaseHostProgram()
-        // {
-        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-        //   Dispose(false);
-        // }
-
-        // This code added to correctly implement the disposable pattern.
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
-            // TODO: uncomment the following line if the finalizer is overridden above.
-            // GC.SuppressFinalize(this);
         }
     }
 }

@@ -17,12 +17,71 @@ using MineLib.Server.Proxy.BackgroundServices;
 using MineLib.Server.Proxy.Data;
 
 using Serilog;
-
+using System;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
 
 namespace MineLib.Server.Proxy
 {
+    public class ServiceOptions
+    {
+        public Guid ProgramGuid { get; } = Guid.NewGuid();
+    }
+    public class SubscriptionStorage : IDisposable
+    {
+        protected CompositeDisposable Events { get; } = new CompositeDisposable();
+        protected IAsyncNetworkBus NetworkBus { get; }
+
+        public SubscriptionStorage(IAsyncNetworkBus networkBus)
+        {
+            NetworkBus = networkBus;
+        }
+
+        public void RegisterHandler<TMessageRequest, TMessageResponse>(IMessageHandler<TMessageRequest, TMessageResponse> handler, Guid? referenceId = null)
+            where TMessageRequest : notnull, IMessage, new()
+            where TMessageResponse : notnull, IMessage, new()
+        {
+            Events.Add(NetworkBus.RegisterHandler(handler, referenceId));
+        }
+        public void RegisterHandler<TMessageRequest>(IMessageHandler<TMessageRequest> handler, Guid? referenceId = null)
+            where TMessageRequest : notnull, IMessage, new()
+        {
+            Events.Add(NetworkBus.RegisterHandler(handler, referenceId));
+        }
+
+
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects).
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+        // ~BaseHostProgram()
+        // {
+        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+        //   Dispose(false);
+        // }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+            // GC.SuppressFinalize(this);
+        }
+    }
+
     /// <summary>
     /// Handles connection to Player
     /// Proxy the Player connection to MineLib.Server.PlayerHandler
@@ -50,21 +109,21 @@ namespace MineLib.Server.Proxy
     /// Based on that response, either attempt to fill the biggest PlayerHandler
     /// or fill the smallest one (Player.Count context).
     /// </summary>
-    public class HostProgram : BaseHostProgram
+    public class Program : BaseHostProgram
     {
-        public static async Task Main(string[] args) => await Main<HostProgram>(args);
+        public static async Task Main(string[] args) => await Main<Program>(() => CreateHostBuilder(args));
 
-        protected CompositeDisposable Events { get; } = new CompositeDisposable();
-
-        public override IHostBuilder CreateHostBuilder(string[] args) => Host
+        public static IHostBuilder CreateHostBuilder(string[] args) => Host
             .CreateDefaultBuilder(args)
 
             // Options
             .ConfigureServices((hostContext, services) =>
             {
+                services.AddOptions<ServiceOptions>().Configure(_ => { });
                 services.Configure<MineLibOptions>(hostContext.Configuration.GetSection("MineLib"));
+                var provider = services.BuildServiceProvider();
                 var mineLib = services.BuildServiceProvider().GetRequiredService<IOptions<MineLibOptions>>();
-                services.AddSingleton<ServerInfo>(new ServerInfo
+                services.AddSingleton(new ServerInfo
                 {
                     Name = mineLib.Value.Name,
                     Description = mineLib.Value.Description,
@@ -96,13 +155,23 @@ namespace MineLib.Server.Proxy
             {
                 services.AddSingleton<IAsyncNetworkBus>(new AsyncNATSBus());
                 services.AddSingleton<INetworkBus>(sp => sp.GetRequiredService<IAsyncNetworkBus>());
+                services.AddSingleton<SubscriptionStorage>();
 
                 var sp = services.BuildServiceProvider();
                 var networkBus = sp.GetRequiredService<IAsyncNetworkBus>();
+                var serviceOptions = sp.GetRequiredService<IOptions<ServiceOptions>>().Value;
+                var subscriptionStorage = sp.GetRequiredService<SubscriptionStorage>();
 
-                Events.Add(networkBus.RegisterHandler(new ServiceDiscoveryHandler(ProgramGuid, "Proxy")));
-                Events.Add(networkBus.RegisterHandler(new MetricsPrometheusHandler(sp.GetRequiredService<IMetricsRoot>()), ProgramGuid));
-                Events.Add(networkBus.RegisterHandler(new HealthHandler(sp.GetRequiredService<IHealthRoot>()), ProgramGuid));
+                var lifeTime = sp.GetRequiredService<IHostApplicationLifetime>();
+                lifeTime.ApplicationStopping.Register(() => subscriptionStorage.Dispose());
+
+                subscriptionStorage.RegisterHandler(new ServiceDiscoveryHandler(serviceOptions.ProgramGuid, "Proxy"));
+                subscriptionStorage.RegisterHandler(new MetricsPrometheusHandler(sp.GetRequiredService<IMetricsRoot>()), serviceOptions.ProgramGuid);
+                subscriptionStorage.RegisterHandler(new HealthHandler(sp.GetRequiredService<IHealthRoot>()), serviceOptions.ProgramGuid);
+
+                //Events.Add(networkBus.RegisterHandler(new ServiceDiscoveryHandler(ProgramGuid, "Proxy")));
+                //Events.Add(networkBus.RegisterHandler(new MetricsPrometheusHandler(sp.GetRequiredService<IMetricsRoot>()), ProgramGuid));
+                //Events.Add(networkBus.RegisterHandler(new HealthHandler(sp.GetRequiredService<IHealthRoot>()), ProgramGuid));
             })
 
             // Netty Listener
@@ -112,16 +181,5 @@ namespace MineLib.Server.Proxy
             })
             .UseSerilog()
             .UseConsoleLifetime();
-
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                Events.Dispose();
-            }
-
-            base.Dispose(disposing);
-        }
     }
 }

@@ -2,9 +2,9 @@
 using Aragas.Network.IO;
 using Aragas.Network.Packets;
 
-using MineLib.Server.Proxy.Packets.Netty;
+using MineLib.Server.Proxy.Protocol.Netty.Packets;
 
-namespace MineLib.Server.Proxy.Protocol.Factory.Netty
+namespace MineLib.Server.Proxy.Protocol.Netty.Factory
 {
     internal sealed class HandshakeStateFactory : DefaultPacketFactory<HandshakeStatePacket, VarInt, ProtobufSerializer, ProtobufDeserializer> { }
 }

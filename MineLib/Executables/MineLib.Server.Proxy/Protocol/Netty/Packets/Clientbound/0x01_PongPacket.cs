@@ -3,10 +3,10 @@ using Aragas.Network.IO;
 
 using System;
 
-namespace MineLib.Server.Proxy.Packets.Netty.Serverbound
+namespace MineLib.Server.Proxy.Protocol.Netty.Packets.ClientBound
 {
     [Packet(0x01)]
-    public sealed class PingPacket : StatusStatePacket
+    internal sealed class PongPacket : ProxyNettyPacket
     {
 		public Int64 Time;
 
@@ -17,7 +17,7 @@ namespace MineLib.Server.Proxy.Packets.Netty.Serverbound
 
         public override void Serialize(ProtobufSerializer serializer)
         {
-			serializer.Write(Time);
+            serializer.Write(Time);
         }
     }
 }

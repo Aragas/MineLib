@@ -9,9 +9,9 @@ using Microsoft.Extensions.Localization;
 
 using MineLib.Server.Core.NetworkBus.Messages;
 using MineLib.Server.Proxy.Data;
-using MineLib.Server.Proxy.Packets.Netty;
-using MineLib.Server.Proxy.Packets.Netty.Clientbound;
-using MineLib.Server.Proxy.Packets.Netty.Serverbound;
+using MineLib.Server.Proxy.Protocol.Netty.Packets;
+using MineLib.Server.Proxy.Protocol.Netty.Packets.ClientBound;
+using MineLib.Server.Proxy.Protocol.Netty.Packets.Serverbound;
 
 using System;
 using System.IO;
@@ -23,7 +23,8 @@ using System.Threading.Tasks;
 
 namespace MineLib.Server.Proxy.Protocol.Netty
 {
-    internal sealed class PlayerNettyConnection : DefaultConnectionHandler<ProxyNettyTransmission, ProxyNettyPacket, VarInt, ProtobufSerializer, ProtobufDeserializer>
+    internal sealed class PlayerNettyConnection :
+        DefaultConnectionHandler<ProxyNettyTransmission, ProxyNettyPacket, VarInt, ProtobufSerializer, ProtobufDeserializer>
     {
         private static string GetFavicon()
         {

@@ -1,4 +1,4 @@
-﻿namespace MineLib.Server.Proxy.Protocol.Data
+﻿namespace MineLib.Server.Proxy.Protocol.Netty.Data
 {
     internal enum State : byte
     {

@@ -3,7 +3,7 @@ using Aragas.Network.IO;
 
 using System;
 
-namespace MineLib.Server.Proxy.Packets.Netty.Clientbound
+namespace MineLib.Server.Proxy.Protocol.Netty.Packets.ClientBound
 {
     [Packet(0x00)]
     internal sealed class Disconnect2Packet : ProxyNettyPacket

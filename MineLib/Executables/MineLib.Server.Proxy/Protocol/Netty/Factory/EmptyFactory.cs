@@ -2,11 +2,11 @@
 using Aragas.Network.IO;
 using Aragas.Network.Packets;
 
-using MineLib.Server.Proxy.Packets.Netty;
+using MineLib.Server.Proxy.Protocol.Netty.Packets;
 
 using System;
 
-namespace MineLib.Server.Proxy.Protocol.Factory
+namespace MineLib.Server.Proxy.Protocol.Netty.Factory
 {
     internal sealed class EmptyFactory : BasePacketFactory<ProxyNettyPacket, VarInt, ProtobufSerializer, ProtobufDeserializer>
     {

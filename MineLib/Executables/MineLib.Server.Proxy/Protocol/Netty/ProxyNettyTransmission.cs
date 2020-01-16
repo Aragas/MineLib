@@ -1,9 +1,9 @@
 ﻿using Aragas.Network.Data;
 using Aragas.Network.IO;
 
-using MineLib.Server.Proxy.Packets.Netty;
-using MineLib.Server.Proxy.Packets.Netty.Serverbound;
-using MineLib.Server.Proxy.Protocol.Factory.Netty;
+using MineLib.Server.Proxy.Protocol.Netty.Factory;
+using MineLib.Server.Proxy.Protocol.Netty.Packets;
+using MineLib.Server.Proxy.Protocol.Netty.Packets.Serverbound;
 
 using System.Collections.Concurrent;
 using System.Net.Sockets;

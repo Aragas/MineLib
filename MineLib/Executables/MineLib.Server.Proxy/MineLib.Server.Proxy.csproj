@@ -37,6 +37,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Protocol\Classic\" />
+    <Folder Include="Protocol\RakNet\" />
     <None Update="appsettings.Development.json">
       <DependentUpon>appsettings.json</DependentUpon>
     </None>
@@ -52,8 +54,6 @@
     <EmbeddedResource Include="logo-1.png">
       <DependentUpon>logo-0.png</DependentUpon>
     </EmbeddedResource>
-    
-    <Folder Include="Protocol\Legacy\" />
   </ItemGroup>
 
 </Project>

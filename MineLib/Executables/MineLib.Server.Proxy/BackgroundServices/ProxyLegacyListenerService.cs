@@ -14,18 +14,18 @@ using System;
 
 namespace MineLib.Server.Proxy.BackgroundServices
 {
-    internal sealed class ProxyNettyListenerService :
+    internal sealed class ProxyLegacyListenerService :
         ListenerService<PlayerNettyConnection, ProxyNettyTransmission, ProxyNettyPacket, VarInt, ProtobufSerializer, ProtobufDeserializer>
     {
         public override int Port { get; } = 25565;
         private IMetrics Metrics { get; }
         private CounterOptions PlayersConnectedCounter { get; } = new CounterOptions()
         {
-            Name = "Netty Players Connected",
+            Name = "Legacy Players Connected",
             MeasurementUnit = Unit.Connections
         };
 
-        public ProxyNettyListenerService(IMetrics metrics, IServiceProvider serviceProvider, ILogger<ProxyNettyListenerService> logger) : base(serviceProvider, logger)
+        public ProxyLegacyListenerService(IMetrics metrics, IServiceProvider serviceProvider, ILogger<ProxyNettyListenerService> logger) : base(serviceProvider, logger)
         {
             Metrics = metrics;
             Metrics.Measure.Counter.Increment(PlayersConnectedCounter);

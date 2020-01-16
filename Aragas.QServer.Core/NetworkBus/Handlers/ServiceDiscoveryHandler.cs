@@ -1,4 +1,7 @@
-﻿using Aragas.QServer.Core.NetworkBus.Messages;
+﻿using Aragas.QServer.Core.Data;
+using Aragas.QServer.Core.NetworkBus.Messages;
+
+using Microsoft.Extensions.Options;
 
 using System;
 using System.Threading.Tasks;
@@ -8,14 +11,14 @@ namespace Aragas.QServer.Core.NetworkBus.Handlers
     public class ServiceDiscoveryHandler : IMessageHandler<ServicesPingMessage, ServicesPongMessage>
     {
         private Guid ServiceId { get; }
-        private string ServiceType { get; }
+        private string ServiceName { get; }
 
-        public ServiceDiscoveryHandler(Guid serviceId, string serviceType)
+        public ServiceDiscoveryHandler(IOptions<ServiceOptions> service)
         {
-            ServiceId = serviceId;
-            ServiceType = serviceType;
+            ServiceId = service.Value.Uid;
+            ServiceName = service.Value.Name;
         }
 
-        public Task<ServicesPongMessage> HandleAsync(ServicesPingMessage message) => Task.FromResult(new ServicesPongMessage() { ServiceId = ServiceId, ServiceType = ServiceType });
+        public Task<ServicesPongMessage> HandleAsync(ServicesPingMessage message) => Task.FromResult(new ServicesPongMessage() { ServiceId = ServiceId, ServiceType = ServiceName });
     }
 }

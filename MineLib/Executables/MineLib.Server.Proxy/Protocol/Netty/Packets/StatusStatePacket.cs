@@ -1,4 +1,4 @@
-﻿namespace MineLib.Server.Proxy.Packets.Netty
+﻿namespace MineLib.Server.Proxy.Protocol.Netty.Packets
 {
     public abstract class StatusStatePacket : ProxyNettyPacket { }
 }

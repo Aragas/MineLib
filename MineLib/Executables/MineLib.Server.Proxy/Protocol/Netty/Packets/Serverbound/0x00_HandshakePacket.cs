@@ -4,7 +4,7 @@ using Aragas.Network.IO;
 
 using System;
 
-namespace MineLib.Server.Proxy.Packets.Netty.Serverbound
+namespace MineLib.Server.Proxy.Protocol.Netty.Packets.Serverbound
 {
     [Packet(0x00)]
     public sealed class HandshakePacket : HandshakeStatePacket

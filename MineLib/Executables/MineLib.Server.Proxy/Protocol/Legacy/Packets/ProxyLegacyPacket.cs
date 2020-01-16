@@ -2,7 +2,7 @@
 using Aragas.Network.IO;
 using Aragas.Network.Packets;
 
-namespace MineLib.Server.Proxy.Packets.Legacy
+namespace MineLib.Server.Proxy.Protocol.Legacy.Packets
 {
     internal abstract class ProxyLegacyPacket : PacketWithAttribute<VarInt, ProtobufSerializer, ProtobufDeserializer> { }
 }

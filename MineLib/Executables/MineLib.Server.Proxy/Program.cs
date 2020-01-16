@@ -1,8 +1,5 @@
-﻿using App.Metrics;
-using App.Metrics.Health;
-
-using Aragas.QServer.Core;
-using Aragas.QServer.Core.Extensions;
+﻿using Aragas.QServer.Core;
+using Aragas.QServer.Core.Data;
 using Aragas.QServer.Core.NetworkBus;
 using Aragas.QServer.Core.NetworkBus.Handlers;
 
@@ -17,71 +14,11 @@ using MineLib.Server.Proxy.BackgroundServices;
 using MineLib.Server.Proxy.Data;
 
 using Serilog;
-using System;
-using System.Reactive.Disposables;
+
 using System.Threading.Tasks;
 
 namespace MineLib.Server.Proxy
 {
-    public class ServiceOptions
-    {
-        public Guid ProgramGuid { get; } = Guid.NewGuid();
-    }
-    public class SubscriptionStorage : IDisposable
-    {
-        protected CompositeDisposable Events { get; } = new CompositeDisposable();
-        protected IAsyncNetworkBus NetworkBus { get; }
-
-        public SubscriptionStorage(IAsyncNetworkBus networkBus)
-        {
-            NetworkBus = networkBus;
-        }
-
-        public void RegisterHandler<TMessageRequest, TMessageResponse>(IMessageHandler<TMessageRequest, TMessageResponse> handler, Guid? referenceId = null)
-            where TMessageRequest : notnull, IMessage, new()
-            where TMessageResponse : notnull, IMessage, new()
-        {
-            Events.Add(NetworkBus.RegisterHandler(handler, referenceId));
-        }
-        public void RegisterHandler<TMessageRequest>(IMessageHandler<TMessageRequest> handler, Guid? referenceId = null)
-            where TMessageRequest : notnull, IMessage, new()
-        {
-            Events.Add(NetworkBus.RegisterHandler(handler, referenceId));
-        }
-
-
-        private bool disposedValue = false; // To detect redundant calls
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: dispose managed state (managed objects).
-                }
-
-                disposedValue = true;
-            }
-        }
-
-        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-        // ~BaseHostProgram()
-        // {
-        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-        //   Dispose(false);
-        // }
-
-        // This code added to correctly implement the disposable pattern.
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
-            // TODO: uncomment the following line if the finalizer is overridden above.
-            // GC.SuppressFinalize(this);
-        }
-    }
-
     /// <summary>
     /// Handles connection to Player
     /// Proxy the Player connection to MineLib.Server.PlayerHandler
@@ -119,9 +56,9 @@ namespace MineLib.Server.Proxy
             // Options
             .ConfigureServices((hostContext, services) =>
             {
-                services.AddOptions<ServiceOptions>().Configure(_ => { });
+                services.Configure<ServiceOptions>(o => o.Name = "Proxy");
                 services.Configure<MineLibOptions>(hostContext.Configuration.GetSection("MineLib"));
-                var provider = services.BuildServiceProvider();
+
                 var mineLib = services.BuildServiceProvider().GetRequiredService<IOptions<MineLibOptions>>();
                 services.AddSingleton(new ServerInfo
                 {
@@ -162,16 +99,12 @@ namespace MineLib.Server.Proxy
                 var serviceOptions = sp.GetRequiredService<IOptions<ServiceOptions>>().Value;
                 var subscriptionStorage = sp.GetRequiredService<SubscriptionStorage>();
 
+                subscriptionStorage.Handle<ServiceDiscoveryHandler>();
+                subscriptionStorage.Handle<MetricsPrometheusHandler>(referenceId: serviceOptions.Uid);
+                subscriptionStorage.Handle<HealthHandler>(referenceId: serviceOptions.Uid);
+
                 var lifeTime = sp.GetRequiredService<IHostApplicationLifetime>();
                 lifeTime.ApplicationStopping.Register(() => subscriptionStorage.Dispose());
-
-                subscriptionStorage.RegisterHandler(new ServiceDiscoveryHandler(serviceOptions.ProgramGuid, "Proxy"));
-                subscriptionStorage.RegisterHandler(new MetricsPrometheusHandler(sp.GetRequiredService<IMetricsRoot>()), serviceOptions.ProgramGuid);
-                subscriptionStorage.RegisterHandler(new HealthHandler(sp.GetRequiredService<IHealthRoot>()), serviceOptions.ProgramGuid);
-
-                //Events.Add(networkBus.RegisterHandler(new ServiceDiscoveryHandler(ProgramGuid, "Proxy")));
-                //Events.Add(networkBus.RegisterHandler(new MetricsPrometheusHandler(sp.GetRequiredService<IMetricsRoot>()), ProgramGuid));
-                //Events.Add(networkBus.RegisterHandler(new HealthHandler(sp.GetRequiredService<IHealthRoot>()), ProgramGuid));
             })
 
             // Netty Listener
@@ -179,7 +112,9 @@ namespace MineLib.Server.Proxy
             {
                 services.AddHostedService<ProxyNettyListenerService>();
             })
+
             .UseSerilog()
+
             .UseConsoleLifetime();
     }
 }

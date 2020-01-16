@@ -1,10 +1,10 @@
 using Aragas.Network.Attributes;
 using Aragas.Network.IO;
 
-namespace MineLib.Server.Proxy.Packets.Netty.Serverbound
+namespace MineLib.Server.Proxy.Protocol.Legacy.Packets
 {
     [Packet(0xFE)]
-    public sealed class ServerListPingPacket : ProxyNettyPacket // To support legacy ping
+    internal sealed class ServerListPingPacket : ProxyLegacyPacket
     {
         public byte Magic { get; set; }
 

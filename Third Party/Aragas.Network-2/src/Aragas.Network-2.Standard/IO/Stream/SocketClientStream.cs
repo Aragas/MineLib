@@ -6,9 +6,9 @@ namespace Aragas.Network.IO
 { 
     public class SocketClientStream : Stream
     {
-        public override bool CanRead { get; }
+        public override bool CanRead { get; } = true;
         public override bool CanSeek { get; }
-        public override bool CanWrite { get; }
+        public override bool CanWrite { get; } = true;
         public override long Length { get; }
         public override long Position { get; set; }
 
@@ -23,8 +23,17 @@ namespace Aragas.Network.IO
         }
         public override int Read(byte[] buffer, int offset, int count)
         {
-            try { return _client.Receive(buffer, offset, count, SocketFlags.None); }
-            catch (Exception e) when (e is SocketException) { return -1; }
+            try 
+            {
+                if (_client.Available >= count)
+                    return _client.Receive(buffer, offset, count, SocketFlags.None);
+                else
+                    return 0;
+            }
+            catch (Exception e) when (e is SocketException) 
+            {
+                return -1;
+            }
         }
 
         public override void Flush() => throw new NotSupportedException();

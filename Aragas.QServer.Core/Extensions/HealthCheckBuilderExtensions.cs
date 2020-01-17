@@ -1,4 +1,5 @@
-﻿using App.Metrics.Health;
+﻿/*
+using App.Metrics.Health;
 
 using NATS.Client;
 
@@ -224,3 +225,4 @@ namespace Aragas.QServer.Core.Extensions
         }
     }
 }
+*/

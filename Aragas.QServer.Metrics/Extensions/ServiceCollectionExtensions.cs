@@ -9,8 +9,6 @@ using Aragas.QServer.Metrics;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-using NATS.Client;
-
 using System;
 
 namespace Microsoft.Extensions.DependencyInjection

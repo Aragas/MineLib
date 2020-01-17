@@ -2,7 +2,7 @@
 using App.Metrics.Formatters;
 using App.Metrics.Formatters.Prometheus;
 using App.Metrics.Gauge;
-
+using App.Metrics.Health;
 using Aragas.QServer.Core.Extensions;
 using Aragas.QServer.Core.NetworkBus.Messages;
 

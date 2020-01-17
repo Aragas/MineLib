@@ -1,6 +1,9 @@
 ﻿using Aragas.Network.IO;
 using Aragas.Network.Packets;
 
+using Microsoft.Extensions.DependencyInjection;
+
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Sockets;
@@ -9,7 +12,7 @@ using System.Threading;
 namespace Aragas.QServer.Core
 {
     public abstract class DefaultConnectionHandler<TPacketTransmission, TPacket, TIDType, TSerializer, TDeserializer> : BaseThreadSafeConnectionHandler
-        where TPacketTransmission : SocketPacketTransmission<TPacket, TIDType, TSerializer, TDeserializer>, new()
+        where TPacketTransmission : SocketPacketTransmission<TPacket, TIDType, TSerializer, TDeserializer>
         where TPacket : Packet<TIDType, TSerializer, TDeserializer>
         where TSerializer : StreamSerializer, new()
         where TDeserializer : StreamDeserializer, new()
@@ -27,7 +30,16 @@ namespace Aragas.QServer.Core
 
         protected DefaultConnectionHandler() { } // Stream is set in generic new()
         protected DefaultConnectionHandler(Socket socket, BasePacketFactory<TPacket, TIDType, TSerializer, TDeserializer>? factory = null)
-            => Stream = new TPacketTransmission() { Socket = socket, Factory = factory };
+        {
+            Stream = (TPacketTransmission )Activator.CreateInstance(typeof(TPacketTransmission), new object[] { socket, factory });
+        }
+        protected DefaultConnectionHandler(IServiceProvider serviceProvider, Socket socket, BasePacketFactory<TPacket, TIDType, TSerializer, TDeserializer>? factory = null)
+        {
+            if(factory == null)
+                Stream = (TPacketTransmission) ActivatorUtilities.CreateInstance(serviceProvider, typeof(TPacketTransmission), new object[] { socket });
+            else
+                Stream = (TPacketTransmission) ActivatorUtilities.CreateInstance(serviceProvider, typeof(TPacketTransmission), new object[] { socket, factory });
+        }
 
         public sealed override void Update()
         {

@@ -16,7 +16,7 @@ namespace Aragas.QServer.Core.BackgroundServices
 {
     public abstract class ListenerService<TConnection, TPacketTransmission, TPacket, TIDType, TSerializer, TDeserializer> : BackgroundService
         where TConnection : DefaultConnectionHandler<TPacketTransmission, TPacket, TIDType, TSerializer, TDeserializer>
-        where TPacketTransmission : SocketPacketTransmission<TPacket, TIDType, TSerializer, TDeserializer>, new()
+        where TPacketTransmission : SocketPacketTransmission<TPacket, TIDType, TSerializer, TDeserializer>
         where TPacket : Packet<TIDType, TSerializer, TDeserializer>
         where TSerializer : StreamSerializer, new()
         where TDeserializer : StreamDeserializer, new()
@@ -45,6 +45,7 @@ namespace Aragas.QServer.Core.BackgroundServices
                 Listener = new TcpListener(new IPEndPoint(IPAddress.IPv6Any, Port));
                 Listener.Server.DualMode = true;
             }
+            Listener.Server.NoDelay = true;
             Listener.Server.ReceiveTimeout = 5000;
             Listener.Server.SendTimeout = 5000;
         }
@@ -58,7 +59,9 @@ namespace Aragas.QServer.Core.BackgroundServices
             {
                 try
                 {
-                    var client = (TConnection) ClientFactory(ServiceProvider, new[] { await Listener.AcceptSocketAsync() });
+                    var socket = await Listener.AcceptSocketAsync();
+                    socket.NoDelay = true;
+                    var client = (TConnection) ClientFactory(ServiceProvider, new[] { socket });
                     OnClientConnected(client);
                 }
                 catch (Exception ex) when (ex is SocketException)

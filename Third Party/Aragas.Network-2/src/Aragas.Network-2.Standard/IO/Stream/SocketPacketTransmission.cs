@@ -22,6 +22,7 @@ namespace Aragas.Network.IO
                     throw new InvalidOperationException("You can't set Socket once it's initialized");
                 _socket = value;
                 Stream = new SocketClientStream(Socket);
+                //Stream = new NetworkStream(Socket);
             }
         }
 
@@ -47,7 +48,9 @@ namespace Aragas.Network.IO
         protected virtual Span<byte> Receive(long length)
         {
             Span<byte> buffer = new byte[length];
-            Stream.Read(buffer);
+            int received = 0;
+            while (received < length)
+                received += Stream.Read(buffer);
             return buffer;
         }
 

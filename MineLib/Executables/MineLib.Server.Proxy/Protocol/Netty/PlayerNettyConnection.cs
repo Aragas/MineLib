@@ -5,7 +5,9 @@ using Aragas.QServer.Core.Extensions;
 using Aragas.QServer.Core.NetworkBus;
 using Aragas.QServer.Core.NetworkBus.Messages;
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Options;
 
 using MineLib.Server.Core.NetworkBus.Messages;
 using MineLib.Server.Proxy.Data;
@@ -48,16 +50,16 @@ namespace MineLib.Server.Proxy.Protocol.Netty
     }},
     ""players"":
     {{
-        ""max"": {ServerInfo.MaxConnections},
+        ""max"": {MineLibOptions.MaxConnections},
         ""online"": {ServerInfo.CurrentConnections}
     }},
     ""name"":
     {{
-        ""text"": ""{ServerInfo.Name}""
+        ""text"": ""{MineLibOptions.Name}""
     }},
     ""description"":
     {{
-        ""text"": ""{ServerInfo.Description}""
+        ""text"": ""{MineLibOptions.Description}""
     }},
     ""favicon"": ""{GetFavicon()}"",
     ""modinfo"":
@@ -74,14 +76,16 @@ namespace MineLib.Server.Proxy.Protocol.Netty
 
         private CompositeDisposable Events { get; } = new CompositeDisposable();
         private INetworkBus NetworkBus { get; }
+        private MineLibOptions MineLibOptions { get; }
         private ServerInfo ServerInfo { get; }
         private IStringLocalizer Localizer { get; }
 
-        public PlayerNettyConnection(ServerInfo serverInfo, Socket socket, INetworkBus networkBus, IStringLocalizer<PlayerNettyConnection> localizer) : base(socket)
+        public PlayerNettyConnection(IServiceProvider serviceProvider, Socket socket) : base(serviceProvider, socket)
         {
-            ServerInfo = serverInfo;
-            NetworkBus = networkBus;
-            Localizer = localizer;
+            MineLibOptions = serviceProvider.GetRequiredService<IOptions<MineLibOptions>>().Value;
+            ServerInfo = serviceProvider.GetRequiredService<ServerInfo>();
+            NetworkBus = serviceProvider.GetRequiredService<INetworkBus>();
+            Localizer = serviceProvider.GetRequiredService<IStringLocalizer<PlayerNettyConnection>>();
         }
 
         protected override void HandlePacket(ProxyNettyPacket packet)
@@ -94,6 +98,22 @@ namespace MineLib.Server.Proxy.Protocol.Netty
 
                 case PingPacket pingPacket:
                     SendPacket(new PongPacket() { Time = pingPacket.Time });
+                    Task.Run(Disconnect);
+                    break;
+
+                case ServerListPingPacket serverListPingPacket:
+                    var serializer = new StandardSerializer();
+                    serializer.Write<byte>(0xFF);
+                    // if serverListPingPacket.Payload == 0x00 : ??-1.3.2 (??-39)
+                    // if serverListPingPacket.Payload == 0x01 : 1.4-1.5.2 (47-61)
+                    var protocolVersion = serverListPingPacket.ProtocolVersion == 0
+                        ? MineLibOptions.NettyLegacyPingProtocol // Seems that we cannot support every client in 1.4-1.5.2 range. Only a specific one.
+                        : serverListPingPacket.ProtocolVersion;
+                    var response = serverListPingPacket.Payload == 0x01
+                        ? $"§1\0{protocolVersion}\0Any Version\0{MineLibOptions.Description}\0{ServerInfo.CurrentConnections}\0{MineLibOptions.MaxConnections}"
+                        : $"{MineLibOptions.Description}§{ServerInfo.CurrentConnections}§{MineLibOptions.MaxConnections}";
+                    serializer.Write<UTF16BEString>(response);
+                    Stream.Socket.Send(serializer.GetData().ToArray(), SocketFlags.None);
                     Task.Run(Disconnect);
                     break;
             }

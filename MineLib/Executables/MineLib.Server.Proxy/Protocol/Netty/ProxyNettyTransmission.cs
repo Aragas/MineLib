@@ -1,6 +1,9 @@
 ﻿using Aragas.Network.Data;
 using Aragas.Network.IO;
 
+using Microsoft.Extensions.Options;
+
+using MineLib.Server.Proxy.Data;
 using MineLib.Server.Proxy.Protocol.Netty.Factory;
 using MineLib.Server.Proxy.Protocol.Netty.Packets;
 using MineLib.Server.Proxy.Protocol.Netty.Packets.Serverbound;
@@ -17,17 +20,18 @@ namespace MineLib.Server.Proxy.Protocol.Netty
     {
         public ConcurrentQueue<byte[]> DataToSend { get; } = new ConcurrentQueue<byte[]>();
 
+        public MineLibOptions MineLibOptions { get; set; }
         public VarInt ProtocolVersion { get; set; }
         public Data.State State { get; set; } = Data.State.Handshake;
 
         private HandshakeStateFactory HandshakeFactory { get; } = new HandshakeStateFactory();
         private StatusStateFactory StatusFactory { get; } = new StatusStateFactory();
 
-        /// <summary>
-        /// For internal use only.
-        /// </summary>
-        public ProxyNettyTransmission() : base() { }
-        //public ProxyNettyTransmission(Socket socket) : base(socket, null, new EmptyFactory()) { }
+        public ProxyNettyTransmission(Socket socket, IOptions<MineLibOptions> mineLibOptions) : base()
+        {
+            Socket = socket;
+            MineLibOptions = mineLibOptions.Value;
+        }
 
         public override ProxyNettyPacket? ReadPacket()
         {
@@ -41,8 +45,12 @@ namespace MineLib.Server.Proxy.Protocol.Netty
                     return null;
                 }
 
-                using var deserializer = new ProtobufDeserializer(Stream);
-                var id = deserializer.Read<VarInt>();
+                using var deserializer = MineLibOptions.NettyLegacyPingEnable
+                    ? new LegacyPingSupportProtobufDeserializer(Stream)
+                    : new ProtobufDeserializer(Stream);
+                var id = MineLibOptions.NettyLegacyPingEnable
+                    ? deserializer.Read<byte>()
+                    : deserializer.Read<VarInt>();
                 ProxyNettyPacket? packet = State switch
                 {
                     Data.State.Handshake => HandshakeFactory.Create(id),

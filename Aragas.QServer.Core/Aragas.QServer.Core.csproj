@@ -32,6 +32,7 @@
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\Third Party\Aragas.Network-2\src\Aragas.Network-2.Standard\Aragas.Network-2.csproj" />
     <ProjectReference Include="$(SolutionDir)\Third Party\Aragas.TupleEventSystem\src\Aragas.TupleEventSystem\Aragas.TupleEventSystem.csproj" />
+    <ProjectReference Include="..\Aragas.QServer.Metrics\Aragas.QServer.Metrics.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
-﻿using App.Metrics;
+﻿/*
+using App.Metrics;
 using App.Metrics.Infrastructure;
 
 using System;
@@ -42,3 +43,4 @@ namespace Aragas.QServer.Core.Extensions
         }
     }
 }
+*/

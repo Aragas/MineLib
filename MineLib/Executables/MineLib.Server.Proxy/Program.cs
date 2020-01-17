@@ -51,6 +51,8 @@ namespace MineLib.Server.Proxy
         {
             ServicePointManager.UseNagleAlgorithm = false;
             MineLib.Server.Proxy.Extensions.PacketExtensions.Init();
+            MineLib.Server.Core.Extensions.PacketExtensions.Init();
+            MineLib.Core.Extensions.PacketExtensions.Init();
             await Main<Program>(CreateHostBuilder, args);
         }
 
@@ -83,9 +85,9 @@ namespace MineLib.Server.Proxy
                 var serviceOptions = sp.GetRequiredService<IOptions<ServiceOptions>>().Value;
                 var subscriptionStorage = sp.GetRequiredService<SubscriptionStorage>();
 
-                subscriptionStorage.Handle<ServiceDiscoveryHandler>();
-                subscriptionStorage.Handle<MetricsPrometheusHandler>(referenceId: serviceOptions.Uid);
-                subscriptionStorage.Handle<HealthHandler>(referenceId: serviceOptions.Uid);
+                subscriptionStorage.HandleServiceDiscoveryHandler();
+                subscriptionStorage.HandleMetricsPrometheusHandler(serviceOptions.Uid);
+                subscriptionStorage.HandleHealthHandler(serviceOptions.Uid);
 
                 var lifeTime = sp.GetRequiredService<IHostApplicationLifetime>();
                 lifeTime.ApplicationStopping.Register(() => subscriptionStorage.Dispose());

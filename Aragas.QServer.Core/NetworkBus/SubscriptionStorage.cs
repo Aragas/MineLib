@@ -19,29 +19,45 @@ namespace Aragas.QServer.Core.NetworkBus
             NetworkBus = networkBus;
         }
 
-        public void Handle<TMessageHandler>(object[]? @params = null, Guid? referenceId = null)
-            where TMessageHandler : notnull, IMessageHandler
-        {
-            if (@params == null)
-                @params = Array.Empty<object>();
-
-            dynamic handler = ActivatorUtilities.CreateInstance<TMessageHandler>(ServiceProvider, @params);
-            RegisterHandler(handler, referenceId);
-        }
-        public void Receive<TMessageReceiver>(object[]? @params = null, Guid? referenceId = null)
-            where TMessageReceiver : notnull, IMessageReceiver
-        {
-            if (@params == null)
-                @params = Array.Empty<object>();
-
-            dynamic handler = ActivatorUtilities.CreateInstance<TMessageReceiver>(ServiceProvider, @params);
-            RegisterReceiver(handler, referenceId);
-        }
-        public void RegisterReceiver<TMessageRequest>(IMessageReceiver<TMessageRequest> receiver, Guid? referenceId = null)
+        public void Handle<TMessageHandler, TMessageRequest>(Guid? referenceId = null, TMessageHandler? messageHandler = null)
+            where TMessageHandler : class, IMessageHandler<TMessageRequest>
             where TMessageRequest : IMessage, new()
         {
-            Events.Add(NetworkBus.RegisterReceiver(receiver, referenceId));
+            var handler = messageHandler ?? ActivatorUtilities.GetServiceOrCreateInstance<TMessageHandler>(ServiceProvider);
+            RegisterHandler(handler, referenceId);
         }
+        public void Handle<TMessageHandler, TMessageRequest, TMessageResponse>(Guid? referenceId = null, TMessageHandler? messageHandler = null)
+            where TMessageHandler : class, IMessageHandler<TMessageRequest, TMessageResponse>
+            where TMessageRequest : IMessage, new()
+            where TMessageResponse : IMessage, new()
+        {
+            var handler = messageHandler ?? ActivatorUtilities.GetServiceOrCreateInstance<TMessageHandler>(ServiceProvider);
+            RegisterHandler(handler, referenceId);
+        }
+        public void EnumerableHandle<TEnumerableMessageHandler, TMessageRequest, TMessageResponse>(Guid? referenceId = null, TEnumerableMessageHandler? messageHandler = null)
+            where TEnumerableMessageHandler : class, IEnumerableMessageHandler<TMessageRequest, TMessageResponse>
+            where TMessageRequest : IMessage, new()
+            where TMessageResponse : IEnumerableMessage, new()
+        {
+            var handler = messageHandler ?? ActivatorUtilities.GetServiceOrCreateInstance<TEnumerableMessageHandler>(ServiceProvider);
+            RegisterEnumerableHandler(handler, referenceId);
+        }
+        public void ExclusiveHandle<TExclusiveMessageHandler, TMessageRequest, TMessageResponse>(Guid referenceId, TExclusiveMessageHandler? messageHandler = null)
+            where TExclusiveMessageHandler : class, IExclusiveMessageHandler<TMessageRequest, TMessageResponse>
+            where TMessageRequest : IMessage, new()
+            where TMessageResponse : IMessage, new()
+        {
+            var handler = messageHandler ?? ActivatorUtilities.GetServiceOrCreateInstance<TExclusiveMessageHandler>(ServiceProvider);
+            RegisterExclusiveHandler(handler, referenceId);
+        }
+        public void Receive<TMessageReceiver, TMessageRequest>(Guid? referenceId = null, TMessageReceiver? messageHandler = null)
+            where TMessageReceiver : class, IMessageReceiver<TMessageRequest>
+            where TMessageRequest : IMessage, new()
+        {
+            var handler = messageHandler ?? ActivatorUtilities.CreateInstance<TMessageReceiver>(ServiceProvider);
+            RegisterReceiver(handler, referenceId);
+        }
+
         public void RegisterHandler<TMessageRequest, TMessageResponse>(IMessageHandler<TMessageRequest, TMessageResponse> handler, Guid? referenceId = null)
             where TMessageRequest : notnull, IMessage, new()
             where TMessageResponse : notnull, IMessage, new()
@@ -52,6 +68,23 @@ namespace Aragas.QServer.Core.NetworkBus
             where TMessageRequest : IMessage, new()
         {
             Events.Add(NetworkBus.RegisterHandler(handler, referenceId));
+        }
+        public void RegisterEnumerableHandler<TMessageRequest, TMessageResponse>(IEnumerableMessageHandler<TMessageRequest, TMessageResponse> handler, Guid? referenceId = null)
+            where TMessageRequest : notnull, IMessage, new()
+            where TMessageResponse : notnull, IEnumerableMessage, new()
+        {
+            Events.Add(NetworkBus.RegisterEnumerableHandler(handler, referenceId));
+        }
+        public void RegisterExclusiveHandler<TMessageRequest, TMessageResponse>(IExclusiveMessageHandler<TMessageRequest, TMessageResponse> handler, Guid referenceId)
+            where TMessageRequest : notnull, IMessage, new()
+            where TMessageResponse : notnull, IMessage, new()
+        {
+            Events.Add(NetworkBus.RegisterExclusiveHandler(handler, referenceId));
+        }
+        public void RegisterReceiver<TMessageRequest>(IMessageReceiver<TMessageRequest> receiver, Guid? referenceId = null)
+            where TMessageRequest : IMessage, new()
+        {
+            Events.Add(NetworkBus.RegisterReceiver(receiver, referenceId));
         }
 
         private bool disposedValue = false;
@@ -67,7 +100,6 @@ namespace Aragas.QServer.Core.NetworkBus
                 disposedValue = true;
             }
         }
-
         public void Dispose()
         {
             Dispose(true);

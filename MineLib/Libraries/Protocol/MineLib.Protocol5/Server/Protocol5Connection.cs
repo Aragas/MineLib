@@ -22,7 +22,6 @@ using System.Threading.Tasks;
 
 namespace MineLib.Protocol5.Server
 {
-
     public class Protocol5Connection : BaseProtocol5Connection
     {
         static Protocol5Connection()
@@ -107,7 +106,7 @@ namespace MineLib.Protocol5.Server
                                         var deserializer = new CompressedProtobufDeserializer(r.Data);
                                         return deserializer.Read<Chunk>();
                                     });
-                                    //foreach (var chunk in chunks)
+                                    //await foreach (var chunk in chunks)
                                     //    PacketsToSend.Enqueue(chunk.CreatePacket());
                                     var array = await chunks.ToArrayAsync();
                                     var bulk = array.MapChunkBulk();

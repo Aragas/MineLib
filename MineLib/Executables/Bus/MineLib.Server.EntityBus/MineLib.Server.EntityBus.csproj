@@ -10,11 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="App.Metrics" Version="4.0.0-preview1.0.3" />
-    <PackageReference Include="App.Metrics.Health" Version="3.2.0" />
-    <PackageReference Include="App.Metrics.Health.Checks.Network" Version="3.2.0" />
-    <PackageReference Include="App.Metrics.Health.Checks.Process" Version="3.2.0" />
-    <PackageReference Include="App.Metrics.Health.Checks.Sql" Version="3.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
     <PackageReference Include="Npgsql" Version="4.1.2" />
@@ -28,6 +23,12 @@
     <ProjectReference Include="$(SolutionDir)\Third Party\NiclasOlofsson-fNbt\fNbt\NiclasOlofsson-fNbt.csproj" />
     <ProjectReference Include="$(SolutionDir)\MineLib\Libraries\MineLib.Core\MineLib.Core.csproj" />
     <ProjectReference Include="$(SolutionDir)\MineLib\Libraries\MineLib.Server.Core\MineLib.Server.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.Development.json">
+      <DependentUpon>appsettings.json</DependentUpon>
+    </None>
   </ItemGroup>
 
 </Project>

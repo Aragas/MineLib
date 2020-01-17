@@ -136,7 +136,7 @@ namespace Aragas.QServer.Core.NetworkBus
 
             await foreach (var response in observable.ToAsyncEnumerable())
             {
-                yield return response;
+                 yield return response;
 
                 if (response.IsLastMessage)
                     yield break;

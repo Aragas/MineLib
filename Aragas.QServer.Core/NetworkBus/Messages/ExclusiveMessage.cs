@@ -26,6 +26,7 @@ namespace Aragas.QServer.Core.NetworkBus.Messages
         public ReadOnlySpan<byte> GetData() => ReferenceId.ToByteArray();
         public void SetData(in ReadOnlySpan<byte> data) => ReferenceId = new Guid(data);
     }
+
     public class ExclusiveAcceptedRequestMessage<TMessage> : IMessage where TMessage : IMessage, new()
     {
         public string Name => $"services.exclusive.accepted.request-[{Request.Name}]";

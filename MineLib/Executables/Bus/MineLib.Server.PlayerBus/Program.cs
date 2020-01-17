@@ -1,19 +1,11 @@
-﻿using App.Metrics.Health;
-using App.Metrics.Health.Checks.Sql;
+﻿using Aragas.QServer.Core;
+using Aragas.QServer.Core.Data;
+using Aragas.QServer.Core.NetworkBus;
 
-using Aragas.QServer.Core;
-using Aragas.QServer.Core.Extensions;
-using Aragas.QServer.Core.NetworkBus.Messages;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
-using MineLib.Server.Core;
-using MineLib.Server.Core.NetworkBus.Messages;
-
-using Npgsql;
-
-using System;
-using System.Collections.Concurrent;
-using System.Reactive.Disposables;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace MineLib.Server.PlayerBus
@@ -63,95 +55,52 @@ namespace MineLib.Server.PlayerBus
     /// all the classes that will be needed to interact with ModAPIBus
     /// ---
     /// </summary>
-    internal sealed class Program : MineLibProgram
+    public class Program : BaseHostProgram
     {
-        public static async Task Main(string[] args) => await Main<Program>(args).ConfigureAwait(false);
-
-        private ManualResetEvent Waiter { get; } = new ManualResetEvent(false);
-        private CompositeDisposable Events { get; } = new CompositeDisposable();
-        private ConcurrentDictionary<Guid, PlayerHandler.PlayerHandler> PlayerHanlders { get; } = new ConcurrentDictionary<Guid, PlayerHandler.PlayerHandler>();
-
-        public Program() : base(healthConfigure: ConfigureHealth)
+        public static async Task Main(string[] args)
         {
-            Events.Add(BaseSingleton.Instance.SubscribeAndReply<ServicesPingMessage>(_ =>
-                new ServicesPongMessage() { ServiceId = ProgramGuid, ServiceType = "PlayerBus" }));
-
-            Events.Add(BaseSingleton.Instance.SubscribeAndReply<GetExistingPlayerHandlerRequestMessage>(
-                message =>
-                {
-                    if (PlayerHanlders.TryGetValue(message.PlayerId, out var playerHandler) && playerHandler.ProtocolVersion == message.ProtocolVersion)
-                        return new GetExistingPlayerHandlerResponseMessage() { ServiceId = ProgramGuid, State = playerHandler.State!.Value };
-                    else
-                        return new GetExistingPlayerHandlerResponseMessage() { ServiceId = null };
-                }));
-            Events.Add(BaseSingleton.Instance.SubscribeAndReplyToExclusive<GetNewPlayerHandlerRequestMessage, GetNewPlayerHandlerResponseMessage>(
-                message =>
-                {
-                    return true;
-                },
-                message =>
-                {
-                    var stuff = new PlayerHandler.PlayerHandler(message.PlayerId, message.ProtocolVersion);
-                    PlayerHanlders.TryAdd(message.PlayerId, stuff);
-
-                    return new GetNewPlayerHandlerResponseMessage() { ServiceId = ProgramGuid };
-                }, ProgramGuid));
-        }
-        public static IHealthBuilder ConfigureHealth(IHealthBuilder builder) => builder
-            .HealthChecks.AddProcessPhysicalMemoryCheck("Process Working Set Size", 100 * 1024 * 1024)
-            .HealthChecks.AddProcessPrivateMemorySizeCheck("Process Private Memory Size", 100 * 1024 * 1024)
-            .HealthChecks.AddSqlCheck("PosgreSQL Connection", () => new NpgsqlConnection(MineLibSingleton.PostgreSQLConnectionString), TimeSpan.FromMilliseconds(500));
-
-        public override async Task RunAsync()
-        {
-            await base.RunAsync().ConfigureAwait(false);
-
-            Waiter.WaitOne();
+            MineLib.Server.Core.Extensions.PacketExtensions.Init();
+            MineLib.Core.Extensions.PacketExtensions.Init();
+            await Main<Program>(CreateHostBuilder, args);
         }
 
-        public override async Task StopAsync()
-        {
-            await base.StopAsync().ConfigureAwait(false);
-
-            Waiter.Set();
-        }
-
-        /*
-        private void PlayerBus_MessageReceived(object? sender, MBusMessageReceivedEventArgs args)
-        {
-            InternalBus.HandleRequest<GetPlayerDataRequestPacket, GetPlayerDataResponsePacket>(InternalBus.PlayerBus, args, request =>
+        public static IHostBuilder CreateHostBuilder(IHostBuilder hostBuilder) => hostBuilder
+            // Options
+            .ConfigureServices((hostContext, services) =>
             {
-                if (string.IsNullOrEmpty(request.Username))
-                    return new GetPlayerDataResponsePacket() { Player = null };
+                services.Configure<ServiceOptions>(o => o.Name = "PlayerBus");
+            })
 
-                using var db = new LiteDatabase("Players.db");
-                var players = db.GetCollection<Player>("players");
-                if (!(players.FindOne(p => p.Username==  request.Username) is Player player))
-                {
-                    players.Insert(player = new Player
-                    {
-                        Username = request.Username,
-                        Uuid = Guid.NewGuid()
-                    });
-                }
-
-                return new GetPlayerDataResponsePacket() { Player = player };
-            });
-        }
-        */
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
+            // Metrics
+            .ConfigureServices((hostContext, services) =>
             {
-                foreach (var playerHandler in PlayerHanlders)
-                    playerHandler.Value.Dispose();
+                services.AddNpgSqlMetrics("Database", hostContext.Configuration["PostgreSQLConnectionString"]);
+            })
 
-                Waiter.Dispose();
-                Events.Dispose();
-            }
+            // NATS
+            .ConfigureServices(services =>
+            {
+                services.AddSingleton<IAsyncNetworkBus>(new AsyncNATSBus());
+                services.AddSingleton<INetworkBus>(sp => sp.GetRequiredService<IAsyncNetworkBus>());
+                services.AddSingleton<SubscriptionStorage>();
 
-            base.Dispose(disposing);
-        }
+                var sp = services.BuildServiceProvider();
+                var networkBus = sp.GetRequiredService<IAsyncNetworkBus>();
+                var serviceOptions = sp.GetRequiredService<IOptions<ServiceOptions>>().Value;
+                var subscriptionStorage = sp.GetRequiredService<SubscriptionStorage>();
+
+                subscriptionStorage.HandleServiceDiscoveryHandler();
+                subscriptionStorage.HandleMetricsPrometheusHandler(serviceOptions.Uid);
+                subscriptionStorage.HandleHealthHandler(serviceOptions.Uid);
+
+                services.AddSingleton<PlayerHandlerManager>();
+                subscriptionStorage.HandleGetExistingPlayerHandler<PlayerHandlerManager>();
+                subscriptionStorage.HandleGetNewPlayerHandler<PlayerHandlerManager>(serviceOptions.Uid);
+
+                var lifeTime = sp.GetRequiredService<IHostApplicationLifetime>();
+                lifeTime.ApplicationStopping.Register(() => subscriptionStorage.Dispose());
+            })
+
+            .UseConsoleLifetime();
     }
 }

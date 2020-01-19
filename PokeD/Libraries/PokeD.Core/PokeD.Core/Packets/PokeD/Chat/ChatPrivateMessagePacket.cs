@@ -14,7 +14,7 @@ namespace PokeD.Core.Packets.PokeD.Chat
             PlayerID = deserializer.Read(PlayerID);
             Message = deserializer.Read(Message);
         }
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(PlayerID);
             serializer.Write(Message);

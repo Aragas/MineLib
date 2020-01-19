@@ -8,13 +8,13 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Int32 EntityID;
 		public SByte HeadYaw;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			EntityID = deserialiser.Read(EntityID);
-			HeadYaw = deserialiser.Read(HeadYaw);
+			EntityID = deserializer.Read(EntityID);
+			HeadYaw = deserializer.Read(HeadYaw);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(EntityID);
             serializer.Write(HeadYaw);

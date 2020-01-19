@@ -16,7 +16,7 @@ namespace PokeD.Core.Packets.PokeD.Overworld
         {
             Info = deserializer.Read(Info);
         }
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(Info);
         }

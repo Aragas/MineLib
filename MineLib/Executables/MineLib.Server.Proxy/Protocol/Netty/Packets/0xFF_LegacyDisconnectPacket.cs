@@ -11,12 +11,12 @@ namespace MineLib.Server.Proxy.Protocol.Netty.Packets
     {
         public UTF16BEString Response { get; set; }
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-            Response = deserialiser.Read(Response);
+            Response = deserializer.Read(Response);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(Response);
         }

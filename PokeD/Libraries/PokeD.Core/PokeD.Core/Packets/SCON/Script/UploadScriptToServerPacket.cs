@@ -11,7 +11,7 @@ namespace PokeD.Core.Packets.SCON.Script
         {
             ScriptFile = deserializer.Read(ScriptFile);
         }
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(ScriptFile);
         }

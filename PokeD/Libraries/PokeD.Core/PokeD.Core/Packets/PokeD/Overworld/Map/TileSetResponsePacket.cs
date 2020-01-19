@@ -24,7 +24,7 @@ namespace PokeD.Core.Packets.PokeD.Overworld.Map
             TileSets = deserializer.Read(TileSets);
             Images = deserializer.Read(Images);
         }
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(TileSets);
             serializer.Write(Images);

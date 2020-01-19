@@ -14,18 +14,18 @@ namespace MineLib.Protocol575.Packets.Client.Play
         public VarInt ViewDistance;
         public Boolean ReducedDebugInfo;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			EntityID = deserialiser.Read(EntityID);
-			GameMode = deserialiser.Read(GameMode);
-			Dimension = deserialiser.Read(Dimension);
-            MaxPlayers = deserialiser.Read(MaxPlayers);
-            LevelType = deserialiser.Read(LevelType);
-            ViewDistance = deserialiser.Read(ViewDistance);
-            ReducedDebugInfo = deserialiser.Read(ReducedDebugInfo);
+			EntityID = deserializer.Read(EntityID);
+			GameMode = deserializer.Read(GameMode);
+			Dimension = deserializer.Read(Dimension);
+            MaxPlayers = deserializer.Read(MaxPlayers);
+            LevelType = deserializer.Read(LevelType);
+            ViewDistance = deserializer.Read(ViewDistance);
+            ReducedDebugInfo = deserializer.Read(ReducedDebugInfo);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(EntityID);
             serializer.Write(GameMode);

@@ -13,7 +13,7 @@ namespace PokeD.Core.Packets.SCON.Status
         {
             PlayerDatabases = deserializer.Read(PlayerDatabases);
         }
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(PlayerDatabases);
         }

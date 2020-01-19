@@ -13,6 +13,6 @@ namespace PokeD.Core.Packets.P3D.Battle
         public BattleOfferData BattleData { get => DataItems[1]; set => DataItems[1] = value; }
 
         public override void Deserialize(IPacketDeserializer deserializer) { }
-        public override void Serialize(IStreamSerializer serializer) { }
+        public override void Serialize(IPacketSerializer serializer) { }
     }
 }

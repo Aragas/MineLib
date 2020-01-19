@@ -16,7 +16,7 @@ namespace PokeD.Core.Packets.PokeD.Battle
         {
             BattleState = deserializer.Read(BattleState);
         }
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(BattleState);
         }

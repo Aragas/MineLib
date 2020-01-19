@@ -7,12 +7,12 @@ namespace MineLib.Protocol5.Packets.Server.Play
     {
 		public SByte ActionID;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			ActionID = deserialiser.Read(ActionID);
+			ActionID = deserializer.Read(ActionID);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(ActionID);
         }

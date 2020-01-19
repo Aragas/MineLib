@@ -13,7 +13,7 @@ namespace PokeD.Core.Packets.PokeD.Authorization
             SharedSecret = deserializer.Read(SharedSecret);
             VerificationToken = deserializer.Read(VerificationToken);
         }
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(SharedSecret);
             serializer.Write(VerificationToken);

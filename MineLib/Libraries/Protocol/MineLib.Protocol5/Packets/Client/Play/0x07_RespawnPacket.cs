@@ -10,15 +10,15 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Byte GameMode;
 		public String LevelType;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			Dimension = deserialiser.Read(Dimension);
-			Difficulty = deserialiser.Read(Difficulty);
-			GameMode = deserialiser.Read(GameMode);
-			LevelType = deserialiser.Read(LevelType);
+			Dimension = deserializer.Read(Dimension);
+			Difficulty = deserializer.Read(Difficulty);
+			GameMode = deserializer.Read(GameMode);
+			LevelType = deserializer.Read(LevelType);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(Dimension);
             serializer.Write(Difficulty);

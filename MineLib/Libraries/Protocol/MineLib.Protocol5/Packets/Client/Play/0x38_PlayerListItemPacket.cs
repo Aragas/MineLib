@@ -9,14 +9,14 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Boolean Online;
 		public Int16 Ping;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			PlayerName = deserialiser.Read(PlayerName);
-			Online = deserialiser.Read(Online);
-			Ping = deserialiser.Read(Ping);
+			PlayerName = deserializer.Read(PlayerName);
+			Online = deserializer.Read(Online);
+			Ping = deserializer.Read(Ping);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(PlayerName);
             serializer.Write(Online);

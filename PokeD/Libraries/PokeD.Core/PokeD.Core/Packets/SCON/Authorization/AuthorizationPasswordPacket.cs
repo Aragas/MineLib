@@ -11,7 +11,7 @@ namespace PokeD.Core.Packets.SCON.Authorization
         {
             PasswordHash = deserializer.Read(PasswordHash);
         }
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(PasswordHash);
         }

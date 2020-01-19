@@ -17,7 +17,7 @@ namespace MineLib.Server.Core.Packets.PlayerHandler
             Username = deserializer.Read(Username);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write(Username);

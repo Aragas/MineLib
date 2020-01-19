@@ -13,6 +13,6 @@ namespace Aragas.QServer.Core.Packets
 
         public override void Deserialize(IPacketDeserializer deserializer) => GUID = deserializer.Read(GUID);
 
-        public override void Serialize(IStreamSerializer serializer) => serializer.Write(GUID);
+        public override void Serialize(IPacketSerializer serializer) => serializer.Write(GUID);
     }
 }

@@ -17,7 +17,7 @@ namespace MineLib.Server.Core.Packets.WorldBus
             Chunk = deserializer.Read(Chunk);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write(Chunk);

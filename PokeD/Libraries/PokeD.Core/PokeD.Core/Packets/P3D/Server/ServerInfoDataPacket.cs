@@ -41,6 +41,6 @@ namespace PokeD.Core.Packets.P3D.Server
 
 
         public override void Deserialize(IPacketDeserializer deserializer) { }
-        public override void Serialize(IStreamSerializer serializer) { }
+        public override void Serialize(IPacketSerializer serializer) { }
     }
 }

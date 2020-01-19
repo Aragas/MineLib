@@ -11,17 +11,17 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Byte Action;
 		public Byte[] NBTData;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			X = deserialiser.Read(X);
-			Y = deserialiser.Read(Y);
-			Z = deserialiser.Read(Z);
-			Action = deserialiser.Read(Action);
-            var NBTDataLength = deserialiser.Read<Int16>();
-            NBTData = deserialiser.Read(NBTData, NBTDataLength);
+			X = deserializer.Read(X);
+			Y = deserializer.Read(Y);
+			Z = deserializer.Read(Z);
+			Action = deserializer.Read(Action);
+            var NBTDataLength = deserializer.Read<Int16>();
+            NBTData = deserializer.Read(NBTData, NBTDataLength);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(X);
             serializer.Write(Y);

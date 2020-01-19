@@ -9,14 +9,14 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Int32 VehicleID;
 		public Boolean Leash;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			EntityID = deserialiser.Read(EntityID);
-			VehicleID = deserialiser.Read(VehicleID);
-			Leash = deserialiser.Read(Leash);
+			EntityID = deserializer.Read(EntityID);
+			VehicleID = deserializer.Read(VehicleID);
+			Leash = deserializer.Read(Leash);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(EntityID);
             serializer.Write(VehicleID);

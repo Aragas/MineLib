@@ -13,17 +13,17 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Byte Byte2;
 		public VarInt BlockType;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			X = deserialiser.Read(X);
-			Y = deserialiser.Read(Y);
-			Z = deserialiser.Read(Z);
-			Byte1 = deserialiser.Read(Byte1);
-			Byte2 = deserialiser.Read(Byte2);
-			BlockType = deserialiser.Read(BlockType);
+			X = deserializer.Read(X);
+			Y = deserializer.Read(Y);
+			Z = deserializer.Read(Z);
+			Byte1 = deserializer.Read(Byte1);
+			Byte2 = deserializer.Read(Byte2);
+			BlockType = deserializer.Read(BlockType);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(X);
             serializer.Write(Y);

@@ -10,6 +10,6 @@ namespace PokeD.Core.Packets.P3D.Client
     public class PingPacket : P3DPacket
     {
         public override void Deserialize(IPacketDeserializer deserializer) { }
-        public override void Serialize(IStreamSerializer serializer) { }
+        public override void Serialize(IPacketSerializer serializer) { }
     }
 }

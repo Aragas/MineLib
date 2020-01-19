@@ -15,20 +15,20 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Single ParticleData;
 		public Int32 NumberOfParticles;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			Particlename = deserialiser.Read(Particlename);
-			X = deserialiser.Read(X);
-			Y = deserialiser.Read(Y);
-			Z = deserialiser.Read(Z);
-			OffsetX = deserialiser.Read(OffsetX);
-			OffsetY = deserialiser.Read(OffsetY);
-			OffsetZ = deserialiser.Read(OffsetZ);
-			ParticleData = deserialiser.Read(ParticleData);
-			NumberOfParticles = deserialiser.Read(NumberOfParticles);
+			Particlename = deserializer.Read(Particlename);
+			X = deserializer.Read(X);
+			Y = deserializer.Read(Y);
+			Z = deserializer.Read(Z);
+			OffsetX = deserializer.Read(OffsetX);
+			OffsetY = deserializer.Read(OffsetY);
+			OffsetZ = deserializer.Read(OffsetZ);
+			ParticleData = deserializer.Read(ParticleData);
+			NumberOfParticles = deserializer.Read(NumberOfParticles);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(Particlename);
             serializer.Write(X);

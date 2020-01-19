@@ -8,13 +8,13 @@ namespace MineLib.Protocol5.Packets.Server.Play
 		public SByte WindowID;
 		public SByte Enchantment;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			WindowID = deserialiser.Read(WindowID);
-			Enchantment = deserialiser.Read(Enchantment);
+			WindowID = deserializer.Read(WindowID);
+			Enchantment = deserializer.Read(Enchantment);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(WindowID);
             serializer.Write(Enchantment);

@@ -12,6 +12,6 @@ namespace PokeD.Core.Packets.P3D.Server
         public string Reason { get => DataItems[0]; set => DataItems[0] = value; }
 
         public override void Deserialize(IPacketDeserializer deserializer) { }
-        public override void Serialize(IStreamSerializer serializer) { }
+        public override void Serialize(IPacketSerializer serializer) { }
     }
 }

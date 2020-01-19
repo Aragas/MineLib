@@ -9,14 +9,14 @@ namespace MineLib.Protocol5.Packets.Server.Play
 		public Single Pitch;
 		public Boolean OnGround;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			Yaw = deserialiser.Read(Yaw);
-			Pitch = deserialiser.Read(Pitch);
-			OnGround = deserialiser.Read(OnGround);
+			Yaw = deserializer.Read(Yaw);
+			Pitch = deserializer.Read(Pitch);
+			OnGround = deserializer.Read(OnGround);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(Yaw);
             serializer.Write(Pitch);

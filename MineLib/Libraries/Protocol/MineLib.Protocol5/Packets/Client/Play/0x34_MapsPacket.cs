@@ -9,14 +9,14 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public VarInt ItemDamage;
 		public Byte[] Data;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			ItemDamage = deserialiser.Read(ItemDamage);
-			var DataLength = deserialiser.Read<Int16>();
-			Data = deserialiser.Read(Data, DataLength);
+			ItemDamage = deserializer.Read(ItemDamage);
+			var DataLength = deserializer.Read<Int16>();
+			Data = deserializer.Read(Data, DataLength);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(ItemDamage);
             serializer.Write((Int16) Data.Length);

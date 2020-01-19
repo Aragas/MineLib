@@ -14,7 +14,7 @@ namespace Aragas.QServer.Core.Packets.MBus
             Name = deserializer.Read(Name);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write(Name);

@@ -12,6 +12,6 @@ namespace PokeD.Core.Packets.P3D.Server
         public int PlayerID { get => int.Parse(DataItems[0] == string.Empty ? 0.ToString() : DataItems[0]); set => DataItems[0] = value.ToString(); }
 
         public override void Deserialize(IPacketDeserializer deserializer) { }
-        public override void Serialize(IStreamSerializer serializer) { }
+        public override void Serialize(IPacketSerializer serializer) { }
     }
 }

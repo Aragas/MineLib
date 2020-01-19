@@ -7,12 +7,12 @@ namespace MineLib.Protocol5.Packets.Client.Play
     {
         public StatisticsEntry[] Entry;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-            Entry = deserialiser.Read(Entry);
+            Entry = deserializer.Read(Entry);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(Entry);
         }

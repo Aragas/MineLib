@@ -22,7 +22,7 @@ namespace MineLib.Protocol.Netty.Packets.Server.Handshake
 			NextState = deserializer.Read(NextState);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(ProtocolVersion);
             serializer.Write(ServerAddress);
@@ -46,7 +46,7 @@ namespace MineLib.Protocol.Netty.Packets.Server.Handshake
             NextState = deserializer.Read(NextState);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(ProtocolVersion);
             serializer.Write(ServerAddress);

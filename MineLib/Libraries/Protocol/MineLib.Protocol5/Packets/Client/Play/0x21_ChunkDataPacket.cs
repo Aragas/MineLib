@@ -12,18 +12,18 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public UInt16 AddBitmap;
 		public Byte[] CompressedData;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			ChunkX = deserialiser.Read(ChunkX);
-			ChunkZ = deserialiser.Read(ChunkZ);
-			GroundUpContinuous = deserialiser.Read(GroundUpContinuous);
-			PrimaryBitmap = deserialiser.Read(PrimaryBitmap);
-			AddBitmap = deserialiser.Read(AddBitmap);
-			var CompressedSize = deserialiser.Read<Int32>();
-			CompressedData = deserialiser.Read(CompressedData, CompressedSize);
+			ChunkX = deserializer.Read(ChunkX);
+			ChunkZ = deserializer.Read(ChunkZ);
+			GroundUpContinuous = deserializer.Read(GroundUpContinuous);
+			PrimaryBitmap = deserializer.Read(PrimaryBitmap);
+			AddBitmap = deserializer.Read(AddBitmap);
+			var CompressedSize = deserializer.Read<Int32>();
+			CompressedData = deserializer.Read(CompressedData, CompressedSize);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(ChunkX);
             serializer.Write(ChunkZ);

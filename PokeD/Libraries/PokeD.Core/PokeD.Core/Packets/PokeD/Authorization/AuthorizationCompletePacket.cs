@@ -11,7 +11,7 @@ namespace PokeD.Core.Packets.PokeD.Authorization
         {
             PlayerID = deserializer.Read(PlayerID);
         }
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(PlayerID);
         }

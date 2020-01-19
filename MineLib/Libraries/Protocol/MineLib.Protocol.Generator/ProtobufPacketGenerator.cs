@@ -280,7 +280,7 @@ namespace MineLib.PacketBuilder
 {GenerateReadPacket(packet)}
         }}
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {{
 {GenerateWritePacket(packet)}          
         }}

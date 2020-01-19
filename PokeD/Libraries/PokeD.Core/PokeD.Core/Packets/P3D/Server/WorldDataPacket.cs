@@ -14,6 +14,6 @@ namespace PokeD.Core.Packets.P3D.Server
         public string CurrentTime { get => DataItems[2]; set => DataItems[2] = value; }
 
         public override void Deserialize(IPacketDeserializer deserializer) { }
-        public override void Serialize(IStreamSerializer serializer) { }
+        public override void Serialize(IPacketSerializer serializer) { }
     }
 }

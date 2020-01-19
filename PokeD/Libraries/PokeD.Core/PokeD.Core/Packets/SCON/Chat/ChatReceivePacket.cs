@@ -11,7 +11,7 @@ namespace PokeD.Core.Packets.SCON.Chat
         {
             Enabled = deserializer.Read(Enabled);
         }
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(Enabled);
         }

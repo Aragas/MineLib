@@ -15,7 +15,7 @@ namespace MineLib.Server.Core.Packets.PlayerHandler
             ErrorEnum = deserializer.Read(ErrorEnum);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write(ErrorEnum);

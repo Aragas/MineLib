@@ -20,7 +20,7 @@ namespace PokeD.Core.Packets.PokeD.Battle
         {
             Info = deserializer.Read(Info);
         }
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(Info);
         }

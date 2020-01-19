@@ -7,12 +7,12 @@ namespace MineLib.Protocol5.Packets.Client.Status
     {
 		public Int64 Time;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			Time = deserialiser.Read(Time);
+			Time = deserializer.Read(Time);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(Time);
         }

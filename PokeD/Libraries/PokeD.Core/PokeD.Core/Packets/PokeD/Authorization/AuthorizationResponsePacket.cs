@@ -16,7 +16,7 @@ namespace PokeD.Core.Packets.PokeD.Authorization
         {
             AuthorizationStatus = (AuthorizationStatus)deserializer.Read((byte)AuthorizationStatus);
         }
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write((byte)AuthorizationStatus);
         }

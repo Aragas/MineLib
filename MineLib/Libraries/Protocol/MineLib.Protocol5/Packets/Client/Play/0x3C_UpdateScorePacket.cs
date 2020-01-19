@@ -10,15 +10,15 @@ namespace MineLib.Protocol5.Packets.Client.Play
         public String ScoreName;
         public Int32 Value;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-            ItemName = deserialiser.Read(ItemName);
-            UpdateRemove = deserialiser.Read(UpdateRemove);
-            ScoreName = deserialiser.Read(ScoreName);
-            Value = deserialiser.Read(Value);
+            ItemName = deserializer.Read(ItemName);
+            UpdateRemove = deserializer.Read(UpdateRemove);
+            ScoreName = deserializer.Read(ScoreName);
+            Value = deserializer.Read(Value);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(ItemName);
             serializer.Write(UpdateRemove);

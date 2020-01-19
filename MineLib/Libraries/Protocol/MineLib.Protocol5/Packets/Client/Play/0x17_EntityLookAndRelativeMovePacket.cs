@@ -12,17 +12,17 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public SByte Yaw;
 		public SByte Pitch;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			EntityID = deserialiser.Read(EntityID);
-			DX = deserialiser.Read(DX);
-			DY = deserialiser.Read(DY);
-			DZ = deserialiser.Read(DZ);
-			Yaw = deserialiser.Read(Yaw);
-			Pitch = deserialiser.Read(Pitch);
+			EntityID = deserializer.Read(EntityID);
+			DX = deserializer.Read(DX);
+			DY = deserializer.Read(DY);
+			DZ = deserializer.Read(DZ);
+			Yaw = deserializer.Read(Yaw);
+			Pitch = deserializer.Read(Pitch);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(EntityID);
             serializer.Write(DX);

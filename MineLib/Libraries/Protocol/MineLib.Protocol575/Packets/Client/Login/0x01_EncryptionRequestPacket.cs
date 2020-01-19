@@ -10,16 +10,16 @@ namespace MineLib.Protocol575.Packets.Client.Login
 		public Byte[] PublicKey;
 		public Byte[] VerifyToken;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			ServerID = deserialiser.Read(ServerID);
-			var PublicKeyLength = deserialiser.Read<Int16>();
-			PublicKey = deserialiser.Read(PublicKey, PublicKeyLength);
-			var VerifyTokenLength = deserialiser.Read<Int16>();
-			VerifyToken = deserialiser.Read(VerifyToken, VerifyTokenLength);
+			ServerID = deserializer.Read(ServerID);
+			var PublicKeyLength = deserializer.Read<Int16>();
+			PublicKey = deserializer.Read(PublicKey, PublicKeyLength);
+			var VerifyTokenLength = deserializer.Read<Int16>();
+			VerifyToken = deserializer.Read(VerifyToken, VerifyTokenLength);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(ServerID);
             serializer.Write((Int16) PublicKey.Length);

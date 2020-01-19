@@ -5,9 +5,9 @@ namespace Aragas.Network.IO
 {
     public interface IPacketDeserializer : IDisposable
     {
-        T Read<T>(T value = default, int length = 0);
+        int BytesLeft { get; }
 
-        int BytesLeft();
+        T Read<T>(T value = default, int length = 0);
     }
     public abstract class PacketDeserializer : IPacketDeserializer
     {
@@ -63,14 +63,14 @@ namespace Aragas.Network.IO
 
         private bool disposed = false;
 
+        public abstract int BytesLeft { get; }
+
         protected PacketDeserializer() { }
         protected PacketDeserializer(in Span<byte> data) => Initialize(in data);
 
         protected abstract void Initialize(in Span<byte> data);
 
         public abstract T Read<T>(T value = default, int length = 0);
-
-        public abstract int BytesLeft();
 
         protected virtual void Dispose(bool disposing)
         {

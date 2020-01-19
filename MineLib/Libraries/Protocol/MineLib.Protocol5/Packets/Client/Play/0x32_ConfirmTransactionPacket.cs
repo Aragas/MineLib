@@ -9,14 +9,14 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Int16 ActionNumber;
 		public Boolean Accepted;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			WindowID = deserialiser.Read(WindowID);
-			ActionNumber = deserialiser.Read(ActionNumber);
-			Accepted = deserialiser.Read(Accepted);
+			WindowID = deserializer.Read(WindowID);
+			ActionNumber = deserializer.Read(ActionNumber);
+			Accepted = deserializer.Read(Accepted);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(WindowID);
             serializer.Write(ActionNumber);

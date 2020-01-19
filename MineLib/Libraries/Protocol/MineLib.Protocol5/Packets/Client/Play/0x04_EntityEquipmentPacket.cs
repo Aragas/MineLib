@@ -9,14 +9,14 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Int16 Slot;
 		//public ItemStack Item; // TODO:
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			EntityID = deserialiser.Read(EntityID);
-			Slot = deserialiser.Read(Slot);
-			//Item = deserialiser.Read(Item);
+			EntityID = deserializer.Read(EntityID);
+			Slot = deserializer.Read(Slot);
+			//Item = deserializer.Read(Item);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(EntityID);
             serializer.Write(Slot);

@@ -8,13 +8,13 @@ namespace MineLib.Protocol5.Packets.Server.Play
 		public Int32 Target;
 		public SByte Mouse;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			Target = deserialiser.Read(Target);
-			Mouse = deserialiser.Read(Mouse);
+			Target = deserializer.Read(Target);
+			Mouse = deserializer.Read(Mouse);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(Target);
             serializer.Write(Mouse);

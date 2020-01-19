@@ -14,20 +14,20 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Single PlayerMotionY;
 		public Single PlayerMotionZ;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			X = deserialiser.Read(X);
-			Y = deserialiser.Read(Y);
-			Z = deserialiser.Read(Z);
-			Radius = deserialiser.Read(Radius);
-			var RecordsLength = deserialiser.Read<Int32>();
-			Records = deserialiser.Read(Records, RecordsLength / 3);
-			PlayerMotionX = deserialiser.Read(PlayerMotionX);
-			PlayerMotionY = deserialiser.Read(PlayerMotionY);
-			PlayerMotionZ = deserialiser.Read(PlayerMotionZ);
+			X = deserializer.Read(X);
+			Y = deserializer.Read(Y);
+			Z = deserializer.Read(Z);
+			Radius = deserializer.Read(Radius);
+			var RecordsLength = deserializer.Read<Int32>();
+			Records = deserializer.Read(Records, RecordsLength / 3);
+			PlayerMotionX = deserializer.Read(PlayerMotionX);
+			PlayerMotionY = deserializer.Read(PlayerMotionY);
+			PlayerMotionZ = deserializer.Read(PlayerMotionZ);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(X);
             serializer.Write(Y);

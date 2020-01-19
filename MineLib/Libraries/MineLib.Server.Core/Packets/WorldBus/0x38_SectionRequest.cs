@@ -18,7 +18,7 @@ namespace MineLib.Server.Core.Packets.WorldBus
             Position = deserializer.Read(Position);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write(Position);

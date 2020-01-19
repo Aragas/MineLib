@@ -12,6 +12,6 @@ namespace PokeD.Core.Packets.P3D.Chat
         public string Message { get => DataItems[1]; set => DataItems[1] = value; }
 
         public override void Deserialize(IPacketDeserializer deserializer) { }
-        public override void Serialize(IStreamSerializer serializer) { }
+        public override void Serialize(IPacketSerializer serializer) { }
     }
 }

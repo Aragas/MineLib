@@ -19,6 +19,6 @@ namespace Aragas.Network.Packets
 
         public abstract void Deserialize(IPacketDeserializer deserializer);
 
-        public abstract void Serialize(IStreamSerializer serializer);
+        public abstract void Serialize(IPacketSerializer serializer);
     }
 }

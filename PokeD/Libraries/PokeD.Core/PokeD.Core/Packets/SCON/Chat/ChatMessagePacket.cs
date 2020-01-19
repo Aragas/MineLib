@@ -13,7 +13,7 @@ namespace PokeD.Core.Packets.SCON.Chat
             Player = deserializer.Read(Player);
             Message = deserializer.Read(Message);
         }
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(Player);
             serializer.Write(Message);

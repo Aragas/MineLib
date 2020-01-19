@@ -20,23 +20,23 @@ namespace MineLib.Protocol5.Packets.Client.Play
         public Int16 CurrentItem;
         public EntityMetadataList Metadata;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-            EntityID = deserialiser.Read(EntityID);
-            PlayerUUID = deserialiser.Read(PlayerUUID);
-            PlayerName = deserialiser.Read(PlayerName);
-            Data = deserialiser.Read(Data);
-            X = deserialiser.Read(X);
-            Y = deserialiser.Read(Y);
-            Z = deserialiser.Read(Z);
-            Yaw = deserialiser.Read(Yaw);
-            Pitch = deserialiser.Read(Pitch);
-            HeadPitch = deserialiser.Read(HeadPitch);
-            CurrentItem = deserialiser.Read(CurrentItem);
-            Metadata = deserialiser.Read(Metadata);
+            EntityID = deserializer.Read(EntityID);
+            PlayerUUID = deserializer.Read(PlayerUUID);
+            PlayerName = deserializer.Read(PlayerName);
+            Data = deserializer.Read(Data);
+            X = deserializer.Read(X);
+            Y = deserializer.Read(Y);
+            Z = deserializer.Read(Z);
+            Yaw = deserializer.Read(Yaw);
+            Pitch = deserializer.Read(Pitch);
+            HeadPitch = deserializer.Read(HeadPitch);
+            CurrentItem = deserializer.Read(CurrentItem);
+            Metadata = deserializer.Read(Metadata);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(EntityID);
             serializer.Write(PlayerUUID);

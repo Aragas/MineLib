@@ -12,17 +12,17 @@ namespace MineLib.Protocol5.Packets.Server.Play
 		public SByte Difficulty;
 		public Boolean ShowCape;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			Locale = deserialiser.Read(Locale);
-			ViewDistance = deserialiser.Read(ViewDistance);
-			ChatFlags = deserialiser.Read(ChatFlags);
-			ChatColours = deserialiser.Read(ChatColours);
-			Difficulty = deserialiser.Read(Difficulty);
-			ShowCape = deserialiser.Read(ShowCape);
+			Locale = deserializer.Read(Locale);
+			ViewDistance = deserializer.Read(ViewDistance);
+			ChatFlags = deserializer.Read(ChatFlags);
+			ChatColours = deserializer.Read(ChatColours);
+			Difficulty = deserializer.Read(Difficulty);
+			ShowCape = deserializer.Read(ShowCape);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(Locale);
             serializer.Write(ViewDistance);

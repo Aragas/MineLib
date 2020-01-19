@@ -25,7 +25,7 @@ namespace MineLib.Protocol5.Packets.Server.Play
 			ClickedItem = deserializer.Read(ClickedItem);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(WindowID);
             serializer.Write(Slot);

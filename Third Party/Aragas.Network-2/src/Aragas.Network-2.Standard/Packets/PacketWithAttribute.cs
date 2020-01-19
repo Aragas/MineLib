@@ -3,7 +3,6 @@ using Aragas.Network.IO;
 
 using System.Reflection;
 
-
 namespace Aragas.Network.Packets
 {
     /*
@@ -29,6 +28,15 @@ namespace Aragas.Network.Packets
     public abstract class PacketWithAttribute<TIDType> : Packet<TIDType>
     {
         private Initializable<TIDType> _id;
-        public sealed override TIDType ID => (!_id.HasInitialized ? (_id = (TIDType) (dynamic) GetType().GetCustomAttribute<PacketAttribute>().ID) : _id).Value;
+        public sealed override TIDType ID
+        {
+            get 
+            {
+                var t = _id.HasInitialized
+                ? _id
+                : (_id = (TIDType) (dynamic) GetType().GetCustomAttribute<PacketAttribute>().ID);
+                return t.Value;
+            }
+        }
     }
 }

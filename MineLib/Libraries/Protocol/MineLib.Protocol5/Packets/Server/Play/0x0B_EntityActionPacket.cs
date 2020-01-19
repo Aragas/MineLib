@@ -9,14 +9,14 @@ namespace MineLib.Protocol5.Packets.Server.Play
 		public SByte ActionID;
 		public Int32 JumpBoost;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			EntityID = deserialiser.Read(EntityID);
-			ActionID = deserialiser.Read(ActionID);
-			JumpBoost = deserialiser.Read(JumpBoost);
+			EntityID = deserializer.Read(EntityID);
+			ActionID = deserializer.Read(ActionID);
+			JumpBoost = deserializer.Read(JumpBoost);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(EntityID);
             serializer.Write(ActionID);

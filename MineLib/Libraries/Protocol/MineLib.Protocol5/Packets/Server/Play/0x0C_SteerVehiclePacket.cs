@@ -10,15 +10,15 @@ namespace MineLib.Protocol5.Packets.Server.Play
         public Boolean Jump;
         public Boolean Unmount;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-            Sideways = deserialiser.Read(Sideways);
-            Forward = deserialiser.Read(Forward);
-            Jump = deserialiser.Read(Jump);
-            Unmount = deserialiser.Read(Unmount);
+            Sideways = deserializer.Read(Sideways);
+            Forward = deserializer.Read(Forward);
+            Jump = deserializer.Read(Jump);
+            Unmount = deserializer.Read(Unmount);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(Sideways);
             serializer.Write(Forward);

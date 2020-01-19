@@ -21,14 +21,14 @@ namespace Aragas.Network.IO
 
         public Stream Stream { get; protected internal set; } = Stream.Null;
 
+        public override int BytesLeft => (int) (Stream.Length - Stream.Position);
+
         protected StreamDeserializer() { }
         protected StreamDeserializer(in Span<byte> data) : base(in data) { }
         protected StreamDeserializer(Stream stream) { Initialize(stream); }
 
         protected abstract void Initialize(Stream stream);
         protected sealed override void Initialize(in Span<byte> data) => Initialize(new MemoryStream(data.ToArray()));
-
-        public override int BytesLeft() => (int) (Stream.Length - Stream.Position);
 
         protected override void Dispose(bool disposing)
         {

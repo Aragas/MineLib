@@ -12,17 +12,17 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Single Pitch;
 		public Boolean OnGround;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			X = deserialiser.Read(X);
-			Y = deserialiser.Read(Y);
-			Z = deserialiser.Read(Z);
-			Yaw = deserialiser.Read(Yaw);
-			Pitch = deserialiser.Read(Pitch);
-			OnGround = deserialiser.Read(OnGround);
+			X = deserializer.Read(X);
+			Y = deserializer.Read(Y);
+			Z = deserializer.Read(Z);
+			Yaw = deserializer.Read(Yaw);
+			Pitch = deserializer.Read(Pitch);
+			OnGround = deserializer.Read(OnGround);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(X);
             serializer.Write(Y);

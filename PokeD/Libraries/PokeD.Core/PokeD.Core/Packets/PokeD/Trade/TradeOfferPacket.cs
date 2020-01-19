@@ -16,7 +16,7 @@ namespace PokeD.Core.Packets.PokeD.Trade
             DestinationID = deserializer.Read(DestinationID);
             MonsterData = deserializer.Read(MonsterData);
         }
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(DestinationID);
             serializer.Write(MonsterData);

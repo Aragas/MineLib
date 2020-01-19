@@ -13,18 +13,18 @@ namespace MineLib.Protocol5.Packets.Server.Play
 		public String Line3;
 		public String Line4;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			X = deserialiser.Read(X);
-			Y = deserialiser.Read(Y);
-			Z = deserialiser.Read(Z);
-			Line1 = deserialiser.Read(Line1);
-			Line2 = deserialiser.Read(Line2);
-			Line3 = deserialiser.Read(Line3);
-			Line4 = deserialiser.Read(Line4);
+			X = deserializer.Read(X);
+			Y = deserializer.Read(Y);
+			Z = deserializer.Read(Z);
+			Line1 = deserializer.Read(Line1);
+			Line2 = deserializer.Read(Line2);
+			Line3 = deserializer.Read(Line3);
+			Line4 = deserializer.Read(Line4);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(X);
             serializer.Write(Y);

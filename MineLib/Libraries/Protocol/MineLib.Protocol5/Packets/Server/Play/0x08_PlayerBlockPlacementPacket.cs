@@ -29,7 +29,7 @@ namespace MineLib.Protocol5.Packets.Server.Play
 			CursorPositionZ = deserializer.Read(CursorPositionZ);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(X);
             serializer.Write(Y);

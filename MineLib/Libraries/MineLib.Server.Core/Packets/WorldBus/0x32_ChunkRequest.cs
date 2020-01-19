@@ -17,7 +17,7 @@ namespace MineLib.Server.Core.Packets.WorldBus
             Coordinates = deserializer.Read(Coordinates);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write(Coordinates);

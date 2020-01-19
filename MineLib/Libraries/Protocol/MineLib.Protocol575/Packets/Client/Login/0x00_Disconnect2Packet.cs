@@ -8,12 +8,12 @@ namespace MineLib.Protocol575.Packets.Client.Login
     {
 		public String JSONData;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			JSONData = deserialiser.Read(JSONData);
+			JSONData = deserializer.Read(JSONData);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
 			serializer.Write(JSONData);
         }

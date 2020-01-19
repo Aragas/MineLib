@@ -19,7 +19,7 @@ namespace MineLib.Server.Core.Packets.WorldBus
             SendBulk = deserializer.Read(SendBulk);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write(X);

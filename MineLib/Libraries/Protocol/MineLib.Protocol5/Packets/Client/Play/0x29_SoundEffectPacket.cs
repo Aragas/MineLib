@@ -12,17 +12,17 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Single Volume;
 		public Byte Pitch;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			SoundName = deserialiser.Read(SoundName);
-			EffectPositionX = deserialiser.Read(EffectPositionX);
-			EffectPositionY = deserialiser.Read(EffectPositionY);
-			EffectPositionZ = deserialiser.Read(EffectPositionZ);
-			Volume = deserialiser.Read(Volume);
-			Pitch = deserialiser.Read(Pitch);
+			SoundName = deserializer.Read(SoundName);
+			EffectPositionX = deserializer.Read(EffectPositionX);
+			EffectPositionY = deserializer.Read(EffectPositionY);
+			EffectPositionZ = deserializer.Read(EffectPositionZ);
+			Volume = deserializer.Read(Volume);
+			Pitch = deserializer.Read(Pitch);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(SoundName);
             serializer.Write(EffectPositionX);

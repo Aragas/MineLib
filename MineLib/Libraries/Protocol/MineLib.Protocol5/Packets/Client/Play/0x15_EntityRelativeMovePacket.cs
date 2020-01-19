@@ -10,15 +10,15 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public SByte DY;
 		public SByte DZ;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			EntityID = deserialiser.Read(EntityID);
-			DX = deserialiser.Read(DX);
-			DY = deserialiser.Read(DY);
-			DZ = deserialiser.Read(DZ);
+			EntityID = deserializer.Read(EntityID);
+			DX = deserializer.Read(DX);
+			DY = deserializer.Read(DY);
+			DZ = deserializer.Read(DZ);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(EntityID);
             serializer.Write(DX);

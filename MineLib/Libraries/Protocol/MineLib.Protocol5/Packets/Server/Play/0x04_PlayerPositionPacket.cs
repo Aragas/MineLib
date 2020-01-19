@@ -11,16 +11,16 @@ namespace MineLib.Protocol5.Packets.Server.Play
 		public Double Z;
 		public Boolean OnGround;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			X = deserialiser.Read(X);
-			FeetY = deserialiser.Read(FeetY);
-			HeadY = deserialiser.Read(HeadY);
-			Z = deserialiser.Read(Z);
-			OnGround = deserialiser.Read(OnGround);
+			X = deserializer.Read(X);
+			FeetY = deserializer.Read(FeetY);
+			HeadY = deserializer.Read(HeadY);
+			Z = deserializer.Read(Z);
+			OnGround = deserializer.Read(OnGround);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(X);
             serializer.Write(FeetY);

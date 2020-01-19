@@ -12,17 +12,17 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Int32 Data;
 		public Boolean DisableRelativeVolume;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			EffectID = deserialiser.Read(EffectID);
-			X = deserialiser.Read(X);
-			Y = deserialiser.Read(Y);
-			Z = deserialiser.Read(Z);
-			Data = deserialiser.Read(Data);
-			DisableRelativeVolume = deserialiser.Read(DisableRelativeVolume);
+			EffectID = deserializer.Read(EffectID);
+			X = deserializer.Read(X);
+			Y = deserializer.Read(Y);
+			Z = deserializer.Read(Z);
+			Data = deserializer.Read(Data);
+			DisableRelativeVolume = deserializer.Read(DisableRelativeVolume);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(EffectID);
             serializer.Write(X);

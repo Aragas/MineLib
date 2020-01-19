@@ -4,7 +4,6 @@ using System;
 
 namespace Aragas.Network.IO
 {
-
     public abstract class PacketTransmission<TPacketType, TPacketIDType> : IDisposable where TPacketType : Packet<TPacketIDType>
     {
         private bool disposedValue = false; // To detect redundant calls

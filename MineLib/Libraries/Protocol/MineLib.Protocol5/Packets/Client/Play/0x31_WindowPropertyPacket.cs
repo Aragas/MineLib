@@ -9,14 +9,14 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Int16 Property;
 		public Int16 Value;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			WindowID = deserialiser.Read(WindowID);
-			Property = deserialiser.Read(Property);
-			Value = deserialiser.Read(Value);
+			WindowID = deserializer.Read(WindowID);
+			Property = deserializer.Read(Property);
+			Value = deserializer.Read(Value);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(WindowID);
             serializer.Write(Property);

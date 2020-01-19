@@ -19,7 +19,7 @@ namespace PokeD.Core.Packets.PokeD.Overworld
             Weather = deserializer.Read(Weather);
             Event = deserializer.Read(Event);
         }
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(Time);
             serializer.Write(Season);

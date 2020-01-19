@@ -7,12 +7,12 @@ namespace MineLib.Protocol5.Packets.Server.Play
     {
 		public Int16 Slot;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			Slot = deserialiser.Read(Slot);
+			Slot = deserializer.Read(Slot);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(Slot);
         }

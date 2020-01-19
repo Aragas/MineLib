@@ -12,16 +12,16 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Byte[] Data;
 		public ChunkColumnMetadata[] MetaInformation;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			var ChunkColumnCount = deserialiser.Read<Int16>();
-			var DataLength = deserialiser.Read<Int32>();
-			SkyLightSent = deserialiser.Read(SkyLightSent);
-			Data = deserialiser.Read(Data, DataLength);
-			MetaInformation = deserialiser.Read(MetaInformation, ChunkColumnCount);
+			var ChunkColumnCount = deserializer.Read<Int16>();
+			var DataLength = deserializer.Read<Int32>();
+			SkyLightSent = deserializer.Read(SkyLightSent);
+			Data = deserializer.Read(Data, DataLength);
+			MetaInformation = deserializer.Read(MetaInformation, ChunkColumnCount);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
 			serializer.Write((short) MetaInformation.Length);
             serializer.Write(Data.Length);

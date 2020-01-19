@@ -7,13 +7,13 @@ namespace MineLib.Protocol5.Packets.Client.Play
     {
 		public Int32[] EntityIDs;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-            var EntityIDsLength = deserialiser.Read<Byte>();
-            EntityIDs = deserialiser.Read(EntityIDs, EntityIDsLength);
+            var EntityIDsLength = deserializer.Read<Byte>();
+            EntityIDs = deserializer.Read(EntityIDs, EntityIDsLength);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write((Byte) EntityIDs.Length);
             serializer.Write(EntityIDs, false);

@@ -1,19 +1,21 @@
+using Aragas.Network.Attributes;
 using Aragas.Network.IO;
 
 using System;
 
 namespace MineLib.Protocol.Netty.Packets.Server.Status
 {
+    [Packet(0x01)]
     public class Ping2Packet : ServerStatusPacket
     {
 		public Int64 Time;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			Time = deserialiser.Read(Time);
+			Time = deserializer.Read(Time);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(Time);
         }

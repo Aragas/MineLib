@@ -11,7 +11,7 @@ namespace PokeD.Core.Packets.SCON
         {
             Command = deserializer.Read(Command);
         }
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(Command);
         }

@@ -21,8 +21,8 @@ namespace MineLib.Server.WorldBus
 
         public Section ToSection()
         {
-            using var deserialiser = new CompressedProtobufDeserializer(SerializedSection);
-            return deserialiser.Read<Section>();
+            using var deserializer = new CompressedProtobufDeserializer(SerializedSection);
+            return deserializer.Read<Section>();
         }
     }
 }

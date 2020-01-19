@@ -17,7 +17,7 @@ namespace PokeD.Core.Packets.PokeD.Battle
             PlayerIDs = deserializer.Read(PlayerIDs);
             Message = deserializer.Read(Message);
         }
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(PlayerIDs);
             serializer.Write(Message);

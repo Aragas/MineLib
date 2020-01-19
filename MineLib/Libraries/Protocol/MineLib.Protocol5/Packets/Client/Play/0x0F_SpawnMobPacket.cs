@@ -20,23 +20,23 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Int16 VelocityZ;
 		public EntityMetadataList Metadata;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			EntityID = deserialiser.Read(EntityID);
-			Type = deserialiser.Read(Type);
-			X = deserialiser.Read(X);
-			Y = deserialiser.Read(Y);
-			Z = deserialiser.Read(Z);
-			Yaw = deserialiser.Read(Yaw);
-			Pitch = deserialiser.Read(Pitch);
-			HeadPitch = deserialiser.Read(HeadPitch);
-			VelocityX = deserialiser.Read(VelocityX);
-			VelocityY = deserialiser.Read(VelocityY);
-			VelocityZ = deserialiser.Read(VelocityZ);
-            Metadata = deserialiser.Read(Metadata);
+			EntityID = deserializer.Read(EntityID);
+			Type = deserializer.Read(Type);
+			X = deserializer.Read(X);
+			Y = deserializer.Read(Y);
+			Z = deserializer.Read(Z);
+			Yaw = deserializer.Read(Yaw);
+			Pitch = deserializer.Read(Pitch);
+			HeadPitch = deserializer.Read(HeadPitch);
+			VelocityX = deserializer.Read(VelocityX);
+			VelocityY = deserializer.Read(VelocityY);
+			VelocityZ = deserializer.Read(VelocityZ);
+            Metadata = deserializer.Read(Metadata);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(EntityID);
             serializer.Write(Type);

@@ -15,7 +15,7 @@ namespace Aragas.QServer.Core.Packets.PlayerHandler
             Port = deserializer.Read(Port);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write(Port);

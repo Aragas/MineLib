@@ -9,14 +9,14 @@ namespace MineLib.Protocol5.Packets.Client.Play
         public String ObjectiveValue;
         public SByte CreateRemove;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-            ObjectiveName = deserialiser.Read(ObjectiveName);
-            ObjectiveValue = deserialiser.Read(ObjectiveValue);
-            CreateRemove = deserialiser.Read(CreateRemove);
+            ObjectiveName = deserializer.Read(ObjectiveName);
+            ObjectiveValue = deserializer.Read(ObjectiveValue);
+            CreateRemove = deserializer.Read(CreateRemove);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(ObjectiveName);
             serializer.Write(ObjectiveValue);

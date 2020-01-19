@@ -10,13 +10,13 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Int16 Count;
 		public ItemSlot[] SlotData;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			WindowID = deserialiser.Read(WindowID);
-			SlotData = deserialiser.Read(SlotData);
+			WindowID = deserializer.Read(WindowID);
+			SlotData = deserializer.Read(SlotData);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(WindowID);
             serializer.Write(SlotData);

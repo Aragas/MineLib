@@ -19,7 +19,7 @@ namespace MineLib.Protocol.Netty.Packets.Server.Login
             Username = deserializer.Read(Username);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(UUID);
             serializer.Write(Username);

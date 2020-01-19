@@ -8,13 +8,13 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Int32 EntityID;
 		public SByte EntityStatus;
 
-        public override void Deserialize(IPacketDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
-			EntityID = deserialiser.Read(EntityID);
-			EntityStatus = deserialiser.Read(EntityStatus);
+			EntityID = deserializer.Read(EntityID);
+			EntityStatus = deserializer.Read(EntityStatus);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             serializer.Write(EntityID);
             serializer.Write(EntityStatus);

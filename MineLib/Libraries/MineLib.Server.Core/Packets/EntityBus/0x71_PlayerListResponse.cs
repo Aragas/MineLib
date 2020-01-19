@@ -15,7 +15,7 @@ namespace MineLib.Server.Core.Packets.EntityBus
             PlayerNames = deserializer.Read(PlayerNames);
         }
 
-        public override void Serialize(IStreamSerializer serializer)
+        public override void Serialize(IPacketSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write(PlayerNames);

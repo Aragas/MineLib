@@ -1,7 +1,7 @@
 ﻿using Aragas.QServer.Core.IO;
 
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.Extensions.Configuration;
 using MineLib.Core;
 using MineLib.Core.Anvil;
 using MineLib.Server.Core;
@@ -42,15 +42,22 @@ namespace MineLib.Server.WorldBus
 
             public Section ToSection()
             {
-                using var deserialiser = new CompressedProtobufDeserializer(SerializedSection);
-                return deserialiser.Read<Section>();
+                using var deserializer = new CompressedProtobufDeserializer(SerializedSection);
+                return deserializer.Read<Section>();
             }
         }
 
         public DbSet<PGSection> Sections { get; set; } = default!;
 
+        private readonly IConfiguration _configuration;
+
+        public WorldContext(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
-            optionsBuilder.UseNpgsql(MineLibSingleton.PostgreSQLConnectionString);
+            optionsBuilder.UseNpgsql(_configuration["PostgreSQLConnectionString"]);
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -67,9 +74,13 @@ namespace MineLib.Server.WorldBus
     {
         private IWorldGenerator Generator { get; } = new StandardGenerator();
 
-        public StandardWorldHandler()
+        private readonly IConfiguration _configuration;
+
+        public StandardWorldHandler(IConfiguration configuration)
         {
-            using var worldContext = new WorldContext();
+            _configuration = configuration;
+
+            using var worldContext = new WorldContext(_configuration);
             worldContext.Database.EnsureCreated();
             Generator.Initialize(null);
         }
@@ -109,7 +120,7 @@ namespace MineLib.Server.WorldBus
         }
         public void SetChunk(in Chunk chunk)
         {
-            using var worldContext = new WorldContext();
+            using var worldContext = new WorldContext(_configuration);
             worldContext.Sections.AddRange(chunk.Sections.Select(s => new WorldContext.PGSection(s)));
             worldContext.SaveChanges();
         }
@@ -117,7 +128,7 @@ namespace MineLib.Server.WorldBus
         public Section GetSection(Location3D chunkLocation)
         {
             var location = chunkLocation.GetDatabaseIndex();
-            using var worldContext = new WorldContext();
+            using var worldContext = new WorldContext(_configuration);
             var section = worldContext.Sections.FirstOrDefault(s => s.Location == location)?.ToSection();
 
             if (section == null)
@@ -131,7 +142,7 @@ namespace MineLib.Server.WorldBus
         }
         public void SetSection(in Section section)
         {
-            using var worldContext = new WorldContext();
+            using var worldContext = new WorldContext(_configuration);
             worldContext.Sections.Add(new WorldContext.PGSection(section));
             worldContext.SaveChanges();
         }
@@ -142,7 +153,7 @@ namespace MineLib.Server.WorldBus
             var section = GetSection(Chunk.GetSectionLocation(blockWorldLocation));
             section.SetBlock(Chunk.GetLocationInSection(blockWorldLocation), block);
 
-            using var worldContext = new WorldContext();
+            using var worldContext = new WorldContext(_configuration);
             worldContext.Sections.Update(new WorldContext.PGSection(section));
             worldContext.SaveChanges();
         }

@@ -7,7 +7,7 @@ namespace MineLib.Protocol.Protocol
     /// <summary>
     /// Standard Factory property is disabled
     /// </summary>
-    public class MinecraftINetworkBusTransmission : ProtobufINetworkBusTransmission<MinecraftPacket>
+    public class MinecraftINetworkBusTransmission : ProtobufINetworkBusTransmission<MinecraftEnumPacket>
     {
         public MinecraftINetworkBusTransmission() : base() { }
     }

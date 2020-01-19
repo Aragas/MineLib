@@ -1,8 +1,16 @@
-﻿using MineLib.Protocol.Netty.Packets;
+﻿using Aragas.Network.Data;
+using Aragas.Network.IO;
+using Aragas.Network.Packets;
+
+using MineLib.Protocol.Netty.Packets;
+using MineLib.Protocol.Packets;
 
 using System;
 
 namespace MineLib.Protocol.Netty.Protocol
 {
-    public sealed class LoginFactory<TEnum> : ProtocolNettyFactory<ProtocolNettyPacket<TEnum>, TEnum> where TEnum : Enum { }
+    public class LoginEnumFactory<TEnum> : ProtocolNettyFactory<ProtocolNettyPacket<TEnum>, TEnum> where TEnum : Enum { }
+
+    public sealed class LoginFactory<TPacket> : DefaultPacketFactory<TPacket, VarInt, ProtobufSerializer, ProtobufDeserializer>
+        where TPacket : MinecraftPacket { }
 }

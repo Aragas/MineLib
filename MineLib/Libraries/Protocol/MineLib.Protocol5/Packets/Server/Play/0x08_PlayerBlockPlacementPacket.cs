@@ -2,7 +2,7 @@ using System;
 
 using Aragas.Network.IO;
 
-using MineLib.Protocol5.Data;
+using MineLib.Core;
 
 namespace MineLib.Protocol5.Packets.Server.Play
 {

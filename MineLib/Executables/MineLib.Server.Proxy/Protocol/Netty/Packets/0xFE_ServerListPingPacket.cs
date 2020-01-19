@@ -1,12 +1,13 @@
 using Aragas.Network.Attributes;
 using Aragas.Network.IO;
 
+using MineLib.Protocol.Netty.Packets.Server;
 using MineLib.Server.Proxy.Data;
 
-namespace MineLib.Server.Proxy.Protocol.Netty.Packets.Serverbound
+namespace MineLib.Server.Proxy.Protocol.Netty.Packets
 {
     [Packet(0xFE)]
-    public sealed class ServerListPingPacket : HandshakeStatePacket // To support legacy ping
+    internal sealed class ServerListPingPacket : ServerStatusPacket
     {
         public byte Payload { get; set; }
         public byte Identifier { get; set; }

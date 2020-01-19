@@ -1,10 +1,8 @@
-using Aragas.Network.Attributes;
 using Aragas.Network.IO;
 
-namespace MineLib.Server.Proxy.Protocol.Netty.Packets.Serverbound
+namespace MineLib.Protocol.Netty.Packets.Server.Status
 {
-    [Packet(0x00)]
-    public sealed class RequestPacket : StatusStatePacket
+    public class RequestPacket : ServerStatusPacket
     {
         public override void Deserialize(ProtobufDeserializer deserialiser) { }
 

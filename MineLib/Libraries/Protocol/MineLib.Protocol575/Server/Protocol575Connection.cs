@@ -32,7 +32,7 @@ namespace MineLib.Protocol575.Server
         public override bool Connected => true;
 
         private ProtocolNettyTransmission<ServerStatusPacketTypes, ServerLoginPacketTypes, ServerPlayPacketTypes> Stream { get; }
-        private ConcurrentQueue<MinecraftPacket> PacketsToSend { get; } = new ConcurrentQueue<MinecraftPacket>();
+        private ConcurrentQueue<MinecraftEnumPacket> PacketsToSend { get; } = new ConcurrentQueue<MinecraftEnumPacket>();
 
         public Protocol575Connection(Guid playerId, State state = Protocol.Netty.State.Handshake)
         {

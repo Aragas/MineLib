@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AngleSharp" Version="0.14.0-alpha-788" />
+    <PackageReference Include="CsvHelper" Version="13.0.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.17" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Third Party\Aragas.Network-2\src\Aragas.Network-2.Standard\Aragas.Network-2.csproj" />
+    <ProjectReference Include="..\..\MineLib.Core\MineLib.Core.csproj" />
+    <ProjectReference Include="..\MineLib.Protocol5\MineLib.Protocol5.csproj" />
+  </ItemGroup>
+
+</Project>

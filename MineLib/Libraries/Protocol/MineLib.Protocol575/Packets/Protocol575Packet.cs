@@ -7,7 +7,7 @@ using MineLib.Protocol.Packets;
 
 namespace MineLib.Protocol575.Packets
 {
-    public abstract class Protocol575Packet<TEnum> : MinecraftPacket where TEnum : Enum
+    public abstract class Protocol575Packet<TEnum> : MinecraftEnumPacket where TEnum : Enum
     {
         private static TEnum[] Cache { get; } = Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToArray();
 

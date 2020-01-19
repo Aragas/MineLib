@@ -1,12 +1,10 @@
-using Aragas.Network.Attributes;
 using Aragas.Network.IO;
 
 using System;
 
-namespace MineLib.Server.Proxy.Protocol.Netty.Packets.ClientBound
+namespace MineLib.Protocol.Netty.Packets.Client.Status
 {
-    [Packet(0x01)]
-    internal sealed class PongPacket : ProxyNettyPacket
+    public class PingPacket : ClientStatusPacket
     {
 		public Int64 Time;
 

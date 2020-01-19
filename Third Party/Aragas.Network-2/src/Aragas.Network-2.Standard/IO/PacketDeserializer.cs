@@ -3,7 +3,13 @@ using System.Collections.Generic;
 
 namespace Aragas.Network.IO
 {
-    public abstract class PacketDeserializer : IDisposable
+    public interface IPacketDeserializer : IDisposable
+    {
+        T Read<T>(T value = default, int length = 0);
+
+        int BytesLeft();
+    }
+    public abstract class PacketDeserializer : IPacketDeserializer
     {
         #region ExtendRead
 

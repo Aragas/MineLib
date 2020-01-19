@@ -3,7 +3,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace MineLib.Protocol5.Data
+namespace MineLib.Core
 {
     public struct ItemSlot : IEquatable<ItemSlot>
     {

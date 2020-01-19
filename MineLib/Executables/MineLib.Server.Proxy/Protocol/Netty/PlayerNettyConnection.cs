@@ -9,11 +9,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
+using MineLib.Protocol.Netty;
+using MineLib.Protocol.Netty.Packets.Client.Login;
+using MineLib.Protocol.Netty.Packets.Client.Status;
+using MineLib.Protocol.Netty.Packets.Server.Status;
+using MineLib.Protocol.Packets;
 using MineLib.Server.Core.NetworkBus.Messages;
 using MineLib.Server.Proxy.Data;
 using MineLib.Server.Proxy.Protocol.Netty.Packets;
-using MineLib.Server.Proxy.Protocol.Netty.Packets.ClientBound;
-using MineLib.Server.Proxy.Protocol.Netty.Packets.Serverbound;
 
 using System;
 using System.IO;
@@ -26,7 +29,7 @@ using System.Threading.Tasks;
 namespace MineLib.Server.Proxy.Protocol.Netty
 {
     internal sealed class PlayerNettyConnection :
-        DefaultConnectionHandler<ProxyNettyTransmission, ProxyNettyPacket, VarInt, ProtobufSerializer, ProtobufDeserializer>
+        DefaultConnectionHandler<ProxyNettyTransmission, MinecraftPacket, VarInt, ProtobufSerializer, ProtobufDeserializer>
     {
         private static string GetFavicon()
         {
@@ -88,7 +91,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty
             Localizer = serviceProvider.GetRequiredService<IStringLocalizer<PlayerNettyConnection>>();
         }
 
-        protected override void HandlePacket(ProxyNettyPacket packet)
+        protected override void HandlePacket(MinecraftPacket packet)
         {
             switch (packet)
             {
@@ -97,7 +100,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty
                     break;
 
                 case PingPacket pingPacket:
-                    SendPacket(new PongPacket() { Time = pingPacket.Time });
+                    SendPacket(new Ping2Packet() { Time = pingPacket.Time });
                     Task.Run(Disconnect);
                     break;
 
@@ -112,6 +115,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty
                     var response = serverListPingPacket.Payload == 0x01
                         ? $"§1\0{protocolVersion}\0Any Version\0{MineLibOptions.Description}\0{ServerInfo.CurrentConnections}\0{MineLibOptions.MaxConnections}"
                         : $"{MineLibOptions.Description}§{ServerInfo.CurrentConnections}§{MineLibOptions.MaxConnections}";
+                    var responsePacket = new LegacyDisconnectPacket() { Response = response };
                     serializer.Write<UTF16BEString>(response);
                     Stream.Socket.Send(serializer.GetData().ToArray(), SocketFlags.None);
                     Task.Run(Disconnect);
@@ -121,7 +125,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty
 
         protected override void AdditionalWork()
         {
-            if (Stream.State == Data.State.Handshake || Stream.State == Data.State.Status)
+            if (Stream.State == State.Handshake || Stream.State == State.Status)
                 return;
 
             if (PlayerBusId == null)
@@ -134,7 +138,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty
                     if (message.ServiceId != null)
                     {
                         playerBusId = message.ServiceId;
-                        Stream.State = (Data.State) message.State;
+                        Stream.State = (State) message.State;
                     }
                 });
                 NetworkBus.Publish(new GetExistingPlayerHandlerRequestMessage()
@@ -159,7 +163,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty
 
                 if (playerBusId == null)
                 {
-                    if (Stream.State == Data.State.Login)
+                    if (Stream.State == State.Login)
                     {
                         SendPacket(new Disconnect2Packet()
                         {

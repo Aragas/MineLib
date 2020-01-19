@@ -1,9 +1,9 @@
 ﻿using Aragas.Network.Data;
 using Aragas.Network.IO;
 
+using MineLib.Protocol.Netty.Packets.Server.Handshake;
 using MineLib.Protocol.Packets;
 using MineLib.Protocol.Protocol;
-using MineLib.Protocol.Netty.Packets.Server.Handshake;
 
 using System;
 
@@ -16,15 +16,12 @@ namespace MineLib.Protocol.Netty.Protocol
     {
         public State State { get; set; }
 
-        private HandshakeFactory HandshakeFactory { get; } = new HandshakeFactory();
-        private StatusFactory<TStatusEnum> StatusFactory { get; } = new StatusFactory<TStatusEnum>();
-        private LoginFactory<TLoginEnum> LoginFactory { get; } = new LoginFactory<TLoginEnum>();
-        private PlayFactory<TPlayEnum> PlayFactory { get; } = new PlayFactory<TPlayEnum>();
+        private ServerHandshakeEnumFactory HandshakeFactory { get; } = new ServerHandshakeEnumFactory();
+        private StatusEnumFactory<TStatusEnum> StatusFactory { get; } = new StatusEnumFactory<TStatusEnum>();
+        private LoginEnumFactory<TLoginEnum> LoginFactory { get; } = new LoginEnumFactory<TLoginEnum>();
+        private PlayEnumFactory<TPlayEnum> PlayFactory { get; } = new PlayEnumFactory<TPlayEnum>();
 
-        //public ProtocolNettyTransmission(Socket socket, State state = State.Handshake) : base(socket) { State = state; }
-        public ProtocolNettyTransmission() : base() { }
-
-        public override MinecraftPacket? ReadPacket()
+        public override MinecraftEnumPacket? ReadPacket()
         {
             var data = Receive(0);
             if (data.IsEmpty)
@@ -32,7 +29,7 @@ namespace MineLib.Protocol.Netty.Protocol
 
             using var deserializer = new ProtobufDeserializer(data);
             var id = deserializer.Read<VarInt>();
-            MinecraftPacket? packet = State switch
+            MinecraftEnumPacket? packet = State switch
             {
                 State.Handshake => HandshakeFactory.Create(id),
                 State.Status => StatusFactory.Create(id),
@@ -44,7 +41,7 @@ namespace MineLib.Protocol.Netty.Protocol
             {
                 packet.Deserialize(deserializer);
 
-                if (packet is HandshakePacket handshakePacket)
+                if (packet is HandshakeEnumPacket handshakePacket)
                     State = (State) (byte) handshakePacket.NextState;
 
                 return packet;
@@ -53,7 +50,7 @@ namespace MineLib.Protocol.Netty.Protocol
             return null;
         }
 
-        public override void SendPacket(MinecraftPacket packet)
+        public override void SendPacket(MinecraftEnumPacket packet)
         {
             base.SendPacket(packet);
 

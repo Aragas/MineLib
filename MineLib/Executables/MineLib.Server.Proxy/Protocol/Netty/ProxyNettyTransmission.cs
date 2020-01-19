@@ -3,10 +3,11 @@ using Aragas.Network.IO;
 
 using Microsoft.Extensions.Options;
 
+using MineLib.Protocol.Netty;
+using MineLib.Protocol.Netty.Packets.Server.Handshake;
+using MineLib.Protocol.Netty.Protocol;
+using MineLib.Protocol.Packets;
 using MineLib.Server.Proxy.Data;
-using MineLib.Server.Proxy.Protocol.Netty.Factory;
-using MineLib.Server.Proxy.Protocol.Netty.Packets;
-using MineLib.Server.Proxy.Protocol.Netty.Packets.Serverbound;
 
 using System.Collections.Concurrent;
 using System.Net.Sockets;
@@ -16,16 +17,16 @@ namespace MineLib.Server.Proxy.Protocol.Netty
     /// <summary>
     /// This class is not related and should not be related to MineLib.Protocol.* classes
     /// </summary>
-    internal sealed class ProxyNettyTransmission : ProtobufTransmission<ProxyNettyPacket>
+    internal sealed class ProxyNettyTransmission : ProtobufTransmission<MinecraftPacket>
     {
         public ConcurrentQueue<byte[]> DataToSend { get; } = new ConcurrentQueue<byte[]>();
 
         public MineLibOptions MineLibOptions { get; set; }
         public VarInt ProtocolVersion { get; set; }
-        public Data.State State { get; set; } = Data.State.Handshake;
+        public State State { get; set; } = State.Handshake;
 
-        private HandshakeStateFactory HandshakeFactory { get; } = new HandshakeStateFactory();
-        private StatusStateFactory StatusFactory { get; } = new StatusStateFactory();
+        private ServerHandshakeFactory HandshakeFactory { get; } = new ServerHandshakeFactory();
+        private ServerStatusFactory StatusFactory { get; } = new ServerStatusFactory();
 
         public ProxyNettyTransmission(Socket socket, IOptions<MineLibOptions> mineLibOptions) : base()
         {
@@ -33,11 +34,11 @@ namespace MineLib.Server.Proxy.Protocol.Netty
             MineLibOptions = mineLibOptions.Value;
         }
 
-        public override ProxyNettyPacket? ReadPacket()
+        public override MinecraftPacket? ReadPacket()
         {
             if (Socket.Available > 0)
             {
-                if (State == Data.State.Login || State == Data.State.Play)
+                if (State == State.Login || State == State.Play)
                 {
                     var buffer = new byte[Socket.Available];
                     Socket.Receive(buffer);
@@ -51,10 +52,10 @@ namespace MineLib.Server.Proxy.Protocol.Netty
                 var id = MineLibOptions.NettyLegacyPingEnable
                     ? deserializer.Read<byte>()
                     : deserializer.Read<VarInt>();
-                ProxyNettyPacket? packet = State switch
+                MinecraftPacket? packet = State switch
                 {
-                    Data.State.Handshake => HandshakeFactory.Create(id),
-                    Data.State.Status => StatusFactory.Create(id),
+                    State.Handshake => HandshakeFactory.Create(id),
+                    State.Status => StatusFactory.Create(id),
 
                     _ => null,
                 };
@@ -64,7 +65,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty
 
                     if (packet is HandshakePacket handshakePacket)
                     {
-                        State = (Data.State)(byte) handshakePacket.NextState;
+                        State = (State) (byte) handshakePacket.NextState;
                         ProtocolVersion = handshakePacket.ProtocolVersion;
                     }
 

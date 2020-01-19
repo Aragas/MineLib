@@ -13,7 +13,7 @@ using System.Reflection;
 namespace MineLib.Protocol.Protocol
 {
     public class MinecraftEnumFactory<TPacketType> : BasePacketFactory<TPacketType, VarInt, ProtobufSerializer, ProtobufDeserializer> 
-        where TPacketType : MinecraftPacket
+        where TPacketType : MinecraftEnumPacket
     {
         private static Dictionary<Type, VarInt> IDTypeFromPacketType { get; } = new Dictionary<Type, VarInt>();
         private static Dictionary<VarInt, Func<TPacketType>> Packets { get; } = new Dictionary<VarInt, Func<TPacketType>>();

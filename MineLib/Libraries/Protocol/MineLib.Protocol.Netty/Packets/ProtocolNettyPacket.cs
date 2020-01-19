@@ -7,7 +7,7 @@ using MineLib.Protocol.Packets;
 
 namespace MineLib.Protocol.Netty.Packets
 {
-    public abstract class ProtocolNettyPacket<TEnum> : MinecraftPacket where TEnum : Enum
+    public abstract class ProtocolNettyPacket<TEnum> : MinecraftEnumPacket where TEnum : Enum
     {
         private static TEnum[] Cache { get; } = Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToArray();
 
@@ -20,7 +20,6 @@ namespace MineLib.Protocol.Netty.Packets
     public abstract class ClientPlayPacket<TEnum> : ProtocolNettyPacket<TEnum> where TEnum : Enum { }
     public abstract class ClientStatusPacket<TEnum> : ProtocolNettyPacket<TEnum> where TEnum : Enum { }
 
-    public abstract class ServerHandshakePacket : ProtocolNettyPacket<ServerHandshakePacketTypes> { }
     public abstract class ServerLoginPacket<TEnum> : ProtocolNettyPacket<TEnum> where TEnum : Enum { }
     public abstract class ServerPlayPacket<TEnum> : ProtocolNettyPacket<TEnum> where TEnum : Enum { }
     public abstract class ServerStatusPacket<TEnum> : ProtocolNettyPacket<TEnum> where TEnum : Enum { }

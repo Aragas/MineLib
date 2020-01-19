@@ -8,17 +8,17 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-alpine AS build
 WORKDIR /src
-COPY ["Aragas.QServer.NATS.Metrics/Aragas.QServer.NATS.Metrics.csproj", "Aragas.QServer.NATS.Metrics/"]
+COPY ["Aragas.QServer.Prometheus.Exporter/Aragas.QServer.Prometheus.Exporter.csproj", "Aragas.QServer.Prometheus.Exporter/"]
 COPY ["Aragas.QServer.Core/Aragas.QServer.Core.csproj", "Aragas.QServer.Core/"]
 COPY ["Third Party/Aragas.Network-2/src/Aragas.Network-2.Standard/Aragas.Network-2.csproj", "Third Party/Aragas.Network-2/src/Aragas.Network-2.Standard/"]
 COPY ["Third Party/Aragas.TupleEventSystem/src/Aragas.TupleEventSystem/Aragas.TupleEventSystem.csproj", "Third Party/Aragas.TupleEventSystem/src/Aragas.TupleEventSystem/"]
-RUN dotnet restore "Aragas.QServer.NATS.Metrics/Aragas.QServer.NATS.Metrics.csproj"
+RUN dotnet restore "Aragas.QServer.Prometheus.Exporter/Aragas.QServer.Prometheus.Exporter.csproj"
 COPY . .
-WORKDIR "/src/Aragas.QServer.NATS.Metrics"
-RUN dotnet build "Aragas.QServer.NATS.Metrics.csproj" -c Release -o /app/build -p:SolutionDir='/src'
+WORKDIR "/src/Aragas.QServer.Prometheus.Exporter"
+RUN dotnet build "Aragas.QServer.Prometheus.Exporter.csproj" -c Release -o /app/build -p:SolutionDir='/src'
 
 FROM build AS publish
-RUN dotnet publish "Aragas.QServer.NATS.Metrics.csproj" -c Release -o /app/publish -p:SolutionDir='/src'
+RUN dotnet publish "Aragas.QServer.Prometheus.Exporter.csproj" -c Release -o /app/publish -p:SolutionDir='/src'
 
 FROM base AS final
 
@@ -30,4 +30,4 @@ ENV LANG en_US.UTF-8
 
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Aragas.QServer.NATS.Metrics.dll"]
+ENTRYPOINT ["dotnet", "Aragas.QServer.Prometheus.Exporter.dll"]

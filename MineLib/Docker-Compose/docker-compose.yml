@@ -99,6 +99,21 @@ services:
     networks:
       - internal
 
+#Bedrock to 1.15.1
+#  geyser:
+#    image: ${DOCKER_REGISTRY-}geyser
+#    build:
+#      context: ../..
+#      dockerfile: MineLib/BedrockProxy/Dockerfile
+#    depends_on:
+#      - minelib.server.proxy
+#    volumes:
+#      - ./../BedrockProxy/config.yml:/app/config.yml
+#    ports:
+#      - 19132:19132
+#    networks:
+#      - internal
+
 #Server
   minelib.server.entitybus:
     image: ${DOCKER_REGISTRY-}minelibserverentitybus

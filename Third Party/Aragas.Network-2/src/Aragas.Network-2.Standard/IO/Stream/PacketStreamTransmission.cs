@@ -4,10 +4,8 @@ using System.IO;
 
 namespace Aragas.Network.IO
 {
-    public abstract class PacketStreamTransmission<TPacketType, TPacketIDType, TSerializer, TDeserializer> : PacketTransmission<TPacketType, TPacketIDType, TSerializer, TDeserializer>
-        where TPacketType : Packet<TPacketIDType, TSerializer, TDeserializer>
-        where TSerializer : PacketSerializer
-        where TDeserializer : PacketDeserializer
+    public abstract class PacketStreamTransmission<TPacketType, TPacketIDType> : PacketTransmission<TPacketType, TPacketIDType>
+        where TPacketType : Packet<TPacketIDType>
     {
         protected Stream Stream { get; set; } = Stream.Null;
         public virtual long AvailableData => Stream.Length - Stream.Position;

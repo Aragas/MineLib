@@ -46,7 +46,7 @@ namespace PokeD.Core.Packets.PokeD.Overworld
         public MonsterTeam MonsterTeam { get; set; } = new MonsterTeam();
 
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             PlayerID = deserializer.Read(PlayerID);
             TrainerSprite = deserializer.Read(TrainerSprite);
@@ -57,7 +57,7 @@ namespace PokeD.Core.Packets.PokeD.Overworld
 
             MonsterTeam = deserializer.Read(MonsterTeam);
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(PlayerID);
             serializer.Write(TrainerSprite);

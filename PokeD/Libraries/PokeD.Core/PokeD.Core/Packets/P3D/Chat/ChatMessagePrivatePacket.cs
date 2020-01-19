@@ -1,4 +1,5 @@
 ﻿using Aragas.Network.Attributes;
+using Aragas.Network.IO;
 
 using PokeD.Core.IO;
 
@@ -10,7 +11,7 @@ namespace PokeD.Core.Packets.P3D.Chat
         public string DestinationPlayerName { get => DataItems[0]; set => DataItems[0] = value; }
         public string Message { get => DataItems[1]; set => DataItems[1] = value; }
 
-        public override void Deserialize(P3DDeserializer deserializer) { }
-        public override void Serialize(P3DSerializer serializer) { }
+        public override void Deserialize(IPacketDeserializer deserializer) { }
+        public override void Serialize(IStreamSerializer serializer) { }
     }
 }

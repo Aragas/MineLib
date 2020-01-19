@@ -12,7 +12,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Int32 Data;
 		public Boolean DisableRelativeVolume;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			EffectID = deserialiser.Read(EffectID);
 			X = deserialiser.Read(X);
@@ -22,7 +22,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 			DisableRelativeVolume = deserialiser.Read(DisableRelativeVolume);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(EffectID);
             serializer.Write(X);

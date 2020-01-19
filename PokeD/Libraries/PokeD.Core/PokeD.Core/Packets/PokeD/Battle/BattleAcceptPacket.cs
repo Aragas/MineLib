@@ -10,11 +10,11 @@ namespace PokeD.Core.Packets.PokeD.Battle
         public bool IsAccepted { get; set; }
 
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             IsAccepted = deserializer.Read(IsAccepted);
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(IsAccepted);
         }

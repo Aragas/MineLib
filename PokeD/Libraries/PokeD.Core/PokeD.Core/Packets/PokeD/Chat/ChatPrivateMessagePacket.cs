@@ -9,12 +9,12 @@ namespace PokeD.Core.Packets.PokeD.Chat
         public string Message { get; set; } = string.Empty;
 
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             PlayerID = deserializer.Read(PlayerID);
             Message = deserializer.Read(Message);
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(PlayerID);
             serializer.Write(Message);

@@ -10,13 +10,13 @@ namespace Aragas.QServer.Core.Packets.MBus
     {
         public byte[] Data = Array.Empty<byte>();
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             base.Deserialize(deserializer);
             Data = deserializer.Read(Data);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write(Data);

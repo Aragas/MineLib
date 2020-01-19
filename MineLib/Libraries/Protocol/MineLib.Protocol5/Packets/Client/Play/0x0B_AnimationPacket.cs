@@ -9,13 +9,13 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public VarInt EntityID;
 		public Byte Animation;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			EntityID = deserialiser.Read(EntityID);
 			Animation = deserialiser.Read(Animation);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(EntityID);
             serializer.Write(Animation);

@@ -11,14 +11,14 @@ namespace MineLib.Protocol575.Packets.Server.Login
         public Boolean Successful { get; set; }
         public byte[] Data { get; set; }
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
             MessageID = deserialiser.Read(MessageID);
             Successful = deserialiser.Read(Successful);
             Data = deserialiser.Read(Data);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(MessageID);
             serializer.Write(Successful);

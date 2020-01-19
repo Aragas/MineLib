@@ -6,13 +6,13 @@ using System;
 
 namespace Aragas.QServer.Core.Packets
 {
-    public abstract class InternalPacket : PacketWithAttribute<VarInt, ProtobufSerializer, ProtobufDeserializer>
+    public abstract class InternalPacket : PacketWithAttribute<VarInt>
     {
         // Because the messages are broadcasted, and received by everyone, they should have some kind of ID system.
         public Guid GUID;
 
-        public override void Deserialize(ProtobufDeserializer deserializer) => GUID = deserializer.Read(GUID);
+        public override void Deserialize(IPacketDeserializer deserializer) => GUID = deserializer.Read(GUID);
 
-        public override void Serialize(ProtobufSerializer serializer) => serializer.Write(GUID);
+        public override void Serialize(IStreamSerializer serializer) => serializer.Write(GUID);
     }
 }

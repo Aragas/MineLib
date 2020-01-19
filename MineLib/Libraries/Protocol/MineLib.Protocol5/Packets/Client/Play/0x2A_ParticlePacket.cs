@@ -15,7 +15,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Single ParticleData;
 		public Int32 NumberOfParticles;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			Particlename = deserialiser.Read(Particlename);
 			X = deserialiser.Read(X);
@@ -28,7 +28,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 			NumberOfParticles = deserialiser.Read(NumberOfParticles);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(Particlename);
             serializer.Write(X);

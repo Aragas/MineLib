@@ -7,11 +7,11 @@ namespace PokeD.Core.Packets.PokeD.Authorization
     {
         public VarInt PlayerID { get; set; }
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             PlayerID = deserializer.Read(PlayerID);
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(PlayerID);
         }

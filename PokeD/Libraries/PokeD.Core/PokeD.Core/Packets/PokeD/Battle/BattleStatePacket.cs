@@ -12,11 +12,11 @@ namespace PokeD.Core.Packets.PokeD.Battle
         public BattleState BattleState { get; set; }
 
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             BattleState = deserializer.Read(BattleState);
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(BattleState);
         }

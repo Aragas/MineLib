@@ -13,7 +13,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public String Line3;
 		public String Line4;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			X = deserialiser.Read(X);
 			Y = deserialiser.Read(Y);
@@ -24,7 +24,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 			Line4 = deserialiser.Read(Line4);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(X);
             serializer.Write(Y);

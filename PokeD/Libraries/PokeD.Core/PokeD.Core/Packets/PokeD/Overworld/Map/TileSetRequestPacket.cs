@@ -7,11 +7,11 @@ namespace PokeD.Core.Packets.PokeD.Overworld.Map
         public string[] TileSetNames { get; set; } = new string[0];
 
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             TileSetNames = deserializer.Read(TileSetNames);
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(TileSetNames);
         }

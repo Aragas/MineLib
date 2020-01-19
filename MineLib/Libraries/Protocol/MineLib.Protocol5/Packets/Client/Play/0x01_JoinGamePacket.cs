@@ -12,7 +12,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Byte MaxPlayers;
 		public String LevelType;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			EntityID = deserialiser.Read(EntityID);
 			GameMode = deserialiser.Read(GameMode);
@@ -22,7 +22,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 			LevelType = deserialiser.Read(LevelType);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(EntityID);
             serializer.Write(GameMode);

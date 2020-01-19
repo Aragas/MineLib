@@ -20,7 +20,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
         public Int16 CurrentItem;
         public EntityMetadataList Metadata;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
             EntityID = deserialiser.Read(EntityID);
             PlayerUUID = deserialiser.Read(PlayerUUID);
@@ -36,7 +36,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
             Metadata = deserialiser.Read(Metadata);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(EntityID);
             serializer.Write(PlayerUUID);

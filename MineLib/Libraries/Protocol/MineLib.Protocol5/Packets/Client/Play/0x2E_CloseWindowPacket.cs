@@ -7,12 +7,12 @@ namespace MineLib.Protocol5.Packets.Client.Play
     {
 		public Byte WindowID;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			WindowID = deserialiser.Read(WindowID);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(WindowID);
         }

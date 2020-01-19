@@ -13,7 +13,7 @@ namespace PokeD.Server.Core.Protocol
         /// </summary>
         public P3DINetworkBusTransmission() : base()
         {
-            Factory = new DefaultPacketFactory<P3DPacket, int, P3DSerializer, P3DDeserializer>();
+            Factory = new DefaultPacketFactory<P3DPacket, int>();
         }
     }
 }

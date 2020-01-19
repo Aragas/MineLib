@@ -11,6 +11,5 @@ namespace MineLib.Protocol.Netty.Protocol
 {
     public class PlayEnumFactory<TEnum> : ProtocolNettyFactory<ProtocolNettyPacket<TEnum>, TEnum> where TEnum : Enum { }
 
-    public class PlayFactory<TPacket> : DefaultPacketFactory<TPacket, VarInt, ProtobufSerializer, ProtobufDeserializer>
-        where TPacket : MinecraftPacket { }
+    public class PlayFactory<TPacket> : DefaultPacketFactory<TPacket, VarInt> where TPacket : MinecraftPacket { }
 }

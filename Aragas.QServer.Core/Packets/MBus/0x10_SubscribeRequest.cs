@@ -8,13 +8,13 @@ namespace Aragas.QServer.Core.Packets.MBus
     {
         public string Name = string.Empty;
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             base.Deserialize(deserializer);
             Name = deserializer.Read(Name);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write(Name);

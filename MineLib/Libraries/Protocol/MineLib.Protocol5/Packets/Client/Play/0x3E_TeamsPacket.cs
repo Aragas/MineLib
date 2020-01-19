@@ -13,7 +13,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public SByte FriendlyFire;
 		//public NotSupportedType Players;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			TeamName = deserialiser.Read(TeamName);
 			Mode = deserialiser.Read(Mode);
@@ -25,7 +25,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 			//Players = deserialiser.Read(Players);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(TeamName);
             serializer.Write(Mode);

@@ -11,7 +11,7 @@ namespace MineLib.Protocol5.Packets.Server.Play
 		public Double Z;
 		public Boolean OnGround;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			X = deserialiser.Read(X);
 			FeetY = deserialiser.Read(FeetY);
@@ -20,7 +20,7 @@ namespace MineLib.Protocol5.Packets.Server.Play
 			OnGround = deserialiser.Read(OnGround);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(X);
             serializer.Write(FeetY);

@@ -10,7 +10,7 @@ namespace Aragas.QServer.Core.Extensions
 {
     public static class PacketFactoryExtension
     {
-        public static InternalPacket? GetPacket(this BasePacketFactory<InternalPacket, VarInt, ProtobufSerializer, ProtobufDeserializer> factory, in Span<byte> data)
+        public static InternalPacket? GetPacket(this BasePacketFactory<InternalPacket, VarInt> factory, in Span<byte> data)
         {
             using var deserializer = new CompressedProtobufDeserializer(in data);
             var id = deserializer.Read<VarInt>();

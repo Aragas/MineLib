@@ -9,14 +9,14 @@ namespace MineLib.Protocol5.Packets.Server.Play
 		public Single FlyingSpeed;
 		public Single WalkingSpeed;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			Flags = deserialiser.Read(Flags);
 			FlyingSpeed = deserialiser.Read(FlyingSpeed);
 			WalkingSpeed = deserialiser.Read(WalkingSpeed);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(Flags);
             serializer.Write(FlyingSpeed);

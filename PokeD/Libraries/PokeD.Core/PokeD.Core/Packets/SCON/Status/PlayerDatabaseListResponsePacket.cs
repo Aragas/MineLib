@@ -9,11 +9,11 @@ namespace PokeD.Core.Packets.SCON.Status
         public PlayerDatabase[] PlayerDatabases { get; set; } = new PlayerDatabase[0];
 
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             PlayerDatabases = deserializer.Read(PlayerDatabases);
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(PlayerDatabases);
         }

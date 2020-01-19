@@ -1,4 +1,5 @@
 ﻿using Aragas.Network.Attributes;
+using Aragas.Network.IO;
 
 using PokeD.Core.Data.P3D;
 using PokeD.Core.IO;
@@ -11,7 +12,7 @@ namespace PokeD.Core.Packets.P3D.Battle
         public int DestinationPlayerID { get => int.Parse(DataItems[0] == string.Empty ? 0.ToString() : DataItems[0]); set => DataItems[0] = value.ToString(); }
         public BattleClientData BattleData { get => DataItems[1]; set => DataItems[1] = value; }
 
-        public override void Deserialize(P3DDeserializer deserializer) { }
-        public override void Serialize(P3DSerializer serializer) { }
+        public override void Deserialize(IPacketDeserializer deserializer) { }
+        public override void Serialize(IStreamSerializer serializer) { }
     }
 }

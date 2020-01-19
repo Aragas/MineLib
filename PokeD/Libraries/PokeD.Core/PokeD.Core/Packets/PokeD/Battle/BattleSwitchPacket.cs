@@ -14,11 +14,11 @@ namespace PokeD.Core.Packets.PokeD.Battle
         public byte SwitchMonster { get => Info.SwitchMonster; set => Info = new MetaSwitch(CurrentMonster, value); }
 
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             Info = deserializer.Read(Info);
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(Info);
         }

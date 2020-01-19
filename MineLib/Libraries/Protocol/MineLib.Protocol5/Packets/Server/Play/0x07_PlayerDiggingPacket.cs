@@ -11,7 +11,7 @@ namespace MineLib.Protocol5.Packets.Server.Play
 		public Int32 Z;
 		public SByte Face;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			Status = deserialiser.Read(Status);
 			X = deserialiser.Read(X);
@@ -20,7 +20,7 @@ namespace MineLib.Protocol5.Packets.Server.Play
 			Face = deserialiser.Read(Face);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(Status);
             serializer.Write(X);

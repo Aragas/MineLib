@@ -8,7 +8,7 @@ using System.Collections.Concurrent;
 namespace Aragas.QServer.Core.Protocol
 {
     public abstract class SocketPacketINetworkBusTransmission<TPacketType, TPacketIDType, TSerializer, TDeserializer> : SocketPacketTransmission<TPacketType, TPacketIDType, TSerializer, TDeserializer>
-        where TPacketType : Packet<TPacketIDType, TSerializer, TDeserializer>
+        where TPacketType : Packet<TPacketIDType>
         where TSerializer : StreamSerializer, new()
         where TDeserializer : StreamDeserializer, new()
     {
@@ -31,7 +31,7 @@ namespace Aragas.QServer.Core.Protocol
         private IDisposable PlayerBusDataEvent { get; set; }
 
         protected SocketPacketINetworkBusTransmission() : base() { }
-        protected SocketPacketINetworkBusTransmission(Guid playerId, BasePacketFactory<TPacketType, TPacketIDType, TSerializer, TDeserializer>? factory = null) : base()
+        protected SocketPacketINetworkBusTransmission(Guid playerId, BasePacketFactory<TPacketType, TPacketIDType>? factory = null) : base()
         {
             PlayerId = playerId;
             Factory = factory;

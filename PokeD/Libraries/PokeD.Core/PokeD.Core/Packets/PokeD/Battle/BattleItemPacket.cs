@@ -15,11 +15,11 @@ namespace PokeD.Core.Packets.PokeD.Battle
         public short Item { get => Info.Item; set => Info = new MetaItem(Monster, value); }
 
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             Info = deserializer.Read(Info);
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(Info);
         }

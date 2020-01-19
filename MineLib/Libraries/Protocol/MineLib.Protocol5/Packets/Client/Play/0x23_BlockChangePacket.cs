@@ -12,7 +12,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public VarInt BlockID;
 		public Byte BlockMetadata;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			X = deserialiser.Read(X);
 			Y = deserialiser.Read(Y);
@@ -21,7 +21,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 			BlockMetadata = deserialiser.Read(BlockMetadata);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(X);
             serializer.Write(Y);

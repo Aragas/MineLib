@@ -8,9 +8,8 @@ namespace MineLib.Core.Extensions
 {
     public static class ProtobufSerializerExtensions
     {
-        public static ReadOnlySpan<byte> GetRawPacket<TSerializer, TDeserializer>(this TSerializer serializer, Packet<VarInt, TSerializer, TDeserializer> packet)
+        public static ReadOnlySpan<byte> GetRawPacket<TSerializer>(this TSerializer serializer, Packet<VarInt> packet)
             where TSerializer : ProtobufSerializer
-            where TDeserializer : PacketDeserializer
         {
             serializer.Write(packet.ID);
             packet.Serialize(serializer);

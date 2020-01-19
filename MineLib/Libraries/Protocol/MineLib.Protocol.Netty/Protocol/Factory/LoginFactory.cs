@@ -11,6 +11,5 @@ namespace MineLib.Protocol.Netty.Protocol
 {
     public class LoginEnumFactory<TEnum> : ProtocolNettyFactory<ProtocolNettyPacket<TEnum>, TEnum> where TEnum : Enum { }
 
-    public sealed class LoginFactory<TPacket> : DefaultPacketFactory<TPacket, VarInt, ProtobufSerializer, ProtobufDeserializer>
-        where TPacket : MinecraftPacket { }
+    public sealed class LoginFactory<TPacket> : DefaultPacketFactory<TPacket, VarInt> where TPacket : MinecraftPacket { }
 }

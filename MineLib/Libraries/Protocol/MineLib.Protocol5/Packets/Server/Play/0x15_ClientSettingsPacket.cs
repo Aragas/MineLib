@@ -12,7 +12,7 @@ namespace MineLib.Protocol5.Packets.Server.Play
 		public SByte Difficulty;
 		public Boolean ShowCape;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			Locale = deserialiser.Read(Locale);
 			ViewDistance = deserialiser.Read(ViewDistance);
@@ -22,7 +22,7 @@ namespace MineLib.Protocol5.Packets.Server.Play
 			ShowCape = deserialiser.Read(ShowCape);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(Locale);
             serializer.Write(ViewDistance);

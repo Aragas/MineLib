@@ -12,14 +12,14 @@ namespace PokeD.Core.Packets.PokeD.Overworld
         public byte Event { get; set; }
 
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             Time = deserializer.Read(Time);
             Season = deserializer.Read(Season);
             Weather = deserializer.Read(Weather);
             Event = deserializer.Read(Event);
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(Time);
             serializer.Write(Season);

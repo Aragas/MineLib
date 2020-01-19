@@ -3,5 +3,5 @@ using Aragas.Network.Packets;
 
 namespace MineLib.Server.Proxy.Protocol.Legacy.Packets
 {
-    internal abstract class ProxyLegacyPacket : PacketWithAttribute<int, StandardSerializer, StandardDeserializer> { }
+    internal abstract class ProxyLegacyPacket : PacketWithAttribute<int> { }
 }

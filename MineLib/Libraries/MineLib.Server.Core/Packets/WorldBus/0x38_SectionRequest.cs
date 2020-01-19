@@ -12,13 +12,13 @@ namespace MineLib.Server.Core.Packets.WorldBus
         // X, Z - Chunk coords, Y - Section number
         public Location3D Position;
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             base.Deserialize(deserializer);
             Position = deserializer.Read(Position);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write(Position);

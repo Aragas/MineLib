@@ -26,7 +26,7 @@ namespace Aragas.Network.Packets
     /// <typeparam name="TIDType">Any type used for <see cref="Packet"/> identification.</typeparam>
     /// <typeparam name="TSerializer"><see cref="StreamSerializer"/>. You can create a custom one or use <see cref="StandardSerializer"/> and <see cref="ProtobufSerializer"/></typeparam>
     /// <typeparam name="TDeserializer"><see cref="StreamDeserializer"/>. You can create a custom one or use <see cref="StandardDeserializer"/> and <see cref="ProtobufDeserializer"/></typeparam>
-    public abstract class PacketWithAttribute<TIDType, TSerializer, TDeserializer> : Packet<TIDType, TSerializer, TDeserializer> where TSerializer : PacketSerializer where TDeserializer : PacketDeserializer
+    public abstract class PacketWithAttribute<TIDType> : Packet<TIDType>
     {
         private Initializable<TIDType> _id;
         public sealed override TIDType ID => (!_id.HasInitialized ? (_id = (TIDType) (dynamic) GetType().GetCustomAttribute<PacketAttribute>().ID) : _id).Value;

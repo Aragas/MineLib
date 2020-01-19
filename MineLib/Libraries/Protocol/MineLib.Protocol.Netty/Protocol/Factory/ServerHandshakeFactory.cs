@@ -9,5 +9,5 @@ namespace MineLib.Protocol.Netty.Protocol
 {
     public sealed class ServerHandshakeEnumFactory : ProtocolNettyFactory<ProtocolNettyPacket<ServerHandshakePacketTypes>, ServerHandshakePacketTypes> { }
 
-    public sealed class ServerHandshakeFactory : DefaultPacketFactory<ServerHandshakePacket, VarInt, ProtobufSerializer, ProtobufDeserializer>  { }
+    public sealed class ServerHandshakeFactory : DefaultPacketFactory<ServerHandshakePacket, VarInt>  { }
 }

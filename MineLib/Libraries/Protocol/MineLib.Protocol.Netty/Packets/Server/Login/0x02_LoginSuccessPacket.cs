@@ -13,13 +13,13 @@ namespace MineLib.Protocol.Netty.Packets.Server.Login
         public String UUID;
         public String Username;
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             UUID = deserializer.Read(UUID);
             Username = deserializer.Read(Username);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(UUID);
             serializer.Write(Username);

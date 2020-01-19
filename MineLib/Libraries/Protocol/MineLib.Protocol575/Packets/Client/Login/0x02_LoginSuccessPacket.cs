@@ -9,13 +9,13 @@ namespace MineLib.Protocol575.Packets.Client.Login
 		public String UUID;
 		public String Username;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			UUID = deserialiser.Read(UUID);
 			Username = deserialiser.Read(Username);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(UUID);
             serializer.Write(Username);

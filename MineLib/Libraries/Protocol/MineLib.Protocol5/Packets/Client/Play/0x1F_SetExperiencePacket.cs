@@ -9,14 +9,14 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Int16 Level;
 		public Int16 TotalExperience;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			ExperienceBar = deserialiser.Read(ExperienceBar);
 			Level = deserialiser.Read(Level);
 			TotalExperience = deserialiser.Read(TotalExperience);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(ExperienceBar);
             serializer.Write(Level);

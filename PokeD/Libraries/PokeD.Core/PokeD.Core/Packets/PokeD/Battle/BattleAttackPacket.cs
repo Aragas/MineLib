@@ -16,11 +16,11 @@ namespace PokeD.Core.Packets.PokeD.Battle
         public byte TargetMonster { get => Info.TargetMonster; set => Info = new MetaAttack(CurrentMonster, Move, value); }
 
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             Info = deserializer.Read(Info);
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(Info);
         }

@@ -8,12 +8,12 @@ namespace MineLib.Protocol.Netty.Packets.Server.Status
     {
 		public Int64 Time;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			Time = deserialiser.Read(Time);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(Time);
         }

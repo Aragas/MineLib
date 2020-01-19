@@ -10,13 +10,13 @@ namespace Aragas.QServer.Core.Packets.PlayerHandler
     {
         public IPEndPoint Endpoint = new IPEndPoint(IPAddress.Any, 0);
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             base.Deserialize(deserializer);
             Endpoint = deserializer.Read(Endpoint);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write(Endpoint);

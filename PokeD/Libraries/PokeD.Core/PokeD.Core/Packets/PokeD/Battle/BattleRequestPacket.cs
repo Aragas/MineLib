@@ -12,7 +12,7 @@ namespace PokeD.Core.Packets.PokeD.Battle
         //public IBattleInfo Battle { get; set; } = new BattleInfo1x1();
 
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             Message = deserializer.Read(Message);
             Type = deserializer.Read(Type);
@@ -47,7 +47,7 @@ namespace PokeD.Core.Packets.PokeD.Battle
             }
             */
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(Message);
             serializer.Write(Type);

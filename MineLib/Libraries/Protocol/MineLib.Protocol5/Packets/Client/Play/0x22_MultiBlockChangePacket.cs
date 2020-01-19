@@ -12,7 +12,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Int32 ChunkZ;
 		public BlockLocation[] Records;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			ChunkX = deserialiser.Read(ChunkX);
 			ChunkZ = deserialiser.Read(ChunkZ);
@@ -21,7 +21,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 			Records = deserialiser.Read(Records, RecordsLength);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(ChunkX);
             serializer.Write(ChunkZ);

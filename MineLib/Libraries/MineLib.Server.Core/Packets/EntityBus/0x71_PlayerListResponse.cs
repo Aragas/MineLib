@@ -9,13 +9,13 @@ namespace MineLib.Server.Core.Packets.EntityBus
     {
         public string[] PlayerNames;
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             base.Deserialize(deserializer);
             PlayerNames = deserializer.Read(PlayerNames);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write(PlayerNames);

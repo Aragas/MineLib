@@ -6,10 +6,8 @@ using System.Linq;
 
 namespace Aragas.Network.Packets
 {
-    public abstract class BasePacketFactory<TPacketType, TIDType, TSerializer, TDeserializer> : IDisposable 
-        where TPacketType : Packet<TIDType, TSerializer, TDeserializer>
-        where TSerializer : PacketSerializer
-        where TDeserializer : PacketDeserializer
+    public abstract class BasePacketFactory<TPacketType, TIDType> : IDisposable 
+        where TPacketType : Packet<TIDType>
     {
         private bool disposedValue = false; // To detect redundant calls
 
@@ -128,10 +126,8 @@ namespace Aragas.Network.Packets
     }
     */
 
-    public class DefaultPacketFactory<TPacketType, TIDType, TSerializer, TDeserializer> : BasePacketFactory<TPacketType, TIDType, TSerializer, TDeserializer>
-        where TPacketType : Packet<TIDType, TSerializer, TDeserializer>
-        where TSerializer : PacketSerializer
-        where TDeserializer : PacketDeserializer
+    public class DefaultPacketFactory<TPacketType, TIDType> : BasePacketFactory<TPacketType, TIDType>
+        where TPacketType : Packet<TIDType>
     {
         private static readonly Dictionary<Type, TIDType> IDTypeFromPacketType = new Dictionary<Type, TIDType>();
         private static readonly Dictionary<TIDType, Func<TPacketType>> Packets = new Dictionary<TIDType, Func<TPacketType>>();

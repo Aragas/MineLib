@@ -8,13 +8,13 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Byte Reason;
 		public Single Value;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			Reason = deserialiser.Read(Reason);
 			Value = deserialiser.Read(Value);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(Reason);
             serializer.Write(Value);

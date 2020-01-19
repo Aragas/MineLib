@@ -19,12 +19,12 @@ namespace PokeD.Core.Packets.PokeD.Overworld.Map
         public ImageResponse[] Images { get; set; } = new ImageResponse[0];
 
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             TileSets = deserializer.Read(TileSets);
             Images = deserializer.Read(Images);
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(TileSets);
             serializer.Write(Images);

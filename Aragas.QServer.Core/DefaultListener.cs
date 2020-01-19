@@ -11,9 +11,9 @@ namespace Aragas.QServer.Core
 {
     public abstract class DefaultListener<TConnection, TFactory, TPacketTransmission, TPacket, TIDType, TSerializer, TDeserializer> : BaseListener
         where TConnection : DefaultConnectionHandler<TPacketTransmission, TPacket, TIDType, TSerializer, TDeserializer>, new()
-        where TFactory : BasePacketFactory<TPacket, TIDType, TSerializer, TDeserializer>, new()
+        where TFactory : BasePacketFactory<TPacket, TIDType>, new()
         where TPacketTransmission : SocketPacketTransmission<TPacket, TIDType, TSerializer, TDeserializer>, new()
-        where TPacket : Packet<TIDType, TSerializer, TDeserializer>
+        where TPacket : Packet<TIDType>
         where TSerializer : StreamSerializer, new()
         where TDeserializer : StreamDeserializer, new()
     {

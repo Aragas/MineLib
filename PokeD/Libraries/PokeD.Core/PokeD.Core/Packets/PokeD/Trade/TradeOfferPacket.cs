@@ -11,12 +11,12 @@ namespace PokeD.Core.Packets.PokeD.Trade
         public Monster MonsterData { get; set; } // TODO: null
 
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             DestinationID = deserializer.Read(DestinationID);
             MonsterData = deserializer.Read(MonsterData);
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(DestinationID);
             serializer.Write(MonsterData);

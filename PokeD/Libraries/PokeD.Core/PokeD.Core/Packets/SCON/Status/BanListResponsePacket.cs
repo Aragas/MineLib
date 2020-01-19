@@ -9,11 +9,11 @@ namespace PokeD.Core.Packets.SCON.Status
         public Ban[] Bans { get; set; } = new Ban[0];
 
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             Bans = deserializer.Read(Bans);
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(Bans);
         }

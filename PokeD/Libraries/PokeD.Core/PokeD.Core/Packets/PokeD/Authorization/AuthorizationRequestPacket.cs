@@ -7,11 +7,11 @@ namespace PokeD.Core.Packets.PokeD.Authorization
         public string Name { get; set; } = string.Empty;
 
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             Name = deserializer.Read(Name);
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(Name);
         }

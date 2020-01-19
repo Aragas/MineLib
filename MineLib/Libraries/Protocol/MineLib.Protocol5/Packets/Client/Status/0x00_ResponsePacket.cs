@@ -7,12 +7,12 @@ namespace MineLib.Protocol5.Packets.Client.Status
     {
 		public String JSONResponse;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			JSONResponse = deserialiser.Read(JSONResponse);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(JSONResponse);
         }

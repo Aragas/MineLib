@@ -9,13 +9,13 @@ namespace MineLib.Server.Core.Packets.PlayerHandler
     {
         public int ErrorEnum;
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             base.Deserialize(deserializer);
             ErrorEnum = deserializer.Read(ErrorEnum);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write(ErrorEnum);

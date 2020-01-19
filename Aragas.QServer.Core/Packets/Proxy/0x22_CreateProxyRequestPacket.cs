@@ -9,13 +9,13 @@ namespace Aragas.QServer.Core.Packets.PlayerHandler
     {
         public VarInt ProtocolVersion;
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             base.Deserialize(deserializer);
             ProtocolVersion = deserializer.Read(ProtocolVersion);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write(ProtocolVersion);

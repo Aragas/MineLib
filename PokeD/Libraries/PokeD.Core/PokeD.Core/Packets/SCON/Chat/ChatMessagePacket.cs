@@ -8,12 +8,12 @@ namespace PokeD.Core.Packets.SCON.Chat
         public string Message { get; set; } = string.Empty;
 
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             Player = deserializer.Read(Player);
             Message = deserializer.Read(Message);
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(Player);
             serializer.Write(Message);

@@ -8,12 +8,12 @@ namespace MineLib.Server.Proxy.Protocol.Legacy.Packets
     {
         public string Message { get; set; }
 
-        public override void Deserialize(StandardDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
             Message = deserialiser.Read(Message);
         }
 
-        public override void Serialize(StandardSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(Message);
         }

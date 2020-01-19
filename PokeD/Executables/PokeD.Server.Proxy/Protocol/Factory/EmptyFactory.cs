@@ -7,7 +7,7 @@ using System;
 
 namespace PokeD.Server.Proxy.Protocol.Factory
 {
-    internal sealed class EmptyFactory : BasePacketFactory<P3DPacket, int, P3DSerializer, P3DDeserializer>
+    internal sealed class EmptyFactory : BasePacketFactory<P3DPacket, int>
     {
         public override P3DPacket Create(int packetID) => default;
 

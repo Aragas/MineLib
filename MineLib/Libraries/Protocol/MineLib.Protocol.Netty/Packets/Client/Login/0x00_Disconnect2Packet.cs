@@ -7,12 +7,12 @@ namespace MineLib.Protocol.Netty.Packets.Client.Login
     {
 		public String JSONData;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			JSONData = deserialiser.Read(JSONData);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
 			serializer.Write(JSONData);
         }

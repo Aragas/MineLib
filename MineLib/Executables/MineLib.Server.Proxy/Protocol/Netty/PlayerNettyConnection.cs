@@ -105,8 +105,6 @@ namespace MineLib.Server.Proxy.Protocol.Netty
                     break;
 
                 case ServerListPingPacket serverListPingPacket:
-                    var serializer = new StandardSerializer();
-                    serializer.Write<byte>(0xFF);
                     // if serverListPingPacket.Payload == 0x00 : ??-1.3.2 (??-39)
                     // if serverListPingPacket.Payload == 0x01 : 1.4-1.5.2 (47-61)
                     var protocolVersion = serverListPingPacket.ProtocolVersion == 0
@@ -116,7 +114,9 @@ namespace MineLib.Server.Proxy.Protocol.Netty
                         ? $"§1\0{protocolVersion}\0Any Version\0{MineLibOptions.Description}\0{ServerInfo.CurrentConnections}\0{MineLibOptions.MaxConnections}"
                         : $"{MineLibOptions.Description}§{ServerInfo.CurrentConnections}§{MineLibOptions.MaxConnections}";
                     var responsePacket = new LegacyDisconnectPacket() { Response = response };
-                    serializer.Write<UTF16BEString>(response);
+
+                    var serializer = new StandardSerializer();
+                    responsePacket.Serialize(serializer);
                     Stream.Socket.Send(serializer.GetData().ToArray(), SocketFlags.None);
                     Task.Run(Disconnect);
                     break;

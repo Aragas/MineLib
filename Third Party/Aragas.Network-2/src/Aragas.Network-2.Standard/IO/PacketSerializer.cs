@@ -3,7 +3,11 @@ using System.Collections.Generic;
 
 namespace Aragas.Network.IO
 {
-    public abstract class PacketSerializer : IDisposable
+    public interface IPacketSerializer : IDisposable
+    {
+        void Write<TDataType>(TDataType value = default, bool writeDefaultLength = true);
+    }
+    public abstract class PacketSerializer : IPacketSerializer
     {
         #region ExtendWrite
 

@@ -11,13 +11,13 @@ namespace MineLib.Server.Core.Packets.WorldBus
     {
         public Section? Section;
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             base.Deserialize(deserializer);
             Section = deserializer.Read(Section);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write(Section);

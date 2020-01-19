@@ -7,12 +7,12 @@ namespace MineLib.Protocol575.Packets.Server.Play
     {
 		public Int64 KeepAliveID;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			KeepAliveID = deserialiser.Read(KeepAliveID);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(KeepAliveID);
         }

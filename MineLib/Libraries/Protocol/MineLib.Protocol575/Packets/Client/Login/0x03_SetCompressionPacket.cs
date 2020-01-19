@@ -8,12 +8,12 @@ namespace MineLib.Protocol575.Packets.Client.Login
     {
 		public Int32 Threshold;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
             Threshold = deserialiser.Read(Threshold);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(Threshold);
         }

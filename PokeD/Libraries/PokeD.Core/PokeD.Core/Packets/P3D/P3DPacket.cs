@@ -6,7 +6,6 @@ using System.Text;
 using Aragas.Network.Packets;
 
 using PokeD.Core.Data.P3D;
-using PokeD.Core.IO;
 
 namespace PokeD.Core.Packets.P3D
 {
@@ -34,7 +33,7 @@ namespace PokeD.Core.Packets.P3D
         public override int GetHashCode() => HashCode.Combine(_value);
     }
 
-    public abstract class P3DPacket : PacketWithAttribute<int, P3DSerializer, P3DDeserializer>
+    public abstract class P3DPacket : PacketWithAttribute<int>
     {
         public Origin Origin { get; set; }
 

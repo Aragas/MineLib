@@ -8,12 +8,12 @@ namespace PokeD.Core.Packets.PokeD.Authorization
         public byte[] VerificationToken { get; set; } = new byte[0];
 
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             PublicKey = deserializer.Read(PublicKey);
             VerificationToken = deserializer.Read(VerificationToken);
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(PublicKey);
             serializer.Write(VerificationToken);

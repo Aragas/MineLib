@@ -14,7 +14,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Single PlayerMotionY;
 		public Single PlayerMotionZ;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			X = deserialiser.Read(X);
 			Y = deserialiser.Read(Y);
@@ -27,7 +27,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 			PlayerMotionZ = deserialiser.Read(PlayerMotionZ);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(X);
             serializer.Write(Y);

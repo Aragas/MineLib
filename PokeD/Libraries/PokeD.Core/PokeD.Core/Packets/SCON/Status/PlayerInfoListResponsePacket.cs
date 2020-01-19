@@ -9,11 +9,11 @@ namespace PokeD.Core.Packets.SCON.Status
         public PlayerInfo[] PlayerInfos { get; set; } = new PlayerInfo[0];
 
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             PlayerInfos = deserializer.Read(PlayerInfos);
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(PlayerInfos);
         }

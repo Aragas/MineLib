@@ -15,7 +15,7 @@ namespace PokeD.Server.Proxy.Protocol.P3D
 
         public int State { get; set; } = 0;
 
-        private BasePacketFactory<P3DPacket, int, P3DSerializer, P3DDeserializer> P3DFactory { get; } = new DefaultPacketFactory<P3DPacket, int, P3DSerializer, P3DDeserializer>();
+        private BasePacketFactory<P3DPacket, int> P3DFactory { get; } = new DefaultPacketFactory<P3DPacket, int>();
 
         public override P3DPacket? ReadPacket()
         {

@@ -9,13 +9,13 @@ namespace Aragas.QServer.Core.Packets.PlayerHandler
     {
         public VarInt Port;
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             base.Deserialize(deserializer);
             Port = deserializer.Read(Port);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write(Port);

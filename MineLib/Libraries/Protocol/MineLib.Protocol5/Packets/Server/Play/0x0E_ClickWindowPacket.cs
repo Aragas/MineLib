@@ -15,7 +15,7 @@ namespace MineLib.Protocol5.Packets.Server.Play
 		public SByte Mode;
 		public ItemSlot ClickedItem;
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
 			WindowID = deserializer.Read(WindowID);
 			Slot = deserializer.Read(Slot);
@@ -25,7 +25,7 @@ namespace MineLib.Protocol5.Packets.Server.Play
 			ClickedItem = deserializer.Read(ClickedItem);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(WindowID);
             serializer.Write(Slot);

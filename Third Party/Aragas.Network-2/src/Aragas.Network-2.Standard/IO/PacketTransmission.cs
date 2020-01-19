@@ -5,10 +5,7 @@ using System;
 namespace Aragas.Network.IO
 {
 
-    public abstract class PacketTransmission<TPacketType, TPacketIDType, TSerializer, TDeserializer> : IDisposable
-        where TPacketType : Packet<TPacketIDType, TSerializer, TDeserializer>
-        where TSerializer : PacketSerializer
-        where TDeserializer : PacketDeserializer
+    public abstract class PacketTransmission<TPacketType, TPacketIDType> : IDisposable where TPacketType : Packet<TPacketIDType>
     {
         private bool disposedValue = false; // To detect redundant calls
 

@@ -12,7 +12,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Byte[] Data;
 		public ChunkColumnMetadata[] MetaInformation;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			var ChunkColumnCount = deserialiser.Read<Int16>();
 			var DataLength = deserialiser.Read<Int32>();
@@ -21,7 +21,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 			MetaInformation = deserialiser.Read(MetaInformation, ChunkColumnCount);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
 			serializer.Write((short) MetaInformation.Length);
             serializer.Write(Data.Length);

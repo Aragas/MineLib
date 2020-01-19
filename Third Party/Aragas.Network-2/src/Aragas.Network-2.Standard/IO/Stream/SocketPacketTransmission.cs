@@ -7,8 +7,8 @@ using System.Net.Sockets;
 
 namespace Aragas.Network.IO
 {
-    public abstract class SocketPacketTransmission<TPacketType, TPacketIDType, TSerializer, TDeserializer> : PacketStreamTransmission<TPacketType, TPacketIDType, TSerializer, TDeserializer>
-        where TPacketType : Packet<TPacketIDType, TSerializer, TDeserializer>
+    public abstract class SocketPacketTransmission<TPacketType, TPacketIDType, TSerializer, TDeserializer> : PacketStreamTransmission<TPacketType, TPacketIDType>
+        where TPacketType : Packet<TPacketIDType>
         where TSerializer : StreamSerializer, new()
         where TDeserializer : StreamDeserializer, new()
     {
@@ -31,10 +31,10 @@ namespace Aragas.Network.IO
         public virtual bool IsConnected => Socket?.Connected == true;
         public override long AvailableData => Socket?.Available ?? -1;
 
-        public BasePacketFactory<TPacketType, TPacketIDType, TSerializer, TDeserializer>? Factory { get; set; }
+        public BasePacketFactory<TPacketType, TPacketIDType>? Factory { get; set; }
 
         protected SocketPacketTransmission() : base() { }
-        protected SocketPacketTransmission(Socket socket, Stream? socketStream = null, BasePacketFactory<TPacketType, TPacketIDType, TSerializer, TDeserializer>? factory = null)
+        protected SocketPacketTransmission(Socket socket, Stream? socketStream = null, BasePacketFactory<TPacketType, TPacketIDType>? factory = null)
             : base(socketStream ?? new SocketClientStream(socket))
         {
             Socket = socket;

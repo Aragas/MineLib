@@ -12,7 +12,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Int32 Y;
 		public Int32 Z;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			EntityID = deserialiser.Read(EntityID);
 			Type = deserialiser.Read(Type);
@@ -21,7 +21,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 			Z = deserialiser.Read(Z);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(EntityID);
             serializer.Write(Type);

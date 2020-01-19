@@ -11,7 +11,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Byte Action;
 		public Byte[] NBTData;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			X = deserialiser.Read(X);
 			Y = deserialiser.Read(Y);
@@ -21,7 +21,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
             NBTData = deserialiser.Read(NBTData, NBTDataLength);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(X);
             serializer.Write(Y);

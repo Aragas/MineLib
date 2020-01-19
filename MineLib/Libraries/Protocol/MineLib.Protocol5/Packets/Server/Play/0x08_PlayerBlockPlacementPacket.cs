@@ -17,7 +17,7 @@ namespace MineLib.Protocol5.Packets.Server.Play
 		public SByte CursorPositionY;
 		public SByte CursorPositionZ;
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
 			X = deserializer.Read(X);
 			Y = deserializer.Read(Y);
@@ -29,7 +29,7 @@ namespace MineLib.Protocol5.Packets.Server.Play
 			CursorPositionZ = deserializer.Read(CursorPositionZ);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(X);
             serializer.Write(Y);

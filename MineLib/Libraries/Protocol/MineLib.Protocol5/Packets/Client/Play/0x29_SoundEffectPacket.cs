@@ -12,7 +12,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Single Volume;
 		public Byte Pitch;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			SoundName = deserialiser.Read(SoundName);
 			EffectPositionX = deserialiser.Read(EffectPositionX);
@@ -22,7 +22,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 			Pitch = deserialiser.Read(Pitch);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(SoundName);
             serializer.Write(EffectPositionX);

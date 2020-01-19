@@ -14,7 +14,7 @@ namespace MineLib.Protocol575.Packets.Client.Play
         public VarInt ViewDistance;
         public Boolean ReducedDebugInfo;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			EntityID = deserialiser.Read(EntityID);
 			GameMode = deserialiser.Read(GameMode);
@@ -25,7 +25,7 @@ namespace MineLib.Protocol575.Packets.Client.Play
             ReducedDebugInfo = deserialiser.Read(ReducedDebugInfo);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(EntityID);
             serializer.Write(GameMode);

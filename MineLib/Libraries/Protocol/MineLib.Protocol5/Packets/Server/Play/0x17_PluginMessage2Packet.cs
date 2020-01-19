@@ -8,14 +8,14 @@ namespace MineLib.Protocol5.Packets.Server.Play
 		public String Channel;
 		public Byte[] Data;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			Channel = deserialiser.Read(Channel);
 			var DataLength = deserialiser.Read<Int16>();
 			Data = deserialiser.Read(Data, DataLength);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(Channel);
             serializer.Write((Int16) Data.Length);

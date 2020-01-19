@@ -1,12 +1,13 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
-
-using Aragas.Network.Attributes;
-
+﻿using Aragas.Network.Attributes;
+using Aragas.Network.IO;
 using PokeD.Core.Data;
+using PokeD.Core.Data.P3D;
 using PokeD.Core.Extensions;
 using PokeD.Core.IO;
+
+using System;
+using System.Globalization;
+using System.Linq;
 
 namespace PokeD.Core.Packets.P3D.Shared
 {
@@ -37,7 +38,7 @@ namespace PokeD.Core.Packets.P3D.Shared
         public void SetPokemonPosition(Vector3 position, char separator) { PokemonPosition = position.ToP3DString(separator, CultureInfo); }
 
 
-        public override void Deserialize(P3DDeserializer deserializer) { }
-        public override void Serialize(P3DSerializer serializer) { }
+        public override void Deserialize(IPacketDeserializer deserializer) { }
+        public override void Serialize(IStreamSerializer serializer) { }
     }
 }

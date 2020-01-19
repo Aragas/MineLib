@@ -12,8 +12,7 @@ namespace Aragas.Network.Packets
     /// <typeparam name="TEnumType">Any integer type. See <see cref="byte"/>, <see cref="short"/>, <see cref="int"/>, <see cref="long"/>, any <see cref="Aragas.Network.Data.Variant"/></typeparam>
     /// <typeparam name="TSerializer"><see cref="StandardSerializer"/>. You can create a custom one or use <see cref="ProtobufSerializer"/> and <see cref="System.Enum"/></typeparam>
     /// <typeparam name="TDeserializer"><see cref="StandardDeserializer"/>. You can create a custom one or use <see cref="ProtobufDeserializer"/> and <see cref="ProtobufDeserializer"/></typeparam>
-    public abstract class PacketWithEnum<TEnum, TNumberType, TSerializer, TDeserializer> : Packet<TNumberType, TSerializer, TDeserializer> 
-        where TEnum : Enum where TSerializer : PacketSerializer where TDeserializer : PacketDeserializer
+    public abstract class PacketWithEnum<TEnum, TNumberType, TSerializer, TDeserializer> : Packet<TNumberType> where TEnum : Enum
     {
         private static readonly List<TEnum> Cache = Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToList();
 

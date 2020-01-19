@@ -8,11 +8,11 @@ namespace PokeD.Core.Packets.PokeD.Trade
         public VarInt DestinationID { get; set; }
 
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             DestinationID = deserializer.Read(DestinationID);
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(DestinationID);
         }

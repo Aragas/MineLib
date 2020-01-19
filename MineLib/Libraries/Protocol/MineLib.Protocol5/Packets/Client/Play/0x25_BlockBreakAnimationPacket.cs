@@ -12,7 +12,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
         public Int32 Z;
         public SByte DestroyStage;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
             EntityID = deserialiser.Read(EntityID);
             X = deserialiser.Read(X);
@@ -21,7 +21,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
             DestroyStage = deserialiser.Read(DestroyStage);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(EntityID);
             serializer.Write(X);

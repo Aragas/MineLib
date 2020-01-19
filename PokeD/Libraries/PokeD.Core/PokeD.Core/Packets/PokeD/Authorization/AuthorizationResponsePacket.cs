@@ -12,11 +12,11 @@ namespace PokeD.Core.Packets.PokeD.Authorization
         public AuthorizationStatus AuthorizationStatus { get; set; }
 
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             AuthorizationStatus = (AuthorizationStatus)deserializer.Read((byte)AuthorizationStatus);
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write((byte)AuthorizationStatus);
         }

@@ -11,7 +11,7 @@ namespace MineLib.Protocol.Netty.Packets.Server.Login
 		public Byte[] SharedSecret;
 		public Byte[] VerifyToken;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			var SharedSecretLength = deserialiser.Read<Int16>();
 			SharedSecret = deserialiser.Read(SharedSecret, SharedSecretLength);
@@ -19,7 +19,7 @@ namespace MineLib.Protocol.Netty.Packets.Server.Login
 			VerifyToken = deserialiser.Read(VerifyToken, VerifyTokenLength);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write((Int16) SharedSecret.Length);
             serializer.Write(SharedSecret, false);

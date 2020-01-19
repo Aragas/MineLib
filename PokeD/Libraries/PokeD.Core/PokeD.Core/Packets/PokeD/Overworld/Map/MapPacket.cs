@@ -15,13 +15,13 @@ namespace PokeD.Core.Packets.PokeD.Overworld.Map
         public FileHash[] ImageHashes { get; set; } = new FileHash[0];
 
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             MapData = deserializer.Read(MapData);
             TileSetHashes = deserializer.Read(TileSetHashes);
             ImageHashes = deserializer.Read(ImageHashes);
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(MapData);
             serializer.Write(TileSetHashes);

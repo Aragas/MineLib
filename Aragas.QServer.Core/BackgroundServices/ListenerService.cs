@@ -17,7 +17,7 @@ namespace Aragas.QServer.Core.BackgroundServices
     public abstract class ListenerService<TConnection, TPacketTransmission, TPacket, TIDType, TSerializer, TDeserializer> : BackgroundService
         where TConnection : DefaultConnectionHandler<TPacketTransmission, TPacket, TIDType, TSerializer, TDeserializer>
         where TPacketTransmission : SocketPacketTransmission<TPacket, TIDType, TSerializer, TDeserializer>
-        where TPacket : Packet<TIDType, TSerializer, TDeserializer>
+        where TPacket : Packet<TIDType>
         where TSerializer : StreamSerializer, new()
         where TDeserializer : StreamDeserializer, new()
     {

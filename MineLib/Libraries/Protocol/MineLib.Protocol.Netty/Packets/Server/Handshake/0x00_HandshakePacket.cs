@@ -14,7 +14,7 @@ namespace MineLib.Protocol.Netty.Packets.Server.Handshake
         public UInt16 ServerPort { get; set; }
         public VarInt NextState { get; set; }
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
 			ProtocolVersion = deserializer.Read(ProtocolVersion);
 			ServerAddress = deserializer.Read(ServerAddress);
@@ -22,7 +22,7 @@ namespace MineLib.Protocol.Netty.Packets.Server.Handshake
 			NextState = deserializer.Read(NextState);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(ProtocolVersion);
             serializer.Write(ServerAddress);
@@ -38,7 +38,7 @@ namespace MineLib.Protocol.Netty.Packets.Server.Handshake
         public UInt16 ServerPort { get; set; }
         public VarInt NextState { get; set; }
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             ProtocolVersion = deserializer.Read(ProtocolVersion);
             ServerAddress = deserializer.Read(ServerAddress);
@@ -46,7 +46,7 @@ namespace MineLib.Protocol.Netty.Packets.Server.Handshake
             NextState = deserializer.Read(NextState);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(ProtocolVersion);
             serializer.Write(ServerAddress);

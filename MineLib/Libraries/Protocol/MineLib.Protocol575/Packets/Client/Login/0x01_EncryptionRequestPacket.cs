@@ -10,7 +10,7 @@ namespace MineLib.Protocol575.Packets.Client.Login
 		public Byte[] PublicKey;
 		public Byte[] VerifyToken;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			ServerID = deserialiser.Read(ServerID);
 			var PublicKeyLength = deserialiser.Read<Int16>();
@@ -19,7 +19,7 @@ namespace MineLib.Protocol575.Packets.Client.Login
 			VerifyToken = deserialiser.Read(VerifyToken, VerifyTokenLength);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(ServerID);
             serializer.Write((Int16) PublicKey.Length);

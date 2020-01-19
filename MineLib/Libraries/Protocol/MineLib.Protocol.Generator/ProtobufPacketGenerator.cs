@@ -275,12 +275,12 @@ namespace MineLib.PacketBuilder
     {{
 {GenerateFields(packet)}
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {{
 {GenerateReadPacket(packet)}
         }}
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {{
 {GenerateWritePacket(packet)}          
         }}

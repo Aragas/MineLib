@@ -12,7 +12,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 		public Boolean UseProvidedWindowTitle;
 		public Int32 EntityID;
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
 			WindowID = deserialiser.Read(WindowID);
 			InventoryType = deserialiser.Read(InventoryType);
@@ -22,7 +22,7 @@ namespace MineLib.Protocol5.Packets.Client.Play
 			EntityID = deserialiser.Read(EntityID);
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(WindowID);
             serializer.Write(InventoryType);

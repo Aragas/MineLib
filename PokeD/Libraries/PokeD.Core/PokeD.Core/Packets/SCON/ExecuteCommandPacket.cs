@@ -7,11 +7,11 @@ namespace PokeD.Core.Packets.SCON
         public string Command { get; set; } = string.Empty;
 
 
-        public override void Deserialize(ProtobufDeserializer deserializer)
+        public override void Deserialize(IPacketDeserializer deserializer)
         {
             Command = deserializer.Read(Command);
         }
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(Command);
         }

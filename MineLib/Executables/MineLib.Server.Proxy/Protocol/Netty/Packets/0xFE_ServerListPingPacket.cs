@@ -16,7 +16,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty.Packets
         public string Host { get; set; }
         public int Port { get; set; }
 
-        public override void Deserialize(ProtobufDeserializer deserialiser)
+        public override void Deserialize(IPacketDeserializer deserialiser)
         {
             if (deserialiser.BytesLeft() > 0)
             {
@@ -33,7 +33,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty.Packets
             }
         }
 
-        public override void Serialize(ProtobufSerializer serializer)
+        public override void Serialize(IStreamSerializer serializer)
         {
             serializer.Write(Payload);
             serializer.Write(Identifier);

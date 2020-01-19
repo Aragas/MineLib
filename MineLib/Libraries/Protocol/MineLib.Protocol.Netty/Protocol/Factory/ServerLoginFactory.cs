@@ -6,5 +6,5 @@ using MineLib.Protocol.Netty.Packets.Server;
 
 namespace MineLib.Protocol.Netty.Protocol
 {
-    public sealed class ServerLoginFactory : DefaultPacketFactory<ServerLoginPacket, VarInt, ProtobufSerializer, ProtobufDeserializer> { }
+    public sealed class ServerLoginFactory : DefaultPacketFactory<ServerLoginPacket, VarInt> { }
 }

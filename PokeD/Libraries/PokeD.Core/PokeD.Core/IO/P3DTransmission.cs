@@ -66,7 +66,7 @@ namespace PokeD.Core.IO
 
         public P3DTransmission() : base() { }
         public P3DTransmission(Socket socket) : this(socket, null) { }
-        public P3DTransmission(Socket socket, BasePacketFactory<P3DPacket, int, P3DSerializer, P3DDeserializer> factory) : base(socket, new P3DSocketStream(socket), factory)
+        public P3DTransmission(Socket socket, BasePacketFactory<P3DPacket, int> factory) : base(socket, new P3DSocketStream(socket), factory)
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {

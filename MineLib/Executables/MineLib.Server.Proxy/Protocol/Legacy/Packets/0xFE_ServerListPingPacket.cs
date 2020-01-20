@@ -5,6 +5,7 @@ using MineLib.Server.Proxy.Data;
 
 namespace MineLib.Server.Proxy.Protocol.Legacy.Packets
 {
+    [Packet(0xFE)]
     internal sealed class ServerListPingPacket : ProxyLegacyPacket
     {
         public byte Payload { get; set; }

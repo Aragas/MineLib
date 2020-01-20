@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace Nopen.NET.Test
+namespace TestHelper
 {
     /// <summary>
     /// Diagnostic Producer class with extra methods dealing with applying codefixes
@@ -82,3 +82,4 @@ namespace Nopen.NET.Test
         }
     }
 }
+

@@ -1,9 +1,7 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
-
-using System;
 using Microsoft.CodeAnalysis;
+using System;
 
-namespace Nopen.NET.Test
+namespace TestHelper
 {
     /// <summary>
     /// Location where the diagnostic appears, as determined by path, line number, and column number.
@@ -19,12 +17,12 @@ namespace Nopen.NET.Test
 
             if (column < -1)
             {
-                throw new ArgumentOutOfRangeException(nameof(line), "column must be >= -1");
+                throw new ArgumentOutOfRangeException(nameof(column), "column must be >= -1");
             }
 
-            Path = path;
-            Line = line;
-            Column = column;
+            this.Path = path;
+            this.Line = line;
+            this.Column = column;
         }
 
         public string Path { get; }
@@ -43,16 +41,16 @@ namespace Nopen.NET.Test
         {
             get
             {
-                if (locations == null)
+                if (this.locations == null)
                 {
-                    return Array.Empty<DiagnosticResultLocation>();
+                    this.locations = new DiagnosticResultLocation[] { };
                 }
-                return locations;
+                return this.locations;
             }
 
             set
             {
-                locations = value;
+                this.locations = value;
             }
         }
 
@@ -66,7 +64,7 @@ namespace Nopen.NET.Test
         {
             get
             {
-                return Locations.Length > 0 ? Locations[0].Path : "";
+                return this.Locations.Length > 0 ? this.Locations[0].Path : "";
             }
         }
 
@@ -74,7 +72,7 @@ namespace Nopen.NET.Test
         {
             get
             {
-                return Locations.Length > 0 ? Locations[0].Line : -1;
+                return this.Locations.Length > 0 ? this.Locations[0].Line : -1;
             }
         }
 
@@ -82,7 +80,7 @@ namespace Nopen.NET.Test
         {
             get
             {
-                return Locations.Length > 0 ? Locations[0].Column : -1;
+                return this.Locations.Length > 0 ? this.Locations[0].Column : -1;
             }
         }
     }

@@ -1,3 +1,4 @@
+using Aragas.Network.Packets;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -7,9 +8,8 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using Nopen.NET;
 
-namespace Nopen.NET.Test
+namespace TestHelper
 {
     /// <summary>
     /// Class for turning strings into documents and getting the diagnostics on them
@@ -21,6 +21,7 @@ namespace Nopen.NET.Test
         private static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location);
         private static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
         private static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location);
+        private static readonly MetadataReference AragasNetworkReference = MetadataReference.CreateFromFile(typeof(Packet).Assembly.Location);
 
         internal static string DefaultFilePathPrefix = "Test";
         internal static string CSharpDefaultFileExt = "cs";
@@ -51,12 +52,9 @@ namespace Nopen.NET.Test
         protected static Diagnostic[] GetSortedDiagnosticsFromDocuments(DiagnosticAnalyzer analyzer, Document[] documents)
         {
             var projects = new HashSet<Project>();
-            foreach (var project in documents.Select(it => it.Project))
+            foreach (var document in documents)
             {
-                var path = Path.Join(Directory.GetCurrentDirectory(), $"{typeof(OpenAttribute).Assembly.GetName().Name}.dll");
-                var attributesAssemblyReference = MetadataReference.CreateFromFile(path);
-                var linkedProject = project.AddMetadataReference(attributesAssemblyReference);
-                projects.Add(linkedProject);
+                projects.Add(document.Project);
             }
 
             var diagnostics = new List<Diagnostic>();
@@ -157,7 +155,10 @@ namespace Nopen.NET.Test
                 .AddMetadataReference(projectId, CorlibReference)
                 .AddMetadataReference(projectId, SystemCoreReference)
                 .AddMetadataReference(projectId, CSharpSymbolsReference)
-                .AddMetadataReference(projectId, CodeAnalysisReference);
+                .AddMetadataReference(projectId, CodeAnalysisReference)
+                .AddMetadataReference(projectId, AragasNetworkReference);
+            solution = AddRuntimeLibrary(solution, projectId, "netstandard.dll");
+            solution = AddRuntimeLibrary(solution, projectId, "System.Runtime.dll");
 
             int count = 0;
             foreach (var source in sources)
@@ -170,5 +171,13 @@ namespace Nopen.NET.Test
             return solution.GetProject(projectId);
         }
         #endregion
+
+        private static Solution AddRuntimeLibrary(Solution solution, ProjectId projectId, string fileName)
+        {
+            var runtimeDirectory = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
+            var dll = Path.Combine(runtimeDirectory, fileName);
+            return solution.AddMetadataReference(projectId, MetadataReference.CreateFromFile(dll));
+        }
     }
 }
+

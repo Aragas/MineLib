@@ -5,11 +5,11 @@ using MineLib.Core.Anvil;
 
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 using static Aragas.Network.IO.PacketSerializer;
 using static Aragas.Network.IO.PacketDeserializer;
-using System.Numerics;
 
 namespace MineLib.Core.Extensions
 {

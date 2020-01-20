@@ -19,11 +19,11 @@ namespace MineLib.Protocol5.Data.EntityMetadata
         public EntityMetadataFloat() { }
         public EntityMetadataFloat(float value) { Value = value; }
 
-        public override void FromDeserializer(PacketDeserializer deserializer)
+        public override void FromDeserializer(IPacketDeserializer deserializer)
         {
             Value = deserializer.Read(Value);
         }
-        public override void ToSerializer(PacketSerializer serializer, byte index)
+        public override void ToSerializer(IPacketSerializer serializer, byte index)
         {
             serializer.Write(GetKey(index));
             serializer.Write(Value);

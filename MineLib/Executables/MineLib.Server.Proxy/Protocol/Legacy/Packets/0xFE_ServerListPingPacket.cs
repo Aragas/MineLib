@@ -5,14 +5,13 @@ using MineLib.Server.Proxy.Data;
 
 namespace MineLib.Server.Proxy.Protocol.Legacy.Packets
 {
-    [Packet(0xFE)]
     internal sealed class ServerListPingPacket : ProxyLegacyPacket
     {
         public byte Payload { get; set; }
         public byte Identifier { get; set; }
-        public string Message { get; set; }
+        public string Message { get; set; } = default!;
         public byte ProtocolVersion { get; set; }
-        public string Host { get; set; }
+        public string Host { get; set; } = default!;
         public int Port { get; set; }
 
         public override void Deserialize(IPacketDeserializer deserializer)

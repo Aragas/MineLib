@@ -103,6 +103,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BedrockProxy", "BedrockProx
 		MineLib\Libraries\BedrockProxy\Dockerfile = MineLib\Libraries\BedrockProxy\Dockerfile
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aragas.Network-2.Analyzer", "Third Party\Aragas.Network-2.Analyzer\Aragas.Network-2.Analyzer.csproj", "{B5DCF670-4566-4BC5-B532-FC573880DE2C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -375,6 +377,14 @@ Global
 		{2F523412-DE9A-429B-A1D9-6B4700C9D227}.LinuxRelease|Any CPU.Build.0 = Release|Any CPU
 		{2F523412-DE9A-429B-A1D9-6B4700C9D227}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F523412-DE9A-429B-A1D9-6B4700C9D227}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5DCF670-4566-4BC5-B532-FC573880DE2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5DCF670-4566-4BC5-B532-FC573880DE2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5DCF670-4566-4BC5-B532-FC573880DE2C}.LinuxDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5DCF670-4566-4BC5-B532-FC573880DE2C}.LinuxDebug|Any CPU.Build.0 = Debug|Any CPU
+		{B5DCF670-4566-4BC5-B532-FC573880DE2C}.LinuxRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{B5DCF670-4566-4BC5-B532-FC573880DE2C}.LinuxRelease|Any CPU.Build.0 = Release|Any CPU
+		{B5DCF670-4566-4BC5-B532-FC573880DE2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5DCF670-4566-4BC5-B532-FC573880DE2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -419,6 +429,7 @@ Global
 		{97AC6EBA-CF49-45B8-8B9E-8728D5732F1F} = {AEA09901-59EF-45A9-88C2-6CD9D5FE4907}
 		{2F523412-DE9A-429B-A1D9-6B4700C9D227} = {AEA09901-59EF-45A9-88C2-6CD9D5FE4907}
 		{4A46323A-174B-4320-BF50-B0C810192D99} = {03646DF3-61E2-492A-BEC0-CCCD72EEBD6A}
+		{B5DCF670-4566-4BC5-B532-FC573880DE2C} = {3EC3A2F3-1EF4-4072-8C30-620948809175}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CE7EEC09-C11D-4199-B674-5D6D6015EDC4}

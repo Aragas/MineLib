@@ -11,9 +11,9 @@ namespace MineLib.Server.Proxy.Protocol.Netty.Packets
     {
         public byte Payload { get; set; }
         public byte Identifier { get; set; }
-        public string Message { get; set; }
+        public string Message { get; set; } = default!;
         public byte ProtocolVersion { get; set; }
-        public string Host { get; set; }
+        public string Host { get; set; } = default!;
         public int Port { get; set; }
 
         public override void Deserialize(IPacketDeserializer deserializer)

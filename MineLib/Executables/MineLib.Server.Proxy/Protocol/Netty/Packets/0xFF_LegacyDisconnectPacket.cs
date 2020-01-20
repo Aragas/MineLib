@@ -9,7 +9,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty.Packets
     [Packet(0xFF)]
     internal sealed class LegacyDisconnectPacket : ServerStatusPacket
     {
-        public UTF16BEString Response { get; set; }
+        public UTF16BEString Response { get; set; } = default!;
 
         public override void Deserialize(IPacketDeserializer deserializer)
         {

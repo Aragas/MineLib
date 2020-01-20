@@ -20,7 +20,7 @@ namespace MineLib.Protocol5.Data.EntityMetadata
         public EntityMetadataVector(int x, int y, int z) { Value = new Location3D(x, y, z); }
         public EntityMetadataVector(in Location3D value) { Value = value; }
 
-        public override void FromDeserializer(PacketDeserializer deserializer)
+        public override void FromDeserializer(IPacketDeserializer deserializer)
         {
             Value = new Location3D(
                 deserializer.Read<int>(),
@@ -28,7 +28,7 @@ namespace MineLib.Protocol5.Data.EntityMetadata
                 deserializer.Read<int>());
         }
 
-        public override void ToSerializer(PacketSerializer serializer, byte index)
+        public override void ToSerializer(IPacketSerializer serializer, byte index)
         {
             serializer.Write(GetKey(index));
             serializer.Write(Value.X);

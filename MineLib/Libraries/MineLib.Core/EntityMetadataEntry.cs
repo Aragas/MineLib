@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
+﻿using Aragas.Network.IO;
 
-using Aragas.Network.IO;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace MineLib.Core
 {
@@ -11,8 +11,8 @@ namespace MineLib.Core
         protected abstract string FriendlyName { get; }
         public byte Index { private get; set; }
 
-        public abstract void FromDeserializer(PacketDeserializer deserializer);
-        public abstract void ToSerializer(PacketSerializer serializer, byte index);
+        public abstract void FromDeserializer(IPacketDeserializer deserializer);
+        public abstract void ToSerializer(IPacketSerializer serializer, byte index);
 
         protected byte GetKey(byte index)
         {

@@ -1,6 +1,4 @@
-﻿using Aragas.QServer.Core;
-using Aragas.QServer.Core.Data;
-using Aragas.QServer.Core.NetworkBus;
+﻿using Aragas.QServer.Core.Data;
 
 using I18Next.Net.Backends;
 using I18Next.Net.Extensions;
@@ -9,9 +7,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
+using MineLib.Server.Core;
 using MineLib.Server.Proxy.BackgroundServices;
 using MineLib.Server.Proxy.Data;
 
+using System;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -44,15 +44,13 @@ namespace MineLib.Server.Proxy
     /// Based on that response, either attempt to fill the biggest PlayerHandler
     /// or fill the smallest one (Player.Count context).
     /// </summary>
-    public class Program : BaseHostProgram
+    public class Program : MineLibHostProgram
     {
         public static async Task Main(string[] args)
         {
             ServicePointManager.UseNagleAlgorithm = false;
             MineLib.Server.Proxy.Extensions.PacketExtensions.Init();
-            MineLib.Server.Core.Extensions.PacketExtensions.Init();
-            MineLib.Core.Extensions.PacketExtensions.Init();
-            await Main<Program>(CreateHostBuilder, args);
+            await Main<Program>(CreateHostBuilder, BeforeRun, args);
         }
 
         public static IHostBuilder CreateHostBuilder(IHostBuilder hostBuilder) => hostBuilder
@@ -62,7 +60,6 @@ namespace MineLib.Server.Proxy
                 services.Configure<ServiceOptions>(o => o.Name = "Proxy");
                 services.Configure<MineLibOptions>(hostContext.Configuration.GetSection("MineLib"));
 
-                var mineLib = services.BuildServiceProvider().GetRequiredService<IOptions<MineLibOptions>>();
                 services.AddSingleton<ServerInfo>();
             })
 
@@ -72,26 +69,6 @@ namespace MineLib.Server.Proxy
                 services.AddI18NextLocalization(i18N => i18N.AddBackend(new JsonFileBackend("locales")));
             })
 
-            // NATS
-            .ConfigureServices(services =>
-            {
-                services.AddSingleton<IAsyncNetworkBus>(new AsyncNATSBus());
-                services.AddSingleton<INetworkBus>(sp => sp.GetRequiredService<IAsyncNetworkBus>());
-                services.AddSingleton<SubscriptionStorage>();
-
-                var sp = services.BuildServiceProvider();
-                var networkBus = sp.GetRequiredService<IAsyncNetworkBus>();
-                var serviceOptions = sp.GetRequiredService<IOptions<ServiceOptions>>().Value;
-                var subscriptionStorage = sp.GetRequiredService<SubscriptionStorage>();
-
-                subscriptionStorage.HandleServiceDiscoveryHandler();
-                subscriptionStorage.HandleMetricsPrometheusHandler(serviceOptions.Uid);
-                subscriptionStorage.HandleHealthHandler(serviceOptions.Uid);
-
-                var lifeTime = sp.GetRequiredService<IHostApplicationLifetime>();
-                lifeTime.ApplicationStopping.Register(() => subscriptionStorage.Dispose());
-            })
-
             // Netty Listener
             .ConfigureServices(services  =>
             {
@@ -99,5 +76,10 @@ namespace MineLib.Server.Proxy
             })
 
             .UseConsoleLifetime();
+
+        private static void BeforeRun(IServiceProvider serviceProvider)
+        {
+            var serviceOptions = serviceProvider.GetRequiredService<IOptions<ServiceOptions>>().Value;
+        }
     }
 }

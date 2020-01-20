@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nopen.NET", "Nopen.NET\Nopen.NET.csproj", "{9FB86957-96ED-488E-BEE2-4AAE27E27E9D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nopen.NET.Test", "Nopen.NET.Test\Nopen.NET.Test.csproj", "{926ADF86-7D30-4639-A36E-DEA0BC99C398}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{434C20E0-DAC1-4BE8-8E64-69AA3B6EDCE5}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		azure-pipelines.yml = azure-pipelines.yml
+		CHANGELOG.md = CHANGELOG.md
+		NuGet.Config = NuGet.Config
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9FB86957-96ED-488E-BEE2-4AAE27E27E9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FB86957-96ED-488E-BEE2-4AAE27E27E9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FB86957-96ED-488E-BEE2-4AAE27E27E9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FB86957-96ED-488E-BEE2-4AAE27E27E9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{926ADF86-7D30-4639-A36E-DEA0BC99C398}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{926ADF86-7D30-4639-A36E-DEA0BC99C398}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{926ADF86-7D30-4639-A36E-DEA0BC99C398}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{926ADF86-7D30-4639-A36E-DEA0BC99C398}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C59E22A1-A408-4FA5-8161-B15D8DA1F6EA}
+	EndGlobalSection
+EndGlobal

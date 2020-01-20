@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Aragas.QServer.Core.Data;
+using Aragas.QServer.Core.NetworkBus;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
+using Microsoft.Extensions.Options;
 using Serilog;
 using Serilog.Events;
 
@@ -11,7 +13,7 @@ namespace Aragas.QServer.Core
 {
     public class BaseHostProgram
     {
-        public static async Task Main<TProgram>(Func<IHostBuilder, IHostBuilder>? hostBuilderFunc = null, string[]? args = null) where TProgram : BaseHostProgram
+        public static async Task Main<TProgram>(Func<IHostBuilder, IHostBuilder>? hostBuilderFunc = null, Action<IServiceProvider>? beforeRunAction = null, string[]? args = null) where TProgram : BaseHostProgram
         {
             Aragas.Network.Extensions.PacketExtensions.Init();
             //MineLib.Core.Extensions.PacketExtensions.Init();
@@ -40,14 +42,25 @@ namespace Aragas.QServer.Core
                     .ConfigureServices(services =>
                     {
                         services.AddHealthCheckPublisher();
+                    })
+                    // NATS
+                    .ConfigureServices(services =>
+                    {
+                        services.AddSingleton<IAsyncNetworkBus>(new AsyncNATSBus());
+                        services.AddSingleton<INetworkBus>(sp => sp.GetRequiredService<IAsyncNetworkBus>());
+                        services.AddSingleton<SubscriptionStorage>();
                     });
 
                 hostBuilderFunc?.Invoke(hostBuilder);
 
-                await hostBuilder
+                var host = hostBuilder
                     .UseSerilog()
-                    .Build()
-                    .RunAsync();
+                    .Build();
+
+                BeforeRun(host.Services);
+                beforeRunAction?.Invoke(host.Services);
+
+                await host.RunAsync();
             }
             catch (Exception ex) when (ex is Exception)
             {
@@ -58,6 +71,19 @@ namespace Aragas.QServer.Core
                 Log.Information("{TypeName}: Stopped.", typeof(TProgram).FullName);
                 Log.CloseAndFlush();
             }
+        }
+
+        private static void BeforeRun(IServiceProvider serviceProvider)
+        {
+            var serviceOptions = serviceProvider.GetRequiredService<IOptions<ServiceOptions>>().Value;
+            var subscriptionStorage = serviceProvider.GetRequiredService<SubscriptionStorage>();
+
+            subscriptionStorage.HandleServiceDiscoveryHandler();
+            subscriptionStorage.HandleMetricsPrometheusHandler(serviceOptions.Uid);
+            subscriptionStorage.HandleHealthHandler(serviceOptions.Uid);
+
+            var lifeTime = serviceProvider.GetRequiredService<IHostApplicationLifetime>();
+            lifeTime.ApplicationStopping.Register(() => subscriptionStorage.Dispose());
         }
     }
 }

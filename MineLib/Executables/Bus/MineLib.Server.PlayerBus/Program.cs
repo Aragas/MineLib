@@ -1,11 +1,13 @@
-﻿using Aragas.QServer.Core;
-using Aragas.QServer.Core.Data;
+﻿using Aragas.QServer.Core.Data;
 using Aragas.QServer.Core.NetworkBus;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
+using MineLib.Server.Core;
+
+using System;
 using System.Threading.Tasks;
 
 namespace MineLib.Server.PlayerBus
@@ -55,13 +57,11 @@ namespace MineLib.Server.PlayerBus
     /// all the classes that will be needed to interact with ModAPIBus
     /// ---
     /// </summary>
-    public class Program : BaseHostProgram
+    public class Program : MineLibHostProgram
     {
         public static async Task Main(string[] args)
         {
-            MineLib.Server.Core.Extensions.PacketExtensions.Init();
-            MineLib.Core.Extensions.PacketExtensions.Init();
-            await Main<Program>(CreateHostBuilder, args);
+            await Main<Program>(CreateHostBuilder, BeforeRun, args);
         }
 
         public static IHostBuilder CreateHostBuilder(IHostBuilder hostBuilder) => hostBuilder
@@ -69,6 +69,12 @@ namespace MineLib.Server.PlayerBus
             .ConfigureServices((hostContext, services) =>
             {
                 services.Configure<ServiceOptions>(o => o.Name = "PlayerBus");
+            })
+
+            // Metrics
+            .ConfigureServices((hostContext, services) =>
+            {
+                services.AddSingleton<PlayerHandlerManager>();
             })
 
             // Metrics
@@ -83,24 +89,16 @@ namespace MineLib.Server.PlayerBus
                 services.AddSingleton<IAsyncNetworkBus>(new AsyncNATSBus());
                 services.AddSingleton<INetworkBus>(sp => sp.GetRequiredService<IAsyncNetworkBus>());
                 services.AddSingleton<SubscriptionStorage>();
-
-                var sp = services.BuildServiceProvider();
-                var networkBus = sp.GetRequiredService<IAsyncNetworkBus>();
-                var serviceOptions = sp.GetRequiredService<IOptions<ServiceOptions>>().Value;
-                var subscriptionStorage = sp.GetRequiredService<SubscriptionStorage>();
-
-                subscriptionStorage.HandleServiceDiscoveryHandler();
-                subscriptionStorage.HandleMetricsPrometheusHandler(serviceOptions.Uid);
-                subscriptionStorage.HandleHealthHandler(serviceOptions.Uid);
-
-                services.AddSingleton<PlayerHandlerManager>();
-                subscriptionStorage.HandleGetExistingPlayerHandler<PlayerHandlerManager>();
-                subscriptionStorage.HandleGetNewPlayerHandler<PlayerHandlerManager>(serviceOptions.Uid);
-
-                var lifeTime = sp.GetRequiredService<IHostApplicationLifetime>();
-                lifeTime.ApplicationStopping.Register(() => subscriptionStorage.Dispose());
             })
 
             .UseConsoleLifetime();
+
+        private static void BeforeRun(IServiceProvider serviceProvider)
+        {
+            var serviceOptions = serviceProvider.GetRequiredService<IOptions<ServiceOptions>>().Value;
+            var subscriptionStorage = serviceProvider.GetRequiredService<SubscriptionStorage>();
+            subscriptionStorage.HandleGetExistingPlayerHandler<PlayerHandlerManager>();
+            subscriptionStorage.HandleGetNewPlayerHandler<PlayerHandlerManager>(serviceOptions.Uid);
+        }
     }
 }

@@ -20,14 +20,14 @@ namespace MineLib.Protocol5.Data.EntityMetadata
         public EntityMetadataRotation(float pitch, float yaw, float roll) { Value = new Rotation(pitch, yaw, roll); }
         public EntityMetadataRotation(in Rotation rotation) { Value = rotation; }
 
-        public override void FromDeserializer(PacketDeserializer deserializer)
+        public override void FromDeserializer(IPacketDeserializer deserializer)
         {
             Value = new Rotation(
                 deserializer.Read<float>(),
                 deserializer.Read<float>(),
                 deserializer.Read<float>());
         }
-        public override void ToSerializer(PacketSerializer serializer, byte index)
+        public override void ToSerializer(IPacketSerializer serializer, byte index)
         {
             serializer.Write(GetKey(index));
             serializer.Write(Value.Pitch);

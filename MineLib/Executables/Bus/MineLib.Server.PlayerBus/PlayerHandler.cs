@@ -3,7 +3,7 @@
 using MineLib.Protocol.Server;
 using MineLib.Protocol5.Server;
 
-namespace MineLib.Server.PlayerBus.PlayerHandler
+namespace MineLib.Server.PlayerBus
 {
     // This shit should interact via interface with multiple different protocols
     // So here we get/set info like EntityID if the protocol requests it or other shit

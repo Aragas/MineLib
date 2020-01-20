@@ -16,6 +16,7 @@
     <PackageReference Include="App.Metrics.AspNetCore.Health.Endpoints" Version="3.2.0" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Aragas.Networ-2.Analyzer" Version="1.0.0.3" />
     <PackageReference Include="I18Next.Net" Version="0.7.1" />
     <PackageReference Include="I18Next.Net.Extensions" Version="0.7.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.1" />

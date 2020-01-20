@@ -26,9 +26,9 @@ namespace MineLib.Server.Proxy.Protocol.Netty
                     var identifier = Read<byte>();
                     if (identifier == 0xFA)
                     {
-                        var data1 = Read<byte[]>(null, 24);
+                        var data1 = Read<byte[]>(null!, 24);
                         var data2Len = Read<short>();
-                        var data2 = Read<byte[]>(null, data2Len);
+                        var data2 = Read<byte[]>(null!, data2Len);
 
                         Span<byte> data = new byte[1 + 1 + 1 + data1.Length + 2 + data2.Length];
                         data[0] = dataLength;

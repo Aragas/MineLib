@@ -6,7 +6,7 @@ namespace MineLib.Server.Proxy.Protocol.Legacy.Packets
     [Packet(0xFF)]
     internal sealed class KickPacket : ProxyLegacyPacket
     {
-        public string Message { get; set; }
+        public string Message { get; set; } = default!;
 
         public override void Deserialize(IPacketDeserializer deserializer)
         {

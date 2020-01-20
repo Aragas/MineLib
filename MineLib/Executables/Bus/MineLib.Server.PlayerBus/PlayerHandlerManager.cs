@@ -1,6 +1,7 @@
 ﻿using Aragas.QServer.Core.Data;
 using Aragas.QServer.Core.NetworkBus;
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 using MineLib.Server.Core.NetworkBus.Messages;
@@ -16,30 +17,33 @@ namespace MineLib.Server.PlayerBus
         IExclusiveMessageHandler<GetNewPlayerHandlerRequestMessage, GetNewPlayerHandlerResponseMessage>,
         IDisposable
     {
+        private int MaxPlayers = 20;
+        private IServiceProvider ServiceProvider { get; }
         private ServiceOptions ServiceOptions { get; }
-        private ConcurrentDictionary<Guid, PlayerHandler.PlayerHandler> PlayerHanlders { get; } = new ConcurrentDictionary<Guid, PlayerHandler.PlayerHandler>();
+        private ConcurrentDictionary<Guid, PlayerHandler> PlayerHandlers { get; } = new ConcurrentDictionary<Guid, PlayerHandler>();
 
-        public PlayerHandlerManager(IOptions<ServiceOptions> serviceOptions)
+        public PlayerHandlerManager(IServiceProvider serviceProvider)
         {
-            ServiceOptions = serviceOptions.Value;
+            ServiceProvider = serviceProvider;
+            ServiceOptions = serviceProvider.GetRequiredService<IOptions<ServiceOptions>>().Value;
         }
 
         public Task<GetExistingPlayerHandlerResponseMessage> HandleAsync(GetExistingPlayerHandlerRequestMessage message)
         {
             return Task.FromResult(
-                PlayerHanlders.TryGetValue(message.PlayerId, out var playerHandler) && playerHandler.ProtocolVersion == message.ProtocolVersion
+                PlayerHandlers.TryGetValue(message.PlayerId, out var playerHandler) && playerHandler.ProtocolVersion == message.ProtocolVersion
                     ? new GetExistingPlayerHandlerResponseMessage() { ServiceId = ServiceOptions.Uid, State = playerHandler.State!.Value }
                     : new GetExistingPlayerHandlerResponseMessage() { ServiceId = null });
         }
 
         public Task<bool> CanHandle(GetNewPlayerHandlerRequestMessage message)
         {
-            return Task.FromResult(true);
+            return Task.FromResult(PlayerHandlers.Count < MaxPlayers);
         }
         public Task<GetNewPlayerHandlerResponseMessage> HandleAsync(GetNewPlayerHandlerRequestMessage message)
         {
-            var stuff = new PlayerHandler.PlayerHandler(message.PlayerId, message.ProtocolVersion);
-            PlayerHanlders.TryAdd(message.PlayerId, stuff);
+            var playerHandler = ActivatorUtilities.CreateInstance<PlayerHandler>(ServiceProvider, new object[] { message.PlayerId, message.ProtocolVersion });
+            PlayerHandlers.TryAdd(message.PlayerId, playerHandler);
 
             return Task.FromResult(new GetNewPlayerHandlerResponseMessage() { ServiceId = ServiceOptions.Uid });
         }
@@ -51,7 +55,7 @@ namespace MineLib.Server.PlayerBus
             {
                 if (disposing)
                 {
-                    foreach (var playerHandler in PlayerHanlders)
+                    foreach (var playerHandler in PlayerHandlers)
                         playerHandler.Value.Dispose();
                 }
 

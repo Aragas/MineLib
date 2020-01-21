@@ -50,12 +50,12 @@ namespace Aragas.QServer.Core.NetworkBus
             var handler = messageHandler ?? ActivatorUtilities.GetServiceOrCreateInstance<TExclusiveMessageHandler>(ServiceProvider);
             RegisterExclusiveHandler(handler, referenceId);
         }
-        public void Receive<TMessageReceiver, TMessageRequest>(Guid? referenceId = null, TMessageReceiver? messageHandler = null)
+        public void Receive<TMessageReceiver, TMessageRequest>(Guid? referenceId = null, TMessageReceiver? messageReceiver = null)
             where TMessageReceiver : class, IMessageReceiver<TMessageRequest>
             where TMessageRequest : IMessage, new()
         {
-            var handler = messageHandler ?? ActivatorUtilities.CreateInstance<TMessageReceiver>(ServiceProvider);
-            RegisterReceiver(handler, referenceId);
+            var receiver = messageReceiver ?? ActivatorUtilities.CreateInstance<TMessageReceiver>(ServiceProvider);
+            RegisterReceiver(receiver, referenceId);
         }
 
         public void RegisterHandler<TMessageRequest, TMessageResponse>(IMessageHandler<TMessageRequest, TMessageResponse> handler, Guid? referenceId = null)

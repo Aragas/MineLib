@@ -64,9 +64,7 @@ namespace Aragas.QServer.Prometheus.Exporter
                         });
                     })
                     .UseKestrel();
-            })
-
-            .UseConsoleLifetime();
+            });
 
         private static void BeforeRun(IServiceProvider serviceProvider)
         {

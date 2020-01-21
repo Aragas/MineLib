@@ -21,7 +21,7 @@ namespace Aragas.QServer.Prometheus.Exporter
         {
             NetworkBus = networkBus;
 
-            subscriptionStorage.ReceiveServicesPong<PingService>();
+            subscriptionStorage.ReceiveServicesPong<PingService>(this);
         }
 
         public Task HandleAsync(ServicesPongMessage message)

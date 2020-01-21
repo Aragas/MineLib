@@ -50,10 +50,10 @@ namespace MineLib.Server.Proxy
         {
             ServicePointManager.UseNagleAlgorithm = false;
             MineLib.Server.Proxy.Extensions.PacketExtensions.Init();
-            await Main<Program>(CreateHostBuilder, BeforeRun, args);
+            await Main<Program>(PopulateHostBuilder, BeforeRun, args);
         }
 
-        public static IHostBuilder CreateHostBuilder(IHostBuilder hostBuilder) => hostBuilder
+        public static IHostBuilder PopulateHostBuilder(IHostBuilder hostBuilder) => hostBuilder
             // Options
             .ConfigureServices((hostContext, services) =>
             {

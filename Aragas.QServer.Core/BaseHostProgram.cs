@@ -1,8 +1,11 @@
 ﻿using Aragas.QServer.Core.Data;
 using Aragas.QServer.Core.NetworkBus;
+    
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+
 using Serilog;
 using Serilog.Events;
 
@@ -19,7 +22,13 @@ namespace Aragas.QServer.Core
             //MineLib.Core.Extensions.PacketExtensions.Init();
             //MineLib.Server.Core.Extensions.PacketExtensions.Init();
 
+            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile(environmentName == "Production" ? "appsettings.json" : $"appsettings.{environmentName}.json", optional: false)
+                .Build();
             Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
@@ -30,27 +39,7 @@ namespace Aragas.QServer.Core
             {
                 Log.Information("{TypeName}: Starting.", typeof(TProgram).FullName);
 
-                var hostBuilder = Host
-                    .CreateDefaultBuilder(args ?? Array.Empty<string>())
-                    // Metrics
-                    .ConfigureServices(services =>
-                    {
-                        services.AddPrometheusEndpoint();
-                        services.AddDefaultMetrics();
-                    })
-                    // HealthCheck
-                    .ConfigureServices(services =>
-                    {
-                        services.AddHealthCheckPublisher();
-                    })
-                    // NATS
-                    .ConfigureServices(services =>
-                    {
-                        services.AddSingleton<IAsyncNetworkBus>(new AsyncNATSBus());
-                        services.AddSingleton<INetworkBus>(sp => sp.GetRequiredService<IAsyncNetworkBus>());
-                        services.AddSingleton<SubscriptionStorage>();
-                    });
-
+                var hostBuilder = CreateHostBuilder(args ?? Array.Empty<string>());
                 hostBuilderFunc?.Invoke(hostBuilder);
 
                 var host = hostBuilder
@@ -72,6 +61,27 @@ namespace Aragas.QServer.Core
                 Log.CloseAndFlush();
             }
         }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) => Host
+            .CreateDefaultBuilder(args ?? Array.Empty<string>())
+            // Metrics
+            .ConfigureServices(services =>
+            {
+                services.AddPrometheusEndpoint();
+                services.AddDefaultMetrics();
+            })
+            // HealthCheck
+            .ConfigureServices(services =>
+            {
+                services.AddHealthCheckPublisher();
+            })
+            // NATS
+            .ConfigureServices(services =>
+            {
+                services.AddSingleton<IAsyncNetworkBus>(new AsyncNATSBus());
+                services.AddSingleton<INetworkBus>(sp => sp.GetRequiredService<IAsyncNetworkBus>());
+                services.AddSingleton<SubscriptionStorage>();
+            });
 
         private static void BeforeRun(IServiceProvider serviceProvider)
         {

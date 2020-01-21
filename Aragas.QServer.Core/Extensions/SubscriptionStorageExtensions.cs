@@ -7,6 +7,12 @@ namespace Aragas.QServer.Core.NetworkBus
 {
     public static class SubscriptionStorageExtensions
     {
+        public static void ReceiveServicesPong<TMessageReceiver>(this SubscriptionStorage subscriptionStorage)
+            where TMessageReceiver : class, IMessageReceiver<ServicesPongMessage>
+        {
+            subscriptionStorage.Receive<TMessageReceiver, ServicesPongMessage>();
+        }
+
         public static void HandleServiceDiscoveryHandler(this SubscriptionStorage subscriptionStorage) =>
             subscriptionStorage.Handle<ServiceDiscoveryHandler, ServicesPingMessage, ServicesPongMessage>();
        

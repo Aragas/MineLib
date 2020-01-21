@@ -1,47 +1,38 @@
-﻿using Aragas.QServer.Core;
+﻿using Aragas.QServer.Core.NetworkBus;
 using Aragas.QServer.Core.NetworkBus.Messages;
 
 using Microsoft.Extensions.Hosting;
 
-using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Aragas.QServer.Prometheus.Exporter
 {
-    public class ServiceEntry
+    public class PingService : BackgroundService, IPingService, IMessageReceiver<ServicesPongMessage>
     {
-        public string ServiceType { get; set; }
-        public Guid ServiceId { get; set; }
-        public int NotFoundCounter { get; set; }
+        public List<ServiceEntry> Services => _services.Select(kp => kp.Key).ToList();
+        private ConcurrentDictionary<ServiceEntry, object> _services = new ConcurrentDictionary<ServiceEntry, object>();
+        private IAsyncNetworkBus NetworkBus { get; }
 
-        public ServiceEntry(string serviceType, Guid serviceId)
+        public PingService(SubscriptionStorage subscriptionStorage, IAsyncNetworkBus networkBus)
         {
-            ServiceType = serviceType;
-            ServiceId = serviceId;
+            NetworkBus = networkBus;
+
+            subscriptionStorage.ReceiveServicesPong<PingService>();
         }
 
-        public override string ToString() => $"{ServiceType}: {ServiceId}";
-    }
-    public interface IPingService
-    {
-        List<ServiceEntry> Services { get; }
-    }
-    public class PingService : BackgroundService, IPingService
-    {
-        public List<ServiceEntry> Services { get; private set; } = new List<ServiceEntry>();
-
-        public PingService()
+        public Task HandleAsync(ServicesPongMessage message)
         {
-            BaseSingleton.Instance.Subscribe<ServicesPongMessage>(message =>
-            {
-                var item = Services.Find(i => i.ServiceType == message.ServiceType && i.ServiceId == message.ServiceId);
-                if (item == null)
-                    Services.Add(new ServiceEntry(message.ServiceType, message.ServiceId));
-                else
-                    item.NotFoundCounter = 0;
-            });
+            var item = _services.FirstOrDefault(kp => kp.Key.ServiceType == message.ServiceType && kp.Key.ServiceId == message.ServiceId);
+            if (item.Key == null)
+                _services.TryAdd(new ServiceEntry(message.ServiceType, message.ServiceId), null);
+            else
+                item.Key.NotFoundCounter = 0;
+
+            return Task.CompletedTask;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -50,16 +41,16 @@ namespace Aragas.QServer.Prometheus.Exporter
             while (!stoppingToken.IsCancellationRequested)
             {
                 toRemove.Clear();
-                foreach (var item in Services)
+                foreach (var item in _services)
                 {
-                    item.NotFoundCounter++;
-                    if (item.NotFoundCounter == 2)
-                        toRemove.Add(item);
+                    item.Key.NotFoundCounter++;
+                    if (item.Key.NotFoundCounter == 2)
+                        toRemove.Add(item.Key);
                 }
                 foreach (var item in toRemove)
-                    Services.Remove(item);
+                    _services.TryRemove(item, out _);
 
-                await BaseSingleton.Instance.PublishAsync(new ServicesPingMessage());
+                await NetworkBus.PublishAsync(new ServicesPingMessage());
                 await Task.Delay(2000, stoppingToken);
             }
         }

@@ -10,9 +10,11 @@
     <StartupObject>MineLib.Server.Proxy.Program</StartupObject>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Analyzer Include="..\..\..\Third Party\Aragas.Network.Analyzer\Aragas.Network.Analyzer\bin\Debug\netstandard2.0\Aragas.Network.Analyzer.dll"/>
+  <!--
+  <ItemGroup Condition="$(DOTNET_RUNNING_IN_CONTAINER) == ''">
+    <Analyzer Include="$(SolutionDir)\Third Party\Aragas.Network.Analyzer\Aragas.Network.Analyzer\bin\$(Configuration)\netstandard2.0\Aragas.Network.Analyzer.dll"/>
   </ItemGroup>
+  -->
   
   <ItemGroup>
     <PackageReference Include="I18Next.Net" Version="0.7.1" />
@@ -36,6 +38,7 @@
   <ItemGroup>
     <Folder Include="Protocol\Classic\" />
     <Folder Include="Protocol\RakNet\" />
+    
     <None Update="appsettings.Development.json">
       <DependentUpon>appsettings.json</DependentUpon>
     </None>

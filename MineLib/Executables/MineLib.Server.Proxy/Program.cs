@@ -44,7 +44,7 @@ namespace MineLib.Server.Proxy
     /// Based on that response, either attempt to fill the biggest PlayerHandler
     /// or fill the smallest one (Player.Count context).
     /// </summary>
-    public class Program : MineLibHostProgram
+    public sealed class Program : MineLibHostProgram
     {
         public static async Task Main(string[] args)
         {

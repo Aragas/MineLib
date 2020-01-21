@@ -53,7 +53,7 @@ services:
     networks:
       - metrics
   prometheus.aragas_qserver_exporter:
-    image: ${DOCKER_REGISTRY-}aragasqserverexporter
+    image: ${DOCKER_REGISTRY-}aragas_qserver_prometheus_exporter
     build:
       context: ../..
       dockerfile: Aragas.QServer.Prometheus.Exporter/Dockerfile
@@ -116,7 +116,7 @@ services:
 
 #Server
   minelib.server.entitybus:
-    image: ${DOCKER_REGISTRY-}minelibserverentitybus
+    image: ${DOCKER_REGISTRY-}minelib_server_entitybus
     depends_on:
       - postgres
       - nats
@@ -126,7 +126,7 @@ services:
     networks:
       - internal
   minelib.server.playerbus:
-    image: ${DOCKER_REGISTRY-}minelibserverplayerbus
+    image: ${DOCKER_REGISTRY-}minelib_server_playerbus
     build:
       context: ../..
       dockerfile: MineLib/Executables/Bus/MineLib.Server.PlayerBus/Dockerfile
@@ -136,7 +136,7 @@ services:
     networks:
       - internal
   minelib.server.worldbus:
-    image: ${DOCKER_REGISTRY-}minelibserverworldbus
+    image: ${DOCKER_REGISTRY-}minelib_server_worldbus
     build:
       context: ../..
       dockerfile: MineLib/Executables/Bus/MineLib.Server.WorldBus/Dockerfile
@@ -147,7 +147,7 @@ services:
       - internal
 
   minelib.server.proxy:
-    image: ${DOCKER_REGISTRY-}minelibserverproxy
+    image: ${DOCKER_REGISTRY-}minelib_server_proxy
     build:
       context: ../..
       dockerfile: MineLib/Executables/MineLib.Server.Proxy/Dockerfile

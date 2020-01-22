@@ -4,6 +4,7 @@ using App.Metrics.Health.Builder;
 using App.Metrics.Health.Formatters.Ascii;
 using App.Metrics.Health.Formatters.Json;
 
+using Aragas.QServer.Health;
 using Aragas.QServer.Metrics;
 
 using Microsoft.Extensions.Hosting;
@@ -17,19 +18,20 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddHealthCheckPublisher(this IServiceCollection services, Func<IHealthBuilder, IHealthBuilder>? additional = null)
         {
-            var healthBuilder = new HealthBuilder()
-                //.HealthChecks.AddNatsConnectivityCheck("NATS Connection", ConnectionFactory.GetDefaultOptions().SetDefaultArgs(), 300)
-                .HealthChecks.AddSystemMemoryHealthCheck("System Memory")
-                .HealthChecks.AddCpuUsageHealthCheck("CPU Usage")
+            services.AddSingleton<HealthCheck, CpuHealthCheck>();
+            //services.AddSingleton<HealthCheck, NATSHealthCheck>();
+            services.AddSingleton<HealthCheck, RamHealthCheck>();
+
+            var builder = new HealthBuilder()
                 .OutputHealth.Using(new HealthStatusTextOutputFormatter())
                 .OutputHealth.Using(new HealthStatusJsonOutputFormatter());
-            services.AddHealth(healthBuilder);
+            builder = additional?.Invoke(builder) ?? builder;
+            builder.BuildAndAddTo(services);
 
             services.AddAppMetricsHealthPublishing();
 
             return services;
         }
-
 
         public static IServiceCollection AddPrometheusEndpoint(this IServiceCollection services, Func<IMetricsBuilder, IMetricsBuilder>? additional = null)
         {
@@ -42,16 +44,10 @@ namespace Microsoft.Extensions.DependencyInjection
                     )
 
                 .OutputMetrics.AsPrometheusPlainText()
-
-                //.SampleWith.ForwardDecaying()
-
-                //.TimeWith.StopwatchClock()
                 ;
-
-            if (additional != null)
-                metricsBuilder = additional(metricsBuilder);
-
+            metricsBuilder = additional?.Invoke(metricsBuilder) ?? metricsBuilder;
             services.AddMetrics(metricsBuilder);
+
             services.AddMetricsReportingHostedService();
 
             return services;

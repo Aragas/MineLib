@@ -1,10 +1,13 @@
 ﻿using Aragas.QServer.Core.Data;
+using Aragas.QServer.Core.Extensions;
 using Aragas.QServer.Core.NetworkBus;
-    
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+
+using NATS.Client;
 
 using Serilog;
 using Serilog.Events;
@@ -22,13 +25,13 @@ namespace Aragas.QServer.Core
             //MineLib.Core.Extensions.PacketExtensions.Init();
             //MineLib.Server.Core.Extensions.PacketExtensions.Init();
 
-            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
-            var configuration = new ConfigurationBuilder()
-                .AddJsonFile(environmentName == "Production" ? "appsettings.json" : $"appsettings.{environmentName}.json", optional: false)
-                .Build();
+            //var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            //
+            //var configuration = new ConfigurationBuilder()
+            //    .AddJsonFile(environmentName == "Production" ? "appsettings.json" : $"appsettings.{environmentName}.json", optional: false)
+            //    .Build();
             Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(configuration)
+            //    .ReadFrom.Configuration(configuration)
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
@@ -64,6 +67,14 @@ namespace Aragas.QServer.Core
 
         public static IHostBuilder CreateHostBuilder(string[] args) => Host
             .CreateDefaultBuilder(args ?? Array.Empty<string>())
+            // NATS
+            .ConfigureServices(services =>
+            {
+                services.AddSingleton<NATS.Client.Options>(ConnectionFactory.GetDefaultOptions().SetDefaultArgs());
+                services.AddSingleton<IAsyncNetworkBus>(sp => new AsyncNATSBus(sp.GetRequiredService<NATS.Client.Options>()));
+                services.AddSingleton<INetworkBus>(sp => sp.GetRequiredService<IAsyncNetworkBus>());
+                services.AddSingleton<SubscriptionStorage>();
+            })
             // Metrics
             .ConfigureServices(services =>
             {
@@ -74,13 +85,6 @@ namespace Aragas.QServer.Core
             .ConfigureServices(services =>
             {
                 services.AddHealthCheckPublisher();
-            })
-            // NATS
-            .ConfigureServices(services =>
-            {
-                services.AddSingleton<IAsyncNetworkBus>(new AsyncNATSBus());
-                services.AddSingleton<INetworkBus>(sp => sp.GetRequiredService<IAsyncNetworkBus>());
-                services.AddSingleton<SubscriptionStorage>();
             });
 
         private static void BeforeRun(IServiceProvider serviceProvider)

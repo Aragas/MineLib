@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+  spongeapi:
+    image: ${DOCKER_REGISTRY-}spongeapi
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./app:/app

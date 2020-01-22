@@ -2,9 +2,9 @@
 using App.Metrics.Formatters;
 using App.Metrics.Formatters.Prometheus;
 using App.Metrics.Gauge;
-using App.Metrics.Health;
-using Aragas.QServer.Core.Extensions;
+
 using Aragas.QServer.Core.NetworkBus.Messages;
+using Aragas.QServer.Health;
 
 using System;
 using System.Diagnostics;
@@ -64,13 +64,10 @@ namespace Aragas.QServer.Core.NetworkBus.Handlers
 
         public async Task<IMessage> HandleAsync(AppMetricsPrometheusRequestMessage message)
         {
-            //_metricsRoot.Measure.Gauge.SetValue(NATSPingGauge, () => GetNATSPing(ConnectionFactory.GetDefaultOptions().SetDefaultArgs()));
-            //_metricsRoot.Measure.Gauge.SetValue(PostgreSQLPingGauge, () => ExecuteSqlCheck(() => new NpgsqlConnection("Host=postgres;Port=5432;Database=minelib;Username=minelib;Password=minelib")));
-
             _process.Refresh();
             _metricsRoot.Measure.Gauge.SetValue(ProcessWorkingSetSizeGauge, _process.WorkingSet64);
             _metricsRoot.Measure.Gauge.SetValue(ProcessPrivateMemorySizeGauge, _process.PrivateMemorySize64);
-            _metricsRoot.Measure.Gauge.SetValue(ProcessCpuUsageGauge, HealthCheckBuilderExtensions.CurrentCpuUsagePercent);
+            _metricsRoot.Measure.Gauge.SetValue(ProcessCpuUsageGauge, CpuHealthCheck.CpuUsagePercent);
 
             var snapshot = _metricsRoot.Snapshot.Get();
             using var stream = new MemoryStream();

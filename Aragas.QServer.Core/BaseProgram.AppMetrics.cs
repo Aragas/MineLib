@@ -64,9 +64,6 @@ namespace Aragas.QServer.Core
             Metrics = metricsBuilder.Build();
 
             var healthBuilder = new HealthBuilder()
-                .HealthChecks.AddNatsConnectivityCheck("NATS Connection", ConnectionFactory.GetDefaultOptions().SetDefaultArgs(), 300)
-                .HealthChecks.AddSystemMemoryHealthCheck("System Memory")
-                .HealthChecks.AddCpuUsageHealthCheck("CPU Usage")
                 .OutputHealth.Using(new HealthStatusTextOutputFormatter())
                 .OutputHealth.Using(new HealthStatusJsonOutputFormatter());
             if (healthConfigure != null)

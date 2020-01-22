@@ -35,7 +35,7 @@ namespace App.Metrics
         public static MetricsOptions AddRuntimeTag(this MetricsOptions options)
         {
             options.GlobalTags["dotnet_runtime"] = RuntimeInformation.FrameworkDescription;
-            options.GlobalTags["version"] = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion; 
+            options.GlobalTags["version"] = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "unknown";
 
             return options;
         }

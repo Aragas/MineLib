@@ -1,6 +1,6 @@
 ﻿using Aragas.QServer.Core.Data;
 using Aragas.QServer.Core.NetworkBus;
-
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -20,6 +20,22 @@ namespace MineLib.Server.WorldBus
         }
 
         public static IHostBuilder CreateHostBuilder(IHostBuilder hostBuilder) => hostBuilder
+            /*
+            .ConfigureHostConfiguration(configurationBuilder =>
+            {
+                var environmentName = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
+
+                if (environmentName == "Production")
+                {
+                    configurationBuilder.AddJsonFile("appsettings.json", optional: true);
+                    //configurationBuilder.AddJsonFile("connections.json", optional: false);
+                }
+                else
+                {
+                    configurationBuilder.AddJsonFile($"appsettings.{environmentName}.json", optional: true);
+                }
+            })
+            */
             // Options
             .ConfigureServices((hostContext, services) =>
             {

@@ -20,10 +20,10 @@ namespace Aragas.QServer.Prometheus.Exporter
     {
         public static async Task Main(string[] args)
         {
-            await Main<Program>(PopulateHostBuilder, BeforeRun, args);
+            await Main<Program>(CreateHostBuilder, BeforeRun, args);
         }
 
-        public static IHostBuilder PopulateHostBuilder(IHostBuilder hostBuilder) => hostBuilder
+        public static IHostBuilder CreateHostBuilder(IHostBuilder hostBuilder) => hostBuilder
             // Options
             .ConfigureServices((hostContext, services) =>
             {

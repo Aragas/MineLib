@@ -75,6 +75,7 @@ namespace MineLib.Server.PlayerBus
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddSingleton<PlayerHandlerManager>();
+                services.AddSingleton<PlayerTest>();
             })
 
             // Metrics
@@ -97,8 +98,12 @@ namespace MineLib.Server.PlayerBus
         {
             var serviceOptions = serviceProvider.GetRequiredService<IOptions<ServiceOptions>>().Value;
             var subscriptionStorage = serviceProvider.GetRequiredService<SubscriptionStorage>();
+
             subscriptionStorage.HandleGetExistingPlayerHandler<PlayerHandlerManager>();
             subscriptionStorage.HandleGetNewPlayerHandler<PlayerHandlerManager>(serviceOptions.Uid);
+
+            subscriptionStorage.HandlePlayerPosition<PlayerTest>();
+            subscriptionStorage.HandlePlayerLook<PlayerTest>();
         }
     }
 }

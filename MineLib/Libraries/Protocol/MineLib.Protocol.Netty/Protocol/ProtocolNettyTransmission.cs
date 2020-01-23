@@ -1,7 +1,6 @@
 ﻿using Aragas.Network.Data;
 using Aragas.Network.IO;
 
-using MineLib.Protocol.Netty.Packets.Server.Handshake;
 using MineLib.Protocol.Packets;
 using MineLib.Protocol.Protocol;
 
@@ -41,7 +40,7 @@ namespace MineLib.Protocol.Netty.Protocol
             {
                 packet.Deserialize(deserializer);
 
-                if (packet is HandshakeEnumPacket handshakePacket)
+                if (packet is Packets.Enum.HandshakePacket handshakePacket)
                     State = (State) (byte) handshakePacket.NextState;
 
                 return packet;

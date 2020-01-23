@@ -1,8 +1,6 @@
 ﻿using Aragas.Network.Packets;
-using Aragas.QServer.Core;
 
 using MineLib.Protocol.Server;
-using MineLib.Server.Core;
 
 using System.Collections.Generic;
 
@@ -14,9 +12,6 @@ namespace MineLib.Protocol5.Server
         public override string Version => "1.7.10";
         public override int NetworkVersion => 5;
 
-        // Workaround as Protocol is inside PlayerBus
-        private static IMBus? _playerBus;
-        public static IMBus PlayerBus => _playerBus ?? (_playerBus = new NatsMBus($"{InternalBus.Host}/minelib/server/playerbus"));
 
 #if DEBUG
         protected List<Packet> PacketsReceived { get; } = new List<Packet>();

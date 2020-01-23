@@ -25,13 +25,9 @@ namespace Aragas.QServer.Core
             //MineLib.Core.Extensions.PacketExtensions.Init();
             //MineLib.Server.Core.Extensions.PacketExtensions.Init();
 
-            //var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            //
-            //var configuration = new ConfigurationBuilder()
-            //    .AddJsonFile(environmentName == "Production" ? "appsettings.json" : $"appsettings.{environmentName}.json", optional: false)
-            //    .Build();
+            var configuration = new ConfigurationBuilder().AddJsonFile("loggerconfig.json").Build();
             Log.Logger = new LoggerConfiguration()
-            //    .ReadFrom.Configuration(configuration)
+                .ReadFrom.Configuration(configuration)
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
@@ -46,7 +42,8 @@ namespace Aragas.QServer.Core
                 hostBuilderFunc?.Invoke(hostBuilder);
 
                 var host = hostBuilder
-                    .UseSerilog()
+                    .UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration
+                        .ReadFrom.Configuration(hostingContext.Configuration))
                     .Build();
 
                 BeforeRun(host.Services);
@@ -57,6 +54,7 @@ namespace Aragas.QServer.Core
             catch (Exception ex) when (ex is Exception)
             {
                 Log.Fatal(ex, "{TypeName}: Fatal exception.", typeof(TProgram).FullName);
+                throw;
             }
             finally
             {
@@ -67,6 +65,10 @@ namespace Aragas.QServer.Core
 
         public static IHostBuilder CreateHostBuilder(string[] args) => Host
             .CreateDefaultBuilder(args ?? Array.Empty<string>())
+            .ConfigureHostConfiguration(configurationBuilder =>
+            {
+                configurationBuilder.AddJsonFile("loggerconfig.json");
+            })
             // NATS
             .ConfigureServices(services =>
             {

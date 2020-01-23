@@ -111,6 +111,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aragas.Network.Analyzer.Vsi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Aragas.Network-2.Analyzer", "Aragas.Network-2.Analyzer", "{14184E58-7251-45CB-A8A2-063FA1166F46}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{C058E7CE-A790-4414-B6DD-F5ED92F4CDC4}"
+	ProjectSection(SolutionItems) = preProject
+		loggerconfig.json = loggerconfig.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

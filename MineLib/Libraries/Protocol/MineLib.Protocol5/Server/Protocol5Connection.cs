@@ -1,6 +1,6 @@
 ﻿using Aragas.QServer.Core;
 using Aragas.QServer.Core.IO;
-
+using Aragas.QServer.Core.NetworkBus;
 using MineLib.Core;
 using MineLib.Core.Anvil;
 using MineLib.Protocol.Netty;
@@ -17,6 +17,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,11 +39,14 @@ namespace MineLib.Protocol5.Server
         public override ushort Port => 0;
         public override bool Connected => true;
 
+        private IAsyncNetworkBus NetworkBus { get; }
         private Protocol5Transmission Stream { get; }
         private ConcurrentQueue<MinecraftEnumPacket> PacketsToSend { get; } = new ConcurrentQueue<MinecraftEnumPacket>();
 
-        public Protocol5Connection(Guid playerId, State state = Protocol.Netty.State.Handshake)
+        public Protocol5Connection(IAsyncNetworkBus networkBus, Guid playerId, State state = Protocol.Netty.State.Handshake)
         {
+            NetworkBus = networkBus;
+
             PlayerId = playerId;
             Stream = new Protocol5Transmission()
             {
@@ -148,74 +152,66 @@ namespace MineLib.Protocol5.Server
                             break;
                         case PlayerPositionPacket packet:
                             {
-                                Task.Factory.StartNew(() =>
+                                var response = NetworkBus.PublishAndWaitForReply<PlayerPositionRequestMessage, PlayerPositionResponseMessage>(new PlayerPositionRequestMessage()
                                 {
-                                    InternalBus.UpdatePlayerData(new Core.Player()
-                                    {
-                                        Position = new System.Numerics.Vector3((float)packet.X, (float)packet.FeetY, (float)packet.Z),
-                                        Username = Username
-                                    }, PlayerBus);
+                                    PlayerId = PlayerId,
+                                    Position = new Vector3((float)packet.X, (float)packet.FeetY, (float)packet.Z)
                                 });
+                                if(response?.IsCorrect == false)
+                                {
+                                    PacketsToSend.Enqueue(new PlayerPositionAndLookPacket()
+                                    {
+                                        X = response.Position.X,
+                                        Y = response.Position.Y,
+                                        Z = response.Position.Z,
+                                    });
+                                }
                             }
                             break;
                         case PlayerLookPacket packet:
                             {
-                                Task.Factory.StartNew(() =>
+                                var response = NetworkBus.PublishAndWaitForReply<PlayerLookRequestMessage, PlayerLookResponseMessage>(new PlayerLookRequestMessage()
                                 {
-                                    InternalBus.UpdatePlayerData(new Core.Player()
-                                    {
-                                        Look = new Core.Look(packet.Pitch, packet.Yaw),
-                                        Username = Username
-                                    }, PlayerBus);
+                                    PlayerId = PlayerId,
+                                    Look = new Look(packet.Pitch, packet.Yaw),
                                 });
+                                if (response?.IsCorrect == false)
+                                {
+                                    PacketsToSend.Enqueue(new PlayerPositionAndLookPacket()
+                                    {
+                                        Yaw = response.Look.Yaw,
+                                        Pitch = response.Look.Pitch
+                                    });
+                                }
                             }
                             break;
                         case PlayerPositionAndLook2Packet packet:
                             {
-                                Task.Factory.StartNew(() =>
+                                var responsePositionTask = NetworkBus.PublishAndWaitForReplyAsync<PlayerPositionRequestMessage, PlayerPositionResponseMessage>(new PlayerPositionRequestMessage()
                                 {
-                                    InternalBus.UpdatePlayerData(new Core.Player()
-                                    {
-                                        Position = new System.Numerics.Vector3((float)packet.X, (float)packet.FeetY, (float)packet.Z),
-                                        Look = new Core.Look(packet.Pitch, packet.Yaw),
-                                        Username = Username
-                                    }, PlayerBus);
+                                    PlayerId = PlayerId,
+                                    Position = new Vector3((float) packet.X, (float) packet.FeetY, (float) packet.Z)
                                 });
-                                /*
-                                var valid = InternalBus.ValidatePlayerPositionAndLook(
-                                    new MineLib.Protocol.IPC.Packets.PlayerDataPacket()
-                                    {
-                                        Yaw = pplPacket.Yaw,
-                                        Pitch = pplPacket.Pitch,
-                                        X = pplPacket.X,
-                                        FeetY = pplPacket.FeetY,
-                                        Z = pplPacket.Z,
-                                        OnGround = pplPacket.OnGround
-                                    });
-                                */
-                                /*
-                                if (valid)
+                                var responseLookTask = NetworkBus.PublishAndWaitForReplyAsync<PlayerLookRequestMessage, PlayerLookResponseMessage>(new PlayerLookRequestMessage()
                                 {
-                                    yaw = pplPacket.Yaw;
-                                    pitch = pplPacket.Pitch;
-                                    x = pplPacket.X;
-                                    y = pplPacket.FeetY;
-                                    z = pplPacket.Z;
-                                }
+                                    PlayerId = PlayerId,
+                                    Look = new Look(packet.Pitch, packet.Yaw),
+                                });
 
-                                if (!valid)
+                                Task.WaitAll(responsePositionTask, responseLookTask);
+                                var responsePosition = responsePositionTask.Result;
+                                var responseLook = responseLookTask.Result;
+                                if (responsePosition?.IsCorrect == false && responseLook?.IsCorrect == false)
                                 {
                                     PacketsToSend.Enqueue(new PlayerPositionAndLookPacket()
                                     {
-                                        Yaw = (float) yaw,
-                                        Pitch = (float) pitch,
-                                        X = x,
-                                        Y = y,
-                                        Z = z,
-                                        OnGround = true
+                                        X = responsePosition.Position.X,
+                                        Y = responsePosition.Position.Y,
+                                        Z = responsePosition.Position.Z,
+                                        Yaw = responseLook.Look.Yaw,
+                                        Pitch = responseLook.Look.Pitch
                                     });
                                 }
-                                */
                             }
                             break;
 

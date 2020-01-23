@@ -33,5 +33,16 @@ namespace Aragas.QServer.Core.NetworkBus
         {
             subscriptionStorage.Handle<TMessageHandler, GetNewEntityIdRequestMessage, GetNewEntityIdResponseMessage>(messageHandler: messageHandler);
         }
+
+        public static void HandlePlayerPosition<TMessageHandler>(this SubscriptionStorage subscriptionStorage, TMessageHandler? messageHandler = null)
+            where TMessageHandler : class, IMessageHandler<PlayerPositionRequestMessage, PlayerPositionResponseMessage>
+        {
+            subscriptionStorage.Handle<TMessageHandler, PlayerPositionRequestMessage, PlayerPositionResponseMessage>(messageHandler: messageHandler);
+        }
+        public static void HandlePlayerLook<TMessageHandler>(this SubscriptionStorage subscriptionStorage, TMessageHandler? messageHandler = null)
+            where TMessageHandler : class, IMessageHandler<PlayerLookRequestMessage, PlayerLookResponseMessage>
+        {
+            subscriptionStorage.Handle<TMessageHandler, PlayerLookRequestMessage, PlayerLookResponseMessage>(messageHandler: messageHandler);
+        }
     }
 }

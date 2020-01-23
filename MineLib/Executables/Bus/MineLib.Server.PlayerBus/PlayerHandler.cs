@@ -1,10 +1,11 @@
 ﻿using System;
-
+using Microsoft.Extensions.DependencyInjection;
 using MineLib.Protocol.Server;
 using MineLib.Protocol5.Server;
 
 namespace MineLib.Server.PlayerBus
 {
+
     // This shit should interact via interface with multiple different protocols
     // So here we get/set info like EntityID if the protocol requests it or other shit
     internal sealed class PlayerHandler : IDisposable
@@ -16,7 +17,7 @@ namespace MineLib.Server.PlayerBus
 
         private ProtocolConnection? ProtocolConnection { get; }
 
-        public PlayerHandler(Guid playerId, int protocolVersion)
+        public PlayerHandler(IServiceProvider serviceProvider, Guid playerId, int protocolVersion)
         {
             PlayerId = playerId;
             ProtocolVersion = protocolVersion;
@@ -24,7 +25,7 @@ namespace MineLib.Server.PlayerBus
             switch (protocolVersion)
             {
                 case 5:
-                    ProtocolConnection = new Protocol5Connection(playerId, Protocol.Netty.State.Login);
+                    ProtocolConnection = ActivatorUtilities.CreateInstance<Protocol5Connection>(serviceProvider, new object[] { playerId, Protocol.Netty.State.Login });
                     break;
 
                 //case 340:

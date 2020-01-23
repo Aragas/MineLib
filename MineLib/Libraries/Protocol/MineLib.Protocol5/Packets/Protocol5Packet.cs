@@ -1,6 +1,6 @@
 ﻿using Aragas.Network.Data;
 
-using MineLib.Protocol.Netty.Packets;
+using MineLib.Protocol.Netty.Packets.Enum;
 using MineLib.Protocol.Packets;
 
 using System;

@@ -4,11 +4,9 @@ volumes:
   prometheus_data: {}
   grafana_data: {}
   postgresql_data: {}
-  elasticsearch_data: {}
+  seq_data: {}
 
 networks:
-  logging:
-    driver: bridge
   metrics:
   internal:
 
@@ -26,28 +24,16 @@ services:
       - internal
 
 #Logging
-  elasticsearch:
-    image: elasticsearch:6.8.6
+  seq:
+    image: datalust/seq:latest
     environment:
-      - discovery.type=single-node
+      - ACCEPT_EULA=Y
     ports:
-      - "9200:9200"
+      - 5341:80
     networks:
       - internal
-      - logging
     volumes:
-      - elasticsearch_data:/usr/share/elasticsearch/data
-  kibana:
-    image: kibana:6.8.6
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
-    ports:
-      - "5601:5601"
-    depends_on:
-      - elasticsearch
-    networks:
-      - logging
+      - seq_data:/data
 
 #Metrics
   grafana:
@@ -145,6 +131,7 @@ services:
   minelib.server.entitybus:
     image: ${DOCKER_REGISTRY-}minelib_server_entitybus
     depends_on:
+      - seq
       - postgres
       - nats
     build:
@@ -158,6 +145,7 @@ services:
       context: ../..
       dockerfile: MineLib/Executables/Bus/MineLib.Server.PlayerBus/Dockerfile
     depends_on:
+      - seq
       - postgres
       - nats
     networks:
@@ -168,6 +156,7 @@ services:
       context: ../..
       dockerfile: MineLib/Executables/Bus/MineLib.Server.WorldBus/Dockerfile
     depends_on:
+      - seq
       - postgres
       - nats
     networks:
@@ -179,6 +168,7 @@ services:
       context: ../..
       dockerfile: MineLib/Executables/MineLib.Server.Proxy/Dockerfile
     depends_on:
+      - seq
       - nats
       - minelib.server.entitybus
       - minelib.server.playerbus

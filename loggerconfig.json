@@ -1,6 +1,6 @@
 {
   "Serilog": {
-    "Using": [ "Serilog.Sinks.Console", "Serilog.Sinks.Elasticsearch" ],
+    "Using": [ "Serilog.Sinks.Console", "Serilog.Sinks.Seq" ],
     "MinimumLevel": {
       "Default": "Information",
       "Override": {
@@ -16,11 +16,9 @@
         }
       },
       {
-        "Name": "Elasticsearch",
+        "Name": "Seq",
         "Args": {
-          "nodeUris": "http://elasticsearch:9200",
-          "restrictedToMinimumLevel": "Warning",
-          "autoRegisterTemplate": true
+          "serverUrl": "http://seq:5341"
         }
       }
     ]

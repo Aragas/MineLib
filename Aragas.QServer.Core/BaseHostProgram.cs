@@ -10,7 +10,6 @@ using Microsoft.Extensions.Options;
 using NATS.Client;
 
 using Serilog;
-using Serilog.Events;
 
 using System;
 using System.Threading.Tasks;
@@ -19,6 +18,8 @@ namespace Aragas.QServer.Core
 {
     public class BaseHostProgram
     {
+        private static Guid Uid { get; } = Guid.NewGuid();
+
         public static async Task Main<TProgram>(Func<IHostBuilder, IHostBuilder>? hostBuilderFunc = null, Action<IServiceProvider>? beforeRunAction = null, string[]? args = null) where TProgram : BaseHostProgram
         {
             Aragas.Network.Extensions.PacketExtensions.Init();
@@ -27,11 +28,8 @@ namespace Aragas.QServer.Core
 
             var configuration = new ConfigurationBuilder().AddJsonFile("loggerconfig.json").Build();
             Log.Logger = new LoggerConfiguration()
+                .ConfigureSerilog(Uid)
                 .ReadFrom.Configuration(configuration)
-                .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
                 .CreateLogger();
 
             try
@@ -43,6 +41,7 @@ namespace Aragas.QServer.Core
 
                 var host = hostBuilder
                     .UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration
+                        .ConfigureSerilog(Uid)
                         .ReadFrom.Configuration(hostingContext.Configuration))
                     .Build();
 
@@ -65,14 +64,20 @@ namespace Aragas.QServer.Core
 
         public static IHostBuilder CreateHostBuilder(string[] args) => Host
             .CreateDefaultBuilder(args ?? Array.Empty<string>())
+            // Logging
             .ConfigureHostConfiguration(configurationBuilder =>
             {
                 configurationBuilder.AddJsonFile("loggerconfig.json");
             })
+            // Options
+            .ConfigureServices(services =>
+            {
+                services.Configure<ServiceOptions>(o => o.Uid = Uid);
+            })
             // NATS
             .ConfigureServices(services =>
             {
-                services.AddSingleton<NATS.Client.Options>(ConnectionFactory.GetDefaultOptions().SetDefaultArgs());
+                services.AddSingleton(ConnectionFactory.GetDefaultOptions().SetDefaultArgs());
                 services.AddSingleton<IAsyncNetworkBus>(sp => new AsyncNATSBus(sp.GetRequiredService<NATS.Client.Options>()));
                 services.AddSingleton<INetworkBus>(sp => sp.GetRequiredService<IAsyncNetworkBus>());
                 services.AddSingleton<SubscriptionStorage>();

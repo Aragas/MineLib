@@ -14,6 +14,7 @@ namespace Aragas.QServer.Core
     // Warning, you can't use the same instance for sending and getting the same message
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1102:Make class static.", Justification = "<Pending>")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1052:Static holder types should be Static or NotInheritable", Justification = "<Pending>")]
+    [Obsolete]
     public class BaseInternalBus
     {
         //public static string Host { get; } = "mbus://0.0.0.0";

@@ -13,6 +13,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty
         {
             Stream = stream;
 
+            // Unsafe. 
             var dataLength = Read<byte>();
             if (dataLength == 0xFE)
             {

@@ -97,6 +97,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty
             {
                 case RequestPacket _:
                     SendPacket(new ResponsePacket() { JSONResponse = GetJSONResponse() });
+                    Task.Run(Disconnect);
                     break;
 
                 case PingPacket pingPacket:
@@ -159,7 +160,6 @@ namespace MineLib.Server.Proxy.Protocol.Netty
                     if (response != null)
                         playerBusId = response.ServiceId;
                 }
-
 
                 if (playerBusId == null)
                 {

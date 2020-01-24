@@ -1,9 +1,11 @@
 using System;
 
+using Aragas.Network.Attributes;
 using Aragas.Network.IO;
 
 namespace MineLib.Protocol575.Packets.Client.Status
 {
+    [Packet(0x00)]
     public class ResponsePacket : ClientStatusPacket
     {
 		public String JSONResponse;

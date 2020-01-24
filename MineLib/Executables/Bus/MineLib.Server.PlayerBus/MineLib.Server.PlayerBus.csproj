@@ -38,6 +38,7 @@
     <ProjectReference Include="$(SolutionDir)\MineLib\Libraries\Protocol\MineLib.Protocol5\MineLib.Protocol5.csproj" />
     <ProjectReference Include="$(SolutionDir)\MineLib\Libraries\Protocol\MineLib.Protocol\MineLib.Protocol.csproj" />
     <ProjectReference Include="$(SolutionDir)\MineLib\Libraries\Protocol\MineLib.Protocol.Netty\MineLib.Protocol.Netty.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Protocol\MineLib.Protocol575\MineLib.Protocol575.csproj" />
   </ItemGroup>
 
   <ItemGroup>

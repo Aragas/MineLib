@@ -85,8 +85,6 @@ namespace Aragas.QServer.Core
             Metrics.Measure.Counter.Increment(ExceptionCounter);
 #if DEBUG
             var stackTrace = new StackTrace(true);
-            if(!(e.Exception is NATSException) /*&& (e.Exception is NullReferenceException && e.Exception.Source != "NATS.Client")*/)
-                ;
 #endif
         }
     }

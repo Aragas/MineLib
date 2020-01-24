@@ -1,9 +1,11 @@
 using System;
 
+using Aragas.Network.Attributes;
 using Aragas.Network.IO;
 
 namespace MineLib.Protocol575.Packets.Client.Login
 {
+    [Packet(0x02)]
     public class LoginSuccessPacket : ClientLoginPacket
     {
 		public String UUID;

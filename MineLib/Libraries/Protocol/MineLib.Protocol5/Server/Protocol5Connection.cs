@@ -1,6 +1,7 @@
 ﻿using Aragas.QServer.Core;
 using Aragas.QServer.Core.IO;
 using Aragas.QServer.Core.NetworkBus;
+
 using MineLib.Core;
 using MineLib.Core.Anvil;
 using MineLib.Protocol.Netty;
@@ -10,7 +11,6 @@ using MineLib.Protocol5.Packets.Client.Login;
 using MineLib.Protocol5.Packets.Client.Play;
 using MineLib.Protocol5.Packets.Server.Login;
 using MineLib.Protocol5.Packets.Server.Play;
-using MineLib.Server.Core;
 using MineLib.Server.Core.NetworkBus.Messages;
 
 using System;
@@ -102,8 +102,7 @@ namespace MineLib.Protocol5.Server
 
                                 Task.Factory.StartNew(async () =>
                                 {
-                                    var response = BaseSingleton.Instance
-                                    .PublishAndWaitForReplyEnumerableAsync<ChunksInSquareRequestMessage, ChunksInSquareResponseMessage>(
+                                    var response = NetworkBus.PublishAndWaitForReplyEnumerableAsync<ChunksInSquareRequestMessage, ChunksInSquareResponseMessage>(
                                         new ChunksInSquareRequestMessage() { X = 0, Z = 0, Radius = 5 });
                                     var chunks = response.Select(r =>
                                     {
@@ -140,14 +139,6 @@ namespace MineLib.Protocol5.Server
                                     //PacketsToSend.Enqueue(InternalBus.GetChunk(new Coordinates2D(0, 0))?.CreatePacket());
                                     //PacketsToSend.Enqueue(InternalBus.GetChunksInSquare(0, 0, 12, true).ToArray().MapChunkBulk());
                                 });
-
-                                /*
-                                PacketsToSend.Enqueue(InternalBus.GetChunk(new Coordinates2D(0, 0))?.CreatePacket());
-                                Task.Factory.StartNew(() =>
-                                {
-                                    PacketsToSend.Enqueue(InternalBus.GetChunksInRadius(0, 0, 0, 0, 0).MapChunkBulk());
-                                });
-                                */
                             }
                             break;
                         case PlayerPositionPacket packet:

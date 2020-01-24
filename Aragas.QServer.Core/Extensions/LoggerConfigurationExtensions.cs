@@ -13,14 +13,15 @@ namespace Serilog
         {
             return loggerConfiguration
                 .Enrich.WithExceptionDetails()
-                .Enrich.WithApplication(applicationUid)
-                .Enrich.WithLogLevel();
+                .Enrich.WithApplicationInfo(applicationUid)
+                .Enrich.WithLogLevel()
+                ;
         }
 
-        public static LoggerConfiguration WithApplication(this LoggerEnrichmentConfiguration enrichmentConfiguration, Guid applicationUid)
+        public static LoggerConfiguration WithApplicationInfo(this LoggerEnrichmentConfiguration enrichmentConfiguration, Guid applicationUid)
         {
             if (enrichmentConfiguration == null) throw new ArgumentNullException(nameof(enrichmentConfiguration));
-            return enrichmentConfiguration.With(new ApplicationNameEnricher(applicationUid));
+            return enrichmentConfiguration.With(new ApplicationInfoEnricher(applicationUid));
         }
         public static LoggerConfiguration WithLogLevel(this LoggerEnrichmentConfiguration enrichmentConfiguration)
         {

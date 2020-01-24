@@ -112,9 +112,14 @@ namespace Aragas.QServer.Core.NetworkBus
             var returnLock = new TaskCompletionSource<TMessageResponse>(TaskCreationOptions.RunContinuationsAsynchronously);
             using var sub = _connection.SubscribeAsync(GetSubject<TMessageResponse>(referenceId), (s, e) =>
             {
-                var response = new TMessageResponse();
-                response.SetData(e.Message.Data);
-                returnLock.SetResult(response);
+                try
+                {
+                    var response = new TMessageResponse();
+                    response.SetData(e.Message.Data);
+                    returnLock.SetResult(response);
+                }
+                catch (Exception) { }
+
             });
             await PublishAsync(message, referenceId);
 

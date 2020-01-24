@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using MineLib.Protocol.Server;
 using MineLib.Protocol5.Server;
+using MineLib.Protocol575.Server;
 
 namespace MineLib.Server.PlayerBus
 {
@@ -31,6 +32,10 @@ namespace MineLib.Server.PlayerBus
                 //case 340:
                 //    ProtocolConnection = new Protocol340Connection(socket);
                 //    break;
+
+                case 498:
+                    ProtocolConnection = ActivatorUtilities.CreateInstance <Protocol575Connection>(serviceProvider, new object[] { playerId, Protocol.Netty.State.Login });
+                    break;
 
                 default:
                     ProtocolConnection = null;

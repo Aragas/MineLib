@@ -1,17 +1,24 @@
-﻿using MineLib.Core;
+﻿using Aragas.Network.Data;
+using Aragas.QServer.Core.IO;
+using Aragas.QServer.Core.NetworkBus;
+using MineLib.Core;
+using MineLib.Core.Anvil;
 using MineLib.Protocol.Netty;
 using MineLib.Protocol.Netty.Protocol;
 using MineLib.Protocol.Packets;
+using MineLib.Protocol5.Extensions;
 using MineLib.Protocol575.Packets;
 using MineLib.Protocol575.Packets.Client.Login;
 using MineLib.Protocol575.Packets.Client.Play;
 using MineLib.Protocol575.Packets.Server.Login;
 using MineLib.Protocol575.Packets.Server.Play;
-
+using MineLib.Server.Core.NetworkBus.Messages;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MineLib.Protocol575.Server
 {
@@ -31,13 +38,16 @@ namespace MineLib.Protocol575.Server
         public override ushort Port => 0;
         public override bool Connected => true;
 
-        private ProtocolNettyTransmission<ServerStatusPacketTypes, ServerLoginPacketTypes, ServerPlayPacketTypes> Stream { get; }
-        private ConcurrentQueue<MinecraftEnumPacket> PacketsToSend { get; } = new ConcurrentQueue<MinecraftEnumPacket>();
+        private IAsyncNetworkBus NetworkBus { get; }
+        private ProtocolNettyTransmission<ServerStatusPacket, ServerLoginPacket, ServerPlayPacket> Stream { get; }
+        private ConcurrentQueue<MinecraftPacket> PacketsToSend { get; } = new ConcurrentQueue<MinecraftPacket>();
 
-        public Protocol575Connection(Guid playerId, State state = Protocol.Netty.State.Handshake)
+        public Protocol575Connection(IAsyncNetworkBus networkBus, Guid playerId, State state = Protocol.Netty.State.Handshake)
         {
+            NetworkBus = networkBus;
+
             PlayerId = playerId;
-            Stream = new ProtocolNettyTransmission<ServerStatusPacketTypes, ServerLoginPacketTypes, ServerPlayPacketTypes>()
+            Stream = new ProtocolNettyTransmission<ServerStatusPacket, ServerLoginPacket, ServerPlayPacket>()
             {
                 State = state,
                 PlayerId = playerId
@@ -78,6 +88,67 @@ namespace MineLib.Protocol575.Server
                                     ViewDistance = 8,
                                     ReducedDebugInfo = false
                                 });
+
+                                Task.Factory.StartNew(async () =>
+                                {
+                                    PacketsToSend.Enqueue(new PlayerPositionAndLookPacket()
+                                    {
+                                        X = 7,
+                                        Y = 62 + 1.62D,
+                                        Z = 7,
+                                        Yaw = 0,
+                                        Pitch = 0,
+                                    });
+
+                                    PacketsToSend.Enqueue(new UpdateViewPositionPacket()
+                                    {
+                                        X = 0,
+                                        Z = 0
+                                    });
+
+                                    var response = NetworkBus.PublishAndWaitForReplyEnumerableAsync<ChunksInSquareRequestMessage, ChunksInSquareResponseMessage>(
+                                        new ChunksInSquareRequestMessage() { X = 0, Z = 0, Radius = 1 });
+                                    var chunks = response.Select(r =>
+                                    {
+                                        var deserializer = new CompressedProtobufDeserializer(r.Data);
+                                        return deserializer.Read<Chunk>();
+                                    });
+
+                                    await foreach (var chunk in chunks)
+                                    {
+                                        var chunkPacket = chunk.CreatePacket();
+                                        var lightPacket = chunk.CreateLightPacket();
+                                        PacketsToSend.Enqueue(chunkPacket);
+                                        PacketsToSend.Enqueue(lightPacket);
+                                    }
+                                    //var chunk = await chunks.ToListAsync();
+                                    //var data = chunk[0].CreatePacket();
+                                    //PacketsToSend.Enqueue(data);
+                                    PacketsToSend.Enqueue(new WorldBorderPacket()
+                                    {
+                                        X = 0,
+                                        Z = 0,
+                                        NewDiameter = 1000,
+                                        OldDiameter = 1000,
+                                        PortalTeleportBoundary = 29999984,
+                                        Speed = new VarLong(0),
+                                        WarningTime = 30,
+                                        WarningBlocks = 30
+                                    });
+
+                                    await Task.Factory.StartNew(() =>
+                                    {
+                                        PacketsToSend.Enqueue(new SpawnPositionPacket() { Location = new Location3D(7, 62, 7) });
+                                        PacketsToSend.Enqueue(new PlayerPositionAndLookPacket()
+                                        {
+                                            X = 7,
+                                            Y = 62 + 1.62D,
+                                            Z = 7,
+                                            Yaw = 0,
+                                            Pitch = 0,
+                                        });
+                                    });
+                                });
                             }
                             break;
                     }
@@ -107,7 +178,7 @@ namespace MineLib.Protocol575.Server
 
                     if (Stopwatch.ElapsedMilliseconds > 2000)
                     {
-                        PacketsToSend.Enqueue(new KeepAlive2Packet() { KeepAliveID = 0 });
+                        PacketsToSend.Enqueue(new KeepAlivePacket() { KeepAliveID = 0 });
                         Stopwatch.Restart();
                     }
                 }

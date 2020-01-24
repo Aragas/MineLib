@@ -1,10 +1,12 @@
 using System;
 
+using Aragas.Network.Attributes;
 using Aragas.Network.Data;
 using Aragas.Network.IO;
 
 namespace MineLib.Protocol575.Packets.Server.Login
 {
+    [Packet(0x02)]
     public class LoginPluginResponsePacket : ServerLoginPacket
     {
         public VarInt MessageID { get; set; }

@@ -4,11 +4,13 @@ using MineLib.Protocol.Packets;
 
 namespace MineLib.Protocol.Protocol
 {
-    /// <summary>
-    /// Standard Factory property is disabled
-    /// </summary>
-    public class MinecraftINetworkBusTransmission : ProtobufINetworkBusTransmission<MinecraftEnumPacket>
+    public class MinecraftINetworkBusTransmission : ProtobufINetworkBusTransmission<MinecraftPacket>
     {
         public MinecraftINetworkBusTransmission() : base() { }
+    }
+
+    public class MinecraftEnumINetworkBusTransmission : ProtobufINetworkBusTransmission<MinecraftEnumPacket>
+    {
+        public MinecraftEnumINetworkBusTransmission() : base() { }
     }
 }

@@ -7,6 +7,7 @@
     /// Mostly ported from CraftBukkit's Material class
     /// </remarks>
     /// <see href="https://github.com/Bukkit/Bukkit/blob/master/src/main/java/org/bukkit/Material.java"/>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1027:Mark enums with FlagsAttribute", Justification = "<Pending>")]
     public enum Material
     {
         Air = 0,

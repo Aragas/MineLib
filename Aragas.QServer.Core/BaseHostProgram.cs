@@ -5,6 +5,7 @@ using Aragas.QServer.Core.NetworkBus;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using NATS.Client;
@@ -30,6 +31,7 @@ namespace Aragas.QServer.Core
             Log.Logger = new LoggerConfiguration()
                 .ConfigureSerilog(Uid)
                 .ReadFrom.Configuration(configuration)
+                .Enrich.FromLogContext()
                 .CreateLogger();
 
             try
@@ -39,11 +41,7 @@ namespace Aragas.QServer.Core
                 var hostBuilder = CreateHostBuilder(args ?? Array.Empty<string>());
                 hostBuilderFunc?.Invoke(hostBuilder);
 
-                var host = hostBuilder
-                    .UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration
-                        .ConfigureSerilog(Uid)
-                        .ReadFrom.Configuration(hostingContext.Configuration))
-                    .Build();
+                var host = hostBuilder.Build();
 
                 BeforeRun(host.Services);
                 beforeRunAction?.Invoke(host.Services);
@@ -64,10 +62,12 @@ namespace Aragas.QServer.Core
 
         public static IHostBuilder CreateHostBuilder(string[] args) => Host
             .CreateDefaultBuilder(args ?? Array.Empty<string>())
-            // Logging
-            .ConfigureHostConfiguration(configurationBuilder =>
+            .ConfigureLogging(logging =>
             {
-                configurationBuilder.AddJsonFile("loggerconfig.json");
+                logging.AddSerilog(dispose: false);
+#if DEBUG
+                logging.AddDebug();
+#endif
             })
             // Options
             .ConfigureServices(services =>

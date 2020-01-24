@@ -1,9 +1,11 @@
 using System;
 
+using Aragas.Network.Attributes;
 using Aragas.Network.IO;
 
 namespace MineLib.Protocol575.Packets.Client.Play
 {
+    [Packet(0x20)]
     public class KeepAlivePacket : ClientPlayPacket
     {
 		public Int64 KeepAliveID;

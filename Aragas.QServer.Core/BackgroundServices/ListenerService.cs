@@ -68,7 +68,7 @@ namespace Aragas.QServer.Core.BackgroundServices
                 {
                     Logger.LogWarning(ex, "{TypeName}: SocketException.", GetType().Name);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     throw;
                 }

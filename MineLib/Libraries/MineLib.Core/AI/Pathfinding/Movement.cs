@@ -131,9 +131,9 @@ namespace MineLib.Core.AI.Pathfinding
         /// <param name="goal">Destination location</param>
         /// <param name="allowUnsafe">Allow possible but unsafe locations</param>
         /// <returns>A list of locations, or null if calculation failed</returns>
-        public static Queue<Vector3> CalculatePath(IWorld world, in Vector3 start, in Vector3 goal, bool allowUnsafe = false)
+        public static Queue<Vector3>? CalculatePath(IWorld world, in Vector3 start, in Vector3 goal, bool allowUnsafe = false)
         {
-            Queue<Vector3> result = null;
+            Queue<Vector3>? result = null;
 
             var closedSet = new HashSet<Vector3>(); // The set of locations already evaluated.
             var openSet = new HashSet<Vector3>(new[] { start });  // The set of tentative nodes to be evaluated, initially containing the start node

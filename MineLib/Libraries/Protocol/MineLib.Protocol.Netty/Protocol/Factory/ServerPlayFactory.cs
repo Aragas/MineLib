@@ -5,5 +5,5 @@ using MineLib.Protocol.Netty.Packets.Server;
 
 namespace MineLib.Protocol.Netty.Protocol
 {
-    public sealed class ServerHandshakeFactory : DefaultPacketFactory<ServerHandshakePacket, VarInt>  { }
+    public class ServerPlayFactory : DefaultPacketFactory<ServerPlayPacket, VarInt> { }
 }

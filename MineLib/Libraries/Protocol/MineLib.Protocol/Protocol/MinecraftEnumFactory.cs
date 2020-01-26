@@ -1,6 +1,5 @@
 ﻿using Aragas.Network;
 using Aragas.Network.Data;
-using Aragas.Network.IO;
 using Aragas.Network.Packets;
 
 using MineLib.Protocol.Packets;
@@ -8,7 +7,6 @@ using MineLib.Protocol.Packets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace MineLib.Protocol.Protocol
 {

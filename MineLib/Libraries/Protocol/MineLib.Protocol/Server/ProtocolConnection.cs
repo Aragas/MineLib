@@ -2,7 +2,6 @@
 
 namespace MineLib.Protocol.Server
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1063:Implement IDisposable Correctly", Justification = "Implementation problem")]
     public abstract class ProtocolConnection : IDisposable
     {
         public abstract string Name { get; }

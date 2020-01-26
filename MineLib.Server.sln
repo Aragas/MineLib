@@ -49,7 +49,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MineLib.Server.Core", "Mine
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MineLib.Protocol", "MineLib\Libraries\Protocol\MineLib.Protocol\MineLib.Protocol.csproj", "{67C37CFF-F741-4FB5-A613-EEE4DF201B3D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MineLib.Protocol5", "MineLib\Libraries\Protocol\MineLib.Protocol5\MineLib.Protocol5.csproj", "{B58D2740-E059-4323-8557-AEED00125CAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MineLib.Protocol.Netty5", "MineLib\Libraries\Protocol\MineLib.Protocol5\MineLib.Protocol.Netty5.csproj", "{B58D2740-E059-4323-8557-AEED00125CAD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MineLib.Protocol.Forge", "MineLib\Libraries\Protocol\MineLib.Protocol.Forge\MineLib.Protocol.Forge.csproj", "{AFF0DBE4-B9CC-4B87-9FF7-C1AD787F59A7}"
 EndProject
@@ -89,7 +89,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokeD.BattleEngine", "PokeD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aragas.QServer.Prometheus.Exporter", "Aragas.QServer.Prometheus.Exporter\Aragas.QServer.Prometheus.Exporter.csproj", "{0F8ADF2A-1996-45E8-9BA0-68D78A7F4E9B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MineLib.Protocol575", "MineLib\Libraries\Protocol\MineLib.Protocol575\MineLib.Protocol575.csproj", "{E0D0C76D-0A0D-48CD-904A-60D98D052DF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MineLib.Protocol.Netty575", "MineLib\Libraries\Protocol\MineLib.Protocol575\MineLib.Protocol.Netty575.csproj", "{E0D0C76D-0A0D-48CD-904A-60D98D052DF9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MineLib.Protocol.Netty", "MineLib\Libraries\Protocol\MineLib.Protocol.Netty\MineLib.Protocol.Netty.csproj", "{97AC6EBA-CF49-45B8-8B9E-8728D5732F1F}"
 EndProject
@@ -115,6 +115,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{C058E7
 	ProjectSection(SolutionItems) = preProject
 		loggerconfig.json = loggerconfig.json
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MineLib.Protocol.Classic", "MineLib\Libraries\Protocol\Minelib.Protocol.Classic\MineLib.Protocol.Classic.csproj", "{7B6F1F19-4966-4695-966B-8584246A3B9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -266,6 +268,10 @@ Global
 		{B937AEE7-0504-48C6-9494-1080A97F849F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B937AEE7-0504-48C6-9494-1080A97F849F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B937AEE7-0504-48C6-9494-1080A97F849F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B6F1F19-4966-4695-966B-8584246A3B9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B6F1F19-4966-4695-966B-8584246A3B9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B6F1F19-4966-4695-966B-8584246A3B9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B6F1F19-4966-4695-966B-8584246A3B9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -314,6 +320,7 @@ Global
 		{42E1B388-12BF-4B45-AFA8-E4AB5D70D833} = {14184E58-7251-45CB-A8A2-063FA1166F46}
 		{B937AEE7-0504-48C6-9494-1080A97F849F} = {14184E58-7251-45CB-A8A2-063FA1166F46}
 		{14184E58-7251-45CB-A8A2-063FA1166F46} = {3EC3A2F3-1EF4-4072-8C30-620948809175}
+		{7B6F1F19-4966-4695-966B-8584246A3B9A} = {AEA09901-59EF-45A9-88C2-6CD9D5FE4907}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CE7EEC09-C11D-4199-B674-5D6D6015EDC4}

@@ -109,7 +109,7 @@ namespace MineLib.Protocol.Generator.Json
             var properties = new Dictionary<string, string>();
             while (
                 reader.Read() && reader.TokenType == JsonToken.PropertyName && reader.Value is string name &&
-                reader.Read() && reader.Value is string value)
+                reader.Read() && reader.TokenType == JsonToken.String && reader.Value is string value)
                 properties.Add(name, value);
             return properties;
         }
@@ -119,7 +119,9 @@ namespace MineLib.Protocol.Generator.Json
             while (
                 reader.Read() && reader.TokenType == JsonToken.StartArray && reader.Value is string name &&
                 reader.Read() && reader.TokenType == JsonToken.String && reader.Value is string value)
+            {
                 properties.Add(name, value);
+            }
             return properties;
         }
         public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)

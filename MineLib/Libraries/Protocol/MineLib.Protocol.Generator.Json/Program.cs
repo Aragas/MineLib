@@ -1,138 +1,99 @@
 ﻿using Newtonsoft.Json;
-
+using NJsonSchema;
+using NJsonSchema.CodeGeneration.CSharp;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace MineLib.Protocol.Generator.Json
 {
-    public class Protocols
+    public interface IPrimitive
     {
-        [JsonProperty("pc"), JsonConverter(typeof(ProtocolInfoConverter))]
-        public List<ProtocolInfo> Vanilla { get; set; }
 
-        [JsonProperty("pe"), JsonConverter(typeof(ProtocolInfoConverter))]
-        public List<ProtocolInfo> Bedrock { get; set; }
     }
-    public class ProtocolInfo
-    {
-        public string Name { get; set; }
+    public interface IStructural { }
 
-
-        [JsonProperty("blocks")]
-        public string Blocks { get; set; }
-
-        [JsonProperty("biomes")]
-        public string Biomes { get; set; }
-
-        [JsonProperty("effects")]
-        public string Effects { get; set; }
-
-        [JsonProperty("enchantments")]
-        public string Enchantments { get; set; }
-
-        [JsonProperty("items")]
-        public string Items { get; set; }
-
-        [JsonProperty("recipes")]
-        public string Recipes { get; set; }
-
-        [JsonProperty("instruments")]
-        public string Instruments { get; set; }
-
-        [JsonProperty("materials")]
-        public string Materials { get; set; }
-
-        [JsonProperty("entities")]
-        public string Entities { get; set; }
-
-        [JsonProperty("protocol")]
-        public string Protocol { get; set; }
-
-        [JsonProperty("windows")]
-        public string Windows { get; set; }
-
-        [JsonProperty("version")]
-        public string Version { get; set; }
-
-        [JsonProperty("language")]
-        public string Language { get; set; }
-
-        [JsonProperty("protocolComments")]
-        public string ProtocolComments { get; set; }
-    }
-    public class ProtocolInfoConverter : JsonConverter
-    {
-        public override bool CanConvert(Type objectType) => throw new NotImplementedException();
-
-        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
-        {
-            var list = new List<ProtocolInfo>();
-            while (TryReadProtocol(reader, serializer, out var info))
-                list.Add(info!);
-            return list;
-        }
-
-        private bool TryReadProtocol(JsonReader reader, JsonSerializer serializer, out ProtocolInfo? info)
-        {
-            if(reader.Read() && reader.TokenType == JsonToken.PropertyName && reader.Value is string version && reader.Read())
-            {
-                info = serializer.Deserialize<ProtocolInfo>(reader);
-                info!.Name = version;
-                return true;
-            }
-            else
-            {
-                info = null;
-                return false;
-            }
-        }
-
-        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer) => throw new NotImplementedException();
-    }
 
     public class Protocol
     {
-        public class Types
-        {
-
-        }
-
         [JsonProperty("types"), JsonConverter(typeof(TypesConverter))]
-        public Types Type { get; set; }
+        public List<IType> Types { get; set; }
+    }
+    public interface IType
+    {
+        public string Name { get; }
+    }
+    public class SimpleType : IType
+    {
+        public string Name { get; set; }
+        public string Value { get; set; } 
+    }
+    public class ComplexType : IType
+    {
+        public string Name { get; set; }
+
+        public List<IType> Types { get; set; }
+        public Dictionary<string, string> Properties { get; set; }
     }
     public class TypesConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType) => throw new NotImplementedException();
 
-        private Dictionary<string, string> ReadSimpleProperties(JsonReader reader)
+        private IEnumerable<SimpleType> ReadSimpleTypes(JsonReader reader)
         {
-            var properties = new Dictionary<string, string>();
+            var simpleTypes = new List<SimpleType>();
             while (
                 reader.Read() && reader.TokenType == JsonToken.PropertyName && reader.Value is string name &&
                 reader.Read() && reader.TokenType == JsonToken.String && reader.Value is string value)
-                properties.Add(name, value);
-            return properties;
+            {
+                simpleTypes.Add(new SimpleType() { Name = name, Value = value });
+            }
+
+            return simpleTypes;
         }
-        private Dictionary<string, string> ReadSimpleProperties1(JsonReader reader)
+        private IEnumerable<ComplexType> ReadComplexTypes(JsonReader reader)
         {
-            var properties = new Dictionary<string, string>();
+            var complexTypes = new List<ComplexType>();
             while (
-                reader.Read() && reader.TokenType == JsonToken.StartArray && reader.Value is string name &&
+                /*reader.Read() &&*/ reader.TokenType == JsonToken.StartArray && reader.Value is null &&
                 reader.Read() && reader.TokenType == JsonToken.String && reader.Value is string value)
             {
-                properties.Add(name, value);
+                var type = new ComplexType() { Name = value };
+                var types = new List<IType>();
+                reader.Read();
+                while (
+                    reader.Read() && reader.TokenType == JsonToken.PropertyName && reader.Value is string propName &&
+                    reader.Read() && reader.TokenType == JsonToken.String && reader.Value is string propValue)
+                {
+                    types.Add(new SimpleType() { Name = propName, Value = propValue });
+
+                    ;
+                }
+
+                complexTypes.Add(new ComplexType() { Name = value/*, Value = value*/ });
             }
-            return properties;
+            return complexTypes;
         }
         public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
-            var properties = ReadSimpleProperties(reader);
+            var properties1 = ReadSimpleTypes(reader);
 
+            //var properties2 = ReadComplexTypes(reader);
+
+            var list = new StringBuilder();
+            list.Append(reader.Value ?? "null").Append(": ").Append(reader.TokenType).AppendLine();
+            while (reader.Read())
+                list.Append(reader.Value).Append(": ").Append(reader.TokenType).AppendLine();
+            var t = list.ToString();
+            return list;
+
+            /*
             var list = new List<(object?, JsonToken)>();
             list.Add((reader.Value, reader.TokenType));
             while (reader.Read())
                 list.Add((reader.Value, reader.TokenType));
             return list;
+            */
 
             /*
             reader.Read();
@@ -152,7 +113,12 @@ namespace MineLib.Protocol.Generator.Json
         static string j = "{  \"types\": {    \"varint\": \"native\",    \"pstring\": \"native\",    \"u16\": \"native\",    \"u8\": \"native\",    \"i64\": \"native\",    \"buffer\": \"native\",    \"i32\": \"native\",    \"i8\": \"native\",    \"bool\": \"native\",    \"i16\": \"native\",    \"f32\": \"native\",    \"f64\": \"native\",    \"UUID\": \"native\",    \"option\": \"native\",    \"entityMetadataLoop\": \"native\",    \"bitfield\": \"native\",    \"container\": \"native\",    \"switch\": \"native\",    \"void\": \"native\",    \"array\": \"native\",    \"restBuffer\": \"native\",    \"nbt\": \"native\",    \"compressedNbt\": \"native\",    \"string\": [      \"pstring\",      {        \"countType\": \"varint\"      }    ],    \"slot\": [      \"container\",      [        {          \"name\": \"blockId\",          \"type\": \"i16\"        },        {          \"anon\": true,          \"type\": [            \"switch\",            {              \"compareTo\": \"blockId\",              \"fields\": {                \"-1\": \"void\"              },              \"default\": [                \"container\",                [                  {                    \"name\": \"itemCount\",                    \"type\": \"i8\"                  },                  {                    \"name\": \"itemDamage\",                    \"type\": \"i16\"                  },                  {                    \"name\": \"nbtData\",                    \"type\": \"compressedNbt\"                  }                ]              ]            }          ]        }      ]    ],    \"position_iii\": [      \"container\",      [        {          \"name\": \"x\",          \"type\": \"i32\"        },        {          \"name\": \"y\",          \"type\": \"i32\"        },        {          \"name\": \"z\",          \"type\": \"i32\"        }      ]    ],    \"position_isi\": [      \"container\",      [        {          \"name\": \"x\",          \"type\": \"i32\"        },        {          \"name\": \"y\",          \"type\": \"i16\"        },        {          \"name\": \"z\",          \"type\": \"i32\"        }      ]    ],    \"position_ibi\": [      \"container\",      [        {          \"name\": \"x\",          \"type\": \"i32\"        },        {          \"name\": \"y\",          \"type\": \"u8\"        },        {          \"name\": \"z\",          \"type\": \"i32\"        }      ]    ],    \"entityMetadataItem\": [      \"switch\",      {        \"compareTo\": \"$compareTo\",        \"fields\": {          \"0\": \"i8\",          \"1\": \"i16\",          \"2\": \"i32\",          \"3\": \"f32\",          \"4\": \"string\",          \"5\": \"slot\",          \"6\": [            \"container\",            [              {                \"name\": \"x\",                \"type\": \"i32\"              },              {                \"name\": \"y\",                \"type\": \"i32\"              },              {                \"name\": \"z\",                \"type\": \"i32\"              }            ]          ],          \"7\": [            \"container\",            [              {                \"name\": \"pitch\",                \"type\": \"f32\"              },              {                \"name\": \"yaw\",                \"type\": \"f32\"              },              {                \"name\": \"roll\",                \"type\": \"f32\"              }            ]          ]        }      }    ],    \"entityMetadata\": [      \"entityMetadataLoop\",      {        \"endVal\": 127,        \"type\": [          \"container\",          [            {              \"anon\": true,              \"type\": [                \"bitfield\",                [                  {                    \"name\": \"type\",                    \"size\": 3,                    \"signed\": false                  },                  {                    \"name\": \"key\",                    \"size\": 5,                    \"signed\": false                  }                ]              ]            },            {              \"name\": \"value\",              \"type\": [                \"entityMetadataItem\",                {                  \"compareTo\": \"type\"                }              ]            }          ]        ]      }    ]  }}";
         public static void Main(string[] args)
         {
-            //var t0 = JsonConvert.DeserializeObject<Protocols>(s);
+            //var schema = JsonSchema.FromJsonAsync("  {  \"i8\":{\"enum\":[\"i8\"]},  \"u8\":{\"enum\":[\"u8\"]},  \"i16\":{\"enum\":[\"i16\"]},  \"u16\":{\"enum\":[\"u16\"]},  \"i32\":{\"enum\":[\"i32\"]},  \"u32\":{\"enum\":[\"u32\"]},  \"f32\":{\"enum\":[\"f32\"]},  \"f64\":{\"enum\":[\"f64\"]},  \"li8\":{\"enum\":[\"li8\"]},  \"lu8\":{\"enum\":[\"lu8\"]},  \"li16\":{\"enum\":[\"li16\"]},  \"lu16\":{\"enum\":[\"lu16\"]},  \"li32\":{\"enum\":[\"li32\"]},  \"lu32\":{\"enum\":[\"lu32\"]},  \"lf32\":{\"enum\":[\"lf32\"]},  \"lf64\":{\"enum\":[\"lf64\"]},  \"i64\":{\"enum\":[\"i64\"]},  \"li64\":{\"enum\":[\"li64\"]},  \"u64\":{\"enum\":[\"u64\"]},  \"lu64\":{\"enum\":[\"lu64\"]}}").Result;
+            //var generator = new CSharpGenerator(schema);
+            //var file = generator.GenerateFile();
+
+
+            //var t0 = JsonConvert.DeserializeObject<DataPaths>(s);
             var t1 = JsonConvert.DeserializeObject<Protocol>(j);
             ;
         }

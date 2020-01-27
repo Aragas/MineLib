@@ -4,7 +4,7 @@ using Aragas.QServer.Core.Packets;
 
 namespace MineLib.Server.Core.Packets.EntityBus
 {
-    [Packet(0x73)]
+    [PacketID(0x73)]
     public sealed class EntityIDResponse : InternalPacket
     {
         public int EntityID;

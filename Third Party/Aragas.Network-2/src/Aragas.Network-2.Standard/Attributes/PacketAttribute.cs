@@ -13,10 +13,10 @@ namespace Aragas.Network.Attributes
     }
     */
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public sealed class PacketAttribute : Attribute
+    public sealed class PacketIDAttribute : Attribute
     {
         public object ID { get; }
 
-        public PacketAttribute(object id) => ID = id;
+        public PacketIDAttribute(object id) => ID = id;
     }
 }

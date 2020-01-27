@@ -5,7 +5,7 @@ using System;
 
 namespace MineLib.Protocol.Netty.Packets.Server.Login
 {
-    [Packet(0x00)]
+    [PacketID(0x00)]
     public class LoginStartPacket : ServerLoginPacket
     {
 		public String Name { get; set; }

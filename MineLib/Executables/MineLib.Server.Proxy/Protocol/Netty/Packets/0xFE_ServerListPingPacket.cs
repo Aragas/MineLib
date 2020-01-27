@@ -6,7 +6,7 @@ using MineLib.Server.Proxy.Data;
 
 namespace MineLib.Server.Proxy.Protocol.Netty.Packets
 {
-    [Packet(0xFE)]
+    [PacketID(0xFE)]
     internal sealed class ServerListPingPacket : ServerStatusPacket
     {
         public byte Payload { get; set; }

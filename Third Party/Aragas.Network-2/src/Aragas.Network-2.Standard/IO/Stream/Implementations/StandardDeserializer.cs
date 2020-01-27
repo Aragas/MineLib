@@ -11,6 +11,7 @@ namespace Aragas.Network.IO
     {
         private Encoding Encoding { get; } = Encoding.UTF8;
 
+        public StandardDeserializer() { }
         public StandardDeserializer(in Span<byte> data) : base(in data) { }
         public StandardDeserializer(Stream stream) : base(stream) { }
 

@@ -5,7 +5,7 @@ using System.Net;
 
 namespace Aragas.QServer.Core.Packets.PlayerHandler
 {
-    [Packet(0x21)]
+    [PacketID(0x21)]
     public sealed class AvailableSocketResponsePacket : InternalPacket
     {
         public IPEndPoint Endpoint = new IPEndPoint(IPAddress.Any, 0);

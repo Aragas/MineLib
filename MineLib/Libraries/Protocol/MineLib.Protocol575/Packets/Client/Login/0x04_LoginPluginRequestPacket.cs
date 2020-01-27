@@ -6,7 +6,7 @@ using Aragas.Network.IO;
 
 namespace MineLib.Protocol575.Packets.Client.Login
 {
-    [Packet(0x04)]
+    [PacketID(0x04)]
     public class LoginPluginRequestPacket : ClientLoginPacket
     {
         public VarInt MessageID { get; set; }

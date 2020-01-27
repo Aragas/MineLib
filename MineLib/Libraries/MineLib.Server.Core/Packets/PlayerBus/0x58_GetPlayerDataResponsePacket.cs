@@ -6,7 +6,7 @@ using MineLib.Core;
 
 namespace MineLib.Server.Core.Packets.PlayerHandler
 {
-    [Packet(0x58)]
+    [PacketID(0x58)]
     public sealed class GetPlayerDataResponsePacket : InternalPacket
     {
         public IPlayer? Player;

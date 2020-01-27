@@ -5,7 +5,7 @@ using System;
 
 namespace MineLib.Protocol.Netty.Packets.Client.Status
 {
-    [Packet(0x00)]
+    [PacketID(0x00)]
     public class ResponsePacket : ClientStatusPacket
     {
 		public String JSONResponse;

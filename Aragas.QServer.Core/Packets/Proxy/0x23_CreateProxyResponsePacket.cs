@@ -4,7 +4,7 @@ using Aragas.Network.IO;
 
 namespace Aragas.QServer.Core.Packets.PlayerHandler
 {
-    [Packet(0x23)]
+    [PacketID(0x23)]
     public sealed class CreateProxyResponsePacket : InternalPacket
     {
         public VarInt Port;

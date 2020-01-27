@@ -6,7 +6,7 @@ using MineLib.Core;
 
 namespace MineLib.Server.Core.Packets.WorldBus
 {
-    [Packet(0x32)]
+    [PacketID(0x32)]
     public sealed class ChunkRequest : InternalPacket
     {
         public Location2D Coordinates;

@@ -6,7 +6,7 @@ using System;
 
 namespace MineLib.Server.Core.Packets.PlayerHandler
 {
-    [Packet(0x54)]
+    [PacketID(0x54)]
     public sealed class DataPacket : InternalPacket
     {
         public Byte[] Data;

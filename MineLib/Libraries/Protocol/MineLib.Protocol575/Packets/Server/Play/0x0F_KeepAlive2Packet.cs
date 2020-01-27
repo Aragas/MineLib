@@ -4,7 +4,7 @@ using Aragas.Network.IO;
 
 namespace MineLib.Protocol575.Packets.Server.Play
 {
-    [Packet(0x0F)]
+    [PacketID(0x0F)]
     public class KeepAlive2Packet : ServerPlayPacket
     {
 		public Int64 KeepAliveID;

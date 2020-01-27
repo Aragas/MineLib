@@ -6,7 +6,7 @@ using Aragas.Network.IO;
 
 namespace MineLib.Protocol575.Packets.Client.Play
 {
-    [Packet(0x25)]
+    [PacketID(0x25)]
     public class JoinGamePacket : ClientPlayPacket
     {
 		public Int32 EntityID;

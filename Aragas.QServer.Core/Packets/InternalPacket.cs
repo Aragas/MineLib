@@ -6,7 +6,7 @@ using System;
 
 namespace Aragas.QServer.Core.Packets
 {
-    public abstract class InternalPacket : PacketWithAttribute<VarInt>
+    public abstract class InternalPacket : PacketWithIDAttribute<VarInt>
     {
         // Because the messages are broadcasted, and received by everyone, they should have some kind of ID system.
         public Guid GUID;

@@ -4,7 +4,7 @@ using Aragas.QServer.Core.Packets;
 
 namespace MineLib.Server.Core.Packets.PlayerHandler
 {
-    [Packet(0x56)]
+    [PacketID(0x56)]
     public sealed class UpdatePlayerDataResponsePacket : InternalPacket
     {
         public int ErrorEnum;

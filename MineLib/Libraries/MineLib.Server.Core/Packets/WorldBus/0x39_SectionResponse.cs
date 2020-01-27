@@ -6,7 +6,7 @@ using MineLib.Core.Anvil;
 
 namespace MineLib.Server.Core.Packets.WorldBus
 {
-    [Packet(0x39)]
+    [PacketID(0x39)]
     public sealed class SectionResponse : InternalPacket
     {
         public Section? Section;

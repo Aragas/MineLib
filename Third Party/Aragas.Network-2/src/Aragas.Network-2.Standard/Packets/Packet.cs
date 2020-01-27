@@ -8,7 +8,7 @@ namespace Aragas.Network.Packets
     public abstract class Packet { }
 
     /// <summary>
-    /// A <see cref="Packet"/> with <see langword="int"/> <seealso cref="Packet{TPacketType, TReader, TWriter}.ID"/>. Must have an <seealso cref="Aragas.Network.Attributes.PacketAttribute"/>.
+    /// A <see cref="Packet"/> with <see langword="int"/> <seealso cref="Packet{TPacketType, TReader, TWriter}.ID"/>. Must have an <seealso cref="Aragas.Network.Attributes.PacketIDAttribute"/>.
     /// </summary>
     /// <typeparam name="TIDType"><see cref="Packet"/>'s unique ID type. It will be used to differentiate <see cref="Packet"/>'s</typeparam>
     /// <typeparam name="TSerializer"><see cref="PacketSerializer"/>. You can create a custom one or use <see cref="StandardSerializer"/> and <see cref="ProtobufSerializer"/></typeparam>

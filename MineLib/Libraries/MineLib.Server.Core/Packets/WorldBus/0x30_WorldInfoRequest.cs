@@ -3,6 +3,6 @@ using Aragas.QServer.Core.Packets;
 
 namespace MineLib.Server.Core.Packets.WorldBus
 {
-    [Packet(0x30)]
+    [PacketID(0x30)]
     public sealed class WorldInfoRequest : InternalPacket { }
 }

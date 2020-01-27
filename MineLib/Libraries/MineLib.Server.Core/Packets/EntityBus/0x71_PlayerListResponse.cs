@@ -4,7 +4,7 @@ using Aragas.QServer.Core.Packets;
 
 namespace MineLib.Server.Core.Packets.EntityBus
 {
-    [Packet(0x71)]
+    [PacketID(0x71)]
     public sealed class PlayerListResponse : InternalPacket
     {
         public string[] PlayerNames;

@@ -5,7 +5,7 @@ using Aragas.Network.IO;
 
 namespace MineLib.Protocol575.Packets.Client.Status
 {
-    [Packet(0x00)]
+    [PacketID(0x00)]
     public class PingPacket : ClientStatusPacket
     {
 		public Int64 Time;

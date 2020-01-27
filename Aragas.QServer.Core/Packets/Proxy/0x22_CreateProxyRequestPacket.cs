@@ -4,7 +4,7 @@ using Aragas.Network.IO;
 
 namespace Aragas.QServer.Core.Packets.PlayerHandler
 {
-    [Packet(0x22)]
+    [PacketID(0x22)]
     public sealed class CreateProxyRequestPacket : InternalPacket
     {
         public VarInt ProtocolVersion;

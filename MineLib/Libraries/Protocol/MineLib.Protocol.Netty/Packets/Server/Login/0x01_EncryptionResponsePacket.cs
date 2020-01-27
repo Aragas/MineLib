@@ -5,7 +5,7 @@ using System;
 
 namespace MineLib.Protocol.Netty.Packets.Server.Login
 {
-    [Packet(0x01)]
+    [PacketID(0x01)]
     public class EncryptionResponsePacket : ServerLoginPacket
     {
 		public Byte[] SharedSecret;

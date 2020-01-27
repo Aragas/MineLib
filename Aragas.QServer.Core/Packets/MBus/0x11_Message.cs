@@ -5,7 +5,7 @@ using System;
 
 namespace Aragas.QServer.Core.Packets.MBus
 {
-    [Packet(0x11)]
+    [PacketID(0x11)]
     public sealed class Message : InternalPacket
     {
         public byte[] Data = Array.Empty<byte>();

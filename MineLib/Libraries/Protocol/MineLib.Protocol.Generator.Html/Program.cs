@@ -16,7 +16,8 @@ namespace MineLib.Protocol.Generator
         static async Task Main(string[] args)
         {
             var webClient = new WebClient();
-            var page = webClient.DownloadString("https://wiki.vg/Protocol");
+            var page = webClient.DownloadString("https://wiki.vg/Classic_Protocol");
+            //var page = webClient.DownloadString("https://wiki.vg/Protocol");
             //var page = webClient.DownloadString("https://wiki.vg/index.php?title=Protocol&oldid=6003");
             var data = HtmlTableNormalizer.FormatAllTables(page);
 
@@ -103,8 +104,11 @@ namespace MineLib.Protocol.Generator
             }
 
 
-            // Saving to FS
             var packetBuilder = new ProtobufPacketGenerator();
+            var packetsWithMeta = packetBuilder.GenerateClasses(packets).ToList();
+            ;
+
+            // Saving to FS
             var directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Generated");
 
             var client = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Generated", "Client");
@@ -130,7 +134,7 @@ namespace MineLib.Protocol.Generator
             Directory.CreateDirectory(serverLogin);
             Directory.CreateDirectory(serverPlay);
 
-            foreach (var (packet, content) in packetBuilder.GenerateClasses(packets))
+            foreach (var (packet, content) in packetsWithMeta)
             {
                 var dir = directory;
                 switch (packet.BoundTo.ToLowerInvariant())

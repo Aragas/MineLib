@@ -1,0 +1,8 @@
+Protocol parsing:
+Info is available via https://wiki.vg and https://github.com/PrismarineJS/minecraft-data
+MineLib.Protocol.Generator.Html is already generating most of the required data
+MineLib.Protocol.Generator.ProtoDef is good for long term generation, but due to some retardation of the authors, it's not possible to parse the .json files via available for .NET parsers.
+
+The network bus sometimes does some shit with subscribtion waiting
+
+Instead of making 1.7.10 work, we might take a look at the Classic (0.30c) protocol. Seems that creating a server for it is much easier.

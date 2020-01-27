@@ -3,7 +3,7 @@ using Aragas.Network.IO;
 
 namespace MineLib.Server.Proxy.Protocol.Legacy.Packets
 {
-    [Packet(0xFF)]
+    [PacketID(0xFF)]
     internal sealed class KickPacket : ProxyLegacyPacket
     {
         public string Message { get; set; } = default!;

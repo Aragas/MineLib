@@ -11,6 +11,8 @@ using MineLib.Protocol.Packets;
 using MineLib.Server.Proxy.Protocol.Netty;
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MineLib.Server.Proxy.BackgroundServices
 {
@@ -25,12 +27,48 @@ namespace MineLib.Server.Proxy.BackgroundServices
             MeasurementUnit = Unit.Connections
         };
 
+        private Task _hearthbeat;
+        private readonly CancellationTokenSource _stoppingCts = new CancellationTokenSource();
+
+
         public ProxyClassicListenerService(IMetrics metrics, IServiceProvider serviceProvider, ILogger<ProxyNettyListenerService> logger) : base(serviceProvider, logger)
         {
             Metrics = metrics;
             Metrics.Measure.Counter.Increment(PlayersConnectedCounter);
             Metrics.Measure.Counter.Decrement(PlayersConnectedCounter);
         }
+
+        public override Task StartAsync(CancellationToken cancellationToken)
+        {
+            _hearthbeat = HearthbeatAsync(_stoppingCts.Token);
+
+            return base.StartAsync(cancellationToken);
+        }
+
+        public override async Task StopAsync(CancellationToken cancellationToken)
+        {
+            // Stop called without start
+            if (_hearthbeat != null)
+            {
+                try
+                {
+                    // Signal cancellation to the executing method
+                    _stoppingCts.Cancel();
+                }
+                finally
+                {
+                    // Wait until the task completes or the stop token triggers
+                    await Task.WhenAny(_hearthbeat, Task.Delay(Timeout.Infinite, cancellationToken));
+                }
+            }
+
+            await base.StopAsync(cancellationToken);
+        }
+
+        protected Task HearthbeatAsync(CancellationToken stoppingToken)
+        {
+        }
+
 
         protected override void OnClientConnected(PlayerNettyConnection client)
         {

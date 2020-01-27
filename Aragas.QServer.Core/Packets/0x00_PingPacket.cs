@@ -2,6 +2,6 @@
 
 namespace Aragas.QServer.Core.Packets
 {
-    [Packet(0x00)]
+    [PacketID(0x00)]
     public sealed class PingPacket : InternalPacket { }
 }

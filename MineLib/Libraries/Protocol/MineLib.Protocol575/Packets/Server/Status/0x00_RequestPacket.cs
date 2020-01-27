@@ -3,7 +3,7 @@ using Aragas.Network.IO;
 
 namespace MineLib.Protocol575.Packets.Server.Status
 {
-    [Packet(0x00)]
+    [PacketID(0x00)]
     public class RequestPacket : ServerStatusPacket
     {
         public override void Deserialize(IPacketDeserializer deserializer) { }

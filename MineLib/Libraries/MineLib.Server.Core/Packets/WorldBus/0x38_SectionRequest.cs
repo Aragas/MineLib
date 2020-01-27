@@ -6,7 +6,7 @@ using MineLib.Core;
 
 namespace MineLib.Server.Core.Packets.WorldBus
 {
-    [Packet(0x38)]
+    [PacketID(0x38)]
     public sealed class SectionRequest : InternalPacket
     {
         // X, Z - Chunk coords, Y - Section number

@@ -7,7 +7,7 @@ using System;
 
 namespace MineLib.Protocol.Netty.Packets.Server.Login
 {
-    [Packet(0x02)]
+    [PacketID(0x02)]
     public class LoginSuccessPacket : MinecraftPacket
     {
         public String UUID;

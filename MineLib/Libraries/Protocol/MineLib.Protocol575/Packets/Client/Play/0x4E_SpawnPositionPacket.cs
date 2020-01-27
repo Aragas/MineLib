@@ -8,7 +8,7 @@ using MineLib.Core;
 
 namespace MineLib.Protocol575.Packets.Client.Play
 {
-    [Packet(0x24)]
+    [PacketID(0x24)]
     public class UpdateLightPacket : ClientPlayPacket
     {
         public VarInt X;
@@ -42,7 +42,7 @@ namespace MineLib.Protocol575.Packets.Client.Play
         }
     }
 
-    [Packet(0x40)]
+    [PacketID(0x40)]
     public class UpdateViewPositionPacket : ClientPlayPacket
     {
         public VarInt X;
@@ -61,7 +61,7 @@ namespace MineLib.Protocol575.Packets.Client.Play
         }
     }
 
-    [Packet(0x35)]
+    [PacketID(0x35)]
     public class PlayerPositionAndLookPacket : ClientPlayPacket
     {
         public Double X;
@@ -95,7 +95,7 @@ namespace MineLib.Protocol575.Packets.Client.Play
         }
     }
 
-    [Packet(0x3D)]
+    [PacketID(0x3D)]
     public class WorldBorderPacket : ClientPlayPacket
     {
         public Double X;
@@ -127,7 +127,7 @@ namespace MineLib.Protocol575.Packets.Client.Play
     }
 
 
-    [Packet(0x21)]
+    [PacketID(0x21)]
     public class ChunkDataPacket : ClientPlayPacket
     {
         public Int32 X;
@@ -171,7 +171,7 @@ namespace MineLib.Protocol575.Packets.Client.Play
         }
     }
 
-    [Packet(0x4D)]
+    [PacketID(0x4D)]
     public class SpawnPositionPacket : ClientPlayPacket
     {
         public Location3D Location;

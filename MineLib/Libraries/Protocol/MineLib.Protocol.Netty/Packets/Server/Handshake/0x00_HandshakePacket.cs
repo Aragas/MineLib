@@ -6,7 +6,7 @@ using System;
 
 namespace MineLib.Protocol.Netty.Packets.Server.Handshake
 {
-    [Packet(0x00)]
+    [PacketID(0x00)]
     public class HandshakePacket : ServerHandshakePacket
     {
 		public VarInt ProtocolVersion { get; set; }

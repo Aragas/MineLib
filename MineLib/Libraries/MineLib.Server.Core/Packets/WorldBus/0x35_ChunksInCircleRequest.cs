@@ -4,7 +4,7 @@ using Aragas.QServer.Core.Packets;
 
 namespace MineLib.Server.Core.Packets.WorldBus
 {
-    [Packet(0x35)]
+    [PacketID(0x35)]
     public sealed class ChunksInCircleRequest : InternalPacket
     {
         public int X, Z, Radius;

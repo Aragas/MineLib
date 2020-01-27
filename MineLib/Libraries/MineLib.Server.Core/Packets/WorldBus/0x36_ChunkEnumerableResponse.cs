@@ -6,7 +6,7 @@ using MineLib.Core.Anvil;
 
 namespace MineLib.Server.Core.Packets.WorldBus
 {
-    [Packet(0x36)]
+    [PacketID(0x36)]
     public sealed class ChunkEnumerableResponse : InternalPacket
     {
         public Chunk Chunk;

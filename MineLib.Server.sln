@@ -112,13 +112,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{C058E7CE-A790-4414-B6DD-F5ED92F4CDC4}"
 	ProjectSection(SolutionItems) = preProject
 		loggerconfig.json = loggerconfig.json
+		TODO.txt = TODO.txt
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MineLib.Protocol.Classic", "MineLib\Libraries\Protocol\Minelib.Protocol.Classic\MineLib.Protocol.Classic.csproj", "{7B6F1F19-4966-4695-966B-8584246A3B9A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MineLib.Protocol.Generator.Html", "MineLib\Libraries\Protocol\MineLib.Protocol.Generator.Html\MineLib.Protocol.Generator.Html.csproj", "{4C299609-DACB-4BA7-8198-6F54B7398D72}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MineLib.Protocol.Generator.Json", "MineLib\Libraries\Protocol\MineLib.Protocol.Generator.Json\MineLib.Protocol.Generator.Json.csproj", "{4C9DB2A5-1DE0-4A0E-ADC3-2C3E9F70FCBA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MineLib.Protocol.Generator.ProtoDef", "MineLib\Libraries\Protocol\MineLib.Protocol.Generator.Json\MineLib.Protocol.Generator.ProtoDef.csproj", "{4C9DB2A5-1DE0-4A0E-ADC3-2C3E9F70FCBA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

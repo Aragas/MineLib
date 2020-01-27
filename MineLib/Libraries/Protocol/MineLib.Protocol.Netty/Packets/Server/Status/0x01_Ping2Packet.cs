@@ -5,7 +5,7 @@ using System;
 
 namespace MineLib.Protocol.Netty.Packets.Server.Status
 {
-    [Packet(0x01)]
+    [PacketID(0x01)]
     public class Ping2Packet : ServerStatusPacket
     {
 		public Int64 Time;

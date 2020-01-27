@@ -4,7 +4,7 @@ using Aragas.Network.IO;
 
 namespace MineLib.Protocol.Netty.Packets.Client.Login
 {
-    [Packet(0x00)]
+    [PacketID(0x00)]
     public class Disconnect2Packet : ClientLoginPacket
     {
 		public String JSONData;

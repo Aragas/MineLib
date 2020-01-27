@@ -6,7 +6,7 @@ using System;
 
 namespace MineLib.Server.Core.Packets.PlayerHandler
 {
-    [Packet(0x57)]
+    [PacketID(0x57)]
     public sealed class GetPlayerDataRequestPacket : InternalPacket
     {
         public String Username;

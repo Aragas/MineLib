@@ -5,7 +5,7 @@ using Aragas.Network.IO;
 
 namespace MineLib.Protocol575.Packets.Client.Login
 {
-    [Packet(0x01)]
+    [PacketID(0x01)]
     public class EncryptionRequestPacket : ClientLoginPacket
     {
 		public String ServerID;

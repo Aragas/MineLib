@@ -4,7 +4,7 @@ using Aragas.Network.IO;
 
 namespace Aragas.QServer.Core.Packets.PlayerHandler
 {
-    [Packet(0x20)]
+    [PacketID(0x20)]
     public sealed class AvailableSocketRequestPacket : InternalPacket
     {
         public VarInt ProtocolVersion;

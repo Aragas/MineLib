@@ -67,6 +67,7 @@ namespace MineLib.Server.Proxy.BackgroundServices
 
         protected Task HearthbeatAsync(CancellationToken stoppingToken)
         {
+
         }
 
 

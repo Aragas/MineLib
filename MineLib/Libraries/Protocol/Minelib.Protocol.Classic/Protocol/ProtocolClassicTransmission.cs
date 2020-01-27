@@ -1,5 +1,6 @@
 ﻿using Aragas.Network.IO;
 using Aragas.QServer.Core.Protocol;
+
 using MineLib.Protocol.Classic.Packets;
 using MineLib.Protocol.Classic.Protocol.Factory;
 
@@ -22,8 +23,6 @@ namespace MineLib.Protocol.Classic.Protocol
             {
                 packet.Deserialize(deserializer);
 
-                if (packet is Packets.Server.Handshake.HandshakePacket handshakePacket)
-                    State = (State)(byte)handshakePacket.NextState;
 
                 return packet;
             }
@@ -31,12 +30,9 @@ namespace MineLib.Protocol.Classic.Protocol
             return null;
         }
 
-        public override void SendPacket(MinecraftPacket packet)
+        public override void SendPacket(ClientClassicPacket packet)
         {
             base.SendPacket(packet);
-
-            if (packet.ID == 0x02)
-                State = State.Play;
         }
     }
 }

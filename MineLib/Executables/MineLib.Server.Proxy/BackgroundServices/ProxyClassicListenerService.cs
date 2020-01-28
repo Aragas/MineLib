@@ -65,9 +65,40 @@ namespace MineLib.Server.Proxy.BackgroundServices
             await base.StopAsync(cancellationToken);
         }
 
-        protected Task HearthbeatAsync(CancellationToken stoppingToken)
-        {
 
+        /// <summary> Server's public URL, as returned by the heartbeat server.
+        /// This is the URL that players should be able to connect by.
+        /// May be null (if heartbeat is disabled, or first heartbeat has not been sent yet). </summary>
+        public Uri Url { get; internal set; }
+
+        internal Uri HeartbeatServerUrl;
+        readonly TimeSpan DelayDefault = TimeSpan.FromSeconds(20);
+        readonly TimeSpan TimeoutDefault = TimeSpan.FromSeconds(10);
+
+        /// <summary> Delay between sending heartbeats. Default: 20s </summary>
+        public TimeSpan Delay { get; set; }
+
+        /// <summary> Request timeout for heartbeats. Default: 10s </summary>
+        public TimeSpan Timeout { get; set; }
+
+        /// <summary> Secret string used to verify players' names.
+        /// Randomly generated at startup, and can be randomized by "/reload salt"
+        /// Known only to this server and to heartbeat server(s). </summary>
+        public string Salt { get; internal set; }
+        protected async Task HearthbeatAsync(CancellationToken stoppingToken)
+        {
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                _timeout = 45000; // Beat every 30 seconds
+                serverURL = "http://www.minecraft.net/heartbeat.jsp";
+                staticPostVars = "port=" + Properties.ServerPort +
+                                 "&max=" + Properties.MaxPlayers +
+                                 "&name=" + Uri.EscapeDataString(Properties.ServerName) +
+                                 "&public=" + Properties.PublicServer +
+                                 "&version=7";
+
+                await Task.Delay(_timeout);
+            }
         }
 
 

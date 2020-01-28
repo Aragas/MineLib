@@ -175,5 +175,6 @@ services:
       - minelib.server.worldbus
     ports:
       - 25565:25565
+      - 56552:56552
     networks:
       - internal

@@ -97,8 +97,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aragas.QServer.Metrics", "A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BedrockProxy", "BedrockProxy", "{4A46323A-174B-4320-BF50-B0C810192D99}"
 	ProjectSection(SolutionItems) = preProject
-		MineLib\Libraries\BedrockProxy\config.yml = MineLib\Libraries\BedrockProxy\config.yml
-		MineLib\Libraries\BedrockProxy\Dockerfile = MineLib\Libraries\BedrockProxy\Dockerfile
+		MineLib\BedrockProxy\config.yml = MineLib\BedrockProxy\config.yml
+		MineLib\BedrockProxy\Dockerfile = MineLib\BedrockProxy\Dockerfile
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aragas.Network.Analyzer", "Third Party\Aragas.Network.Analyzer\Aragas.Network.Analyzer\Aragas.Network.Analyzer.csproj", "{0B582BE9-0908-41B9-83B6-B9F839385090}"

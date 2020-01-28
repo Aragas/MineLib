@@ -5,6 +5,7 @@ using Aragas.Network.Data;
 using Aragas.Network.IO;
 using Aragas.QServer.Core.BackgroundServices;
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using MineLib.Protocol.Packets;
@@ -27,7 +28,7 @@ namespace MineLib.Server.Proxy.BackgroundServices
             MeasurementUnit = Unit.Connections
         };
 
-        private Task _hearthbeat;
+        private Task? _hearthbeat;
         private readonly CancellationTokenSource _stoppingCts = new CancellationTokenSource();
 
 
@@ -58,46 +59,22 @@ namespace MineLib.Server.Proxy.BackgroundServices
                 finally
                 {
                     // Wait until the task completes or the stop token triggers
-                    await Task.WhenAny(_hearthbeat, Task.Delay(Timeout.Infinite, cancellationToken));
+                    await Task.WhenAny(_hearthbeat, Task.Delay(System.Threading.Timeout.Infinite, cancellationToken));
                 }
             }
 
             await base.StopAsync(cancellationToken);
         }
 
-
-        /// <summary> Server's public URL, as returned by the heartbeat server.
-        /// This is the URL that players should be able to connect by.
-        /// May be null (if heartbeat is disabled, or first heartbeat has not been sent yet). </summary>
-        public Uri Url { get; internal set; }
-
-        internal Uri HeartbeatServerUrl;
-        readonly TimeSpan DelayDefault = TimeSpan.FromSeconds(20);
-        readonly TimeSpan TimeoutDefault = TimeSpan.FromSeconds(10);
-
-        /// <summary> Delay between sending heartbeats. Default: 20s </summary>
-        public TimeSpan Delay { get; set; }
-
-        /// <summary> Request timeout for heartbeats. Default: 10s </summary>
-        public TimeSpan Timeout { get; set; }
-
-        /// <summary> Secret string used to verify players' names.
-        /// Randomly generated at startup, and can be randomized by "/reload salt"
-        /// Known only to this server and to heartbeat server(s). </summary>
-        public string Salt { get; internal set; }
-        protected async Task HearthbeatAsync(CancellationToken stoppingToken)
+        private async Task HearthbeatAsync(CancellationToken stoppingToken)
         {
+            var heartbeat = ActivatorUtilities.CreateInstance<Heartbeat>(ServiceProvider, new object[] { BeatType.Minecraft, (ushort) Port });
+            heartbeat.Beat(true);
             while (!stoppingToken.IsCancellationRequested)
             {
-                _timeout = 45000; // Beat every 30 seconds
-                serverURL = "http://www.minecraft.net/heartbeat.jsp";
-                staticPostVars = "port=" + Properties.ServerPort +
-                                 "&max=" + Properties.MaxPlayers +
-                                 "&name=" + Uri.EscapeDataString(Properties.ServerName) +
-                                 "&public=" + Properties.PublicServer +
-                                 "&version=7";
+                heartbeat.Beat(false);
 
-                await Task.Delay(_timeout);
+                await Task.Delay(45000);
             }
         }
 

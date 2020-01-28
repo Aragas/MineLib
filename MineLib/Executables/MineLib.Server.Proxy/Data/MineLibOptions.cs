@@ -7,5 +7,6 @@
         public int MaxConnections { get; set; } = 1000;
         public bool NettyLegacyPingEnable { get; set; } = true;
         public int NettyLegacyPingProtocol { get; set; } = 62;
+        public string ClassicHeartbeatUrl { get; set; } = "";
     }
 }

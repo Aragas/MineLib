@@ -61,6 +61,7 @@ namespace MineLib.Server.Proxy
                 services.Configure<MineLibOptions>(hostContext.Configuration.GetSection("MineLib"));
 
                 services.AddSingleton<ServerInfo>();
+                services.AddSingleton<ClassicServerInfo>();
             })
 
             // Localization
@@ -73,6 +74,7 @@ namespace MineLib.Server.Proxy
             .ConfigureServices(services  =>
             {
                 services.AddHostedService<ProxyNettyListenerService>();
+                services.AddHostedService<ProxyClassicListenerService>();
             })
 
             .UseConsoleLifetime();

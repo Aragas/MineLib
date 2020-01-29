@@ -114,8 +114,8 @@ services:
     networks:
       - heartbeat
     depends_on:
-      - php
-  php:
+      - heartbeat.php
+  heartbeat.php:
     image: ${DOCKER_REGISTRY-}heartbeat.php
     build:
       context: ../..

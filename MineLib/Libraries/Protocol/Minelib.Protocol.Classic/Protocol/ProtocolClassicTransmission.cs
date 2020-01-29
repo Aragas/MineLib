@@ -6,11 +6,11 @@ using MineLib.Protocol.Classic.Protocol.Factory;
 
 namespace MineLib.Protocol.Classic.Protocol
 {
-    public class ProtocolClassicTransmission : SocketPacketINetworkBusTransmission<ClientClassicPacket, byte, StandardSerializer, StandardDeserializer>
+    public class ProtocolClassicTransmission : SocketPacketINetworkBusTransmission<ClassicPacket, byte, StandardSerializer, StandardDeserializer>
     {
         private ClientClassicFactory Factory { get; } = new ClientClassicFactory();
 
-        public override ClientClassicPacket? ReadPacket()
+        public override ClassicPacket? ReadPacket()
         {
             var data = Receive(0);
             if (data.IsEmpty)
@@ -30,7 +30,7 @@ namespace MineLib.Protocol.Classic.Protocol
             return null;
         }
 
-        public override void SendPacket(ClientClassicPacket packet)
+        public override void SendPacket(ClassicPacket packet)
         {
             base.SendPacket(packet);
         }

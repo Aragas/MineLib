@@ -1,7 +1,9 @@
 ﻿using Aragas.QServer.Core.NetworkBus;
 
-using MineLib.Protocol.Packets;
-
+using MineLib.Protocol.Classic.Packets;
+using MineLib.Protocol.Classic.Packets.Client;
+using MineLib.Protocol.Classic.Protocol;
+using ProtocolClassic.Packets.Server;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -19,28 +21,25 @@ namespace MineLib.Protocol.Classic.Server
         private Guid PlayerId;
         private string Username;
 
-        public override int State => 0;// (int) Stream.State;
+        public override int State => 0;
 
         public override string Host => string.Empty;
         public override ushort Port => 0;
         public override bool Connected => true;
 
         private IAsyncNetworkBus NetworkBus { get; }
-        //private ProtocolNettyTransmission<ServerStatusPacket, ServerLoginPacket, ServerPlayPacket> Stream { get; }
-        private ConcurrentQueue<MinecraftPacket> PacketsToSend { get; } = new ConcurrentQueue<MinecraftPacket>();
+        private ProtocolClassicTransmission Stream { get; }
+        private ConcurrentQueue<ClassicPacket> PacketsToSend { get; } = new ConcurrentQueue<ClassicPacket>();
 
         public ProtocolClassicConnection(IAsyncNetworkBus networkBus, Guid playerId)
         {
             NetworkBus = networkBus;
 
             PlayerId = playerId;
-            /*
-            Stream = new ProtocolNettyTransmission<ServerStatusPacket, ServerLoginPacket, ServerPlayPacket>()
+            Stream = new ProtocolClassicTransmission()
             {
-                State = state,
                 PlayerId = playerId
             };
-            */
             new Thread(PacketReceiver).Start();
         }
 
@@ -49,12 +48,19 @@ namespace MineLib.Protocol.Classic.Server
         {
             while (true)
             {
-                /*
                 while (Stream.TryReadPacket(out var packetToReceive) && packetToReceive != null)
                 {
                     switch (packetToReceive)
                     {
-                        case null:
+                        case PlayerIdentificationPacket playerIdentification:
+                            Username = playerIdentification.Username;
+
+                            PacketsToSend.Enqueue(new ServerIdentificationPacket()
+                            {
+                                ProtocolVersion = playerIdentification.ProtocolVersion,
+                                ServerMOTD = "",
+                                ServerName = ""
+                            });
                             break;
                     }
 
@@ -74,7 +80,15 @@ namespace MineLib.Protocol.Classic.Server
                     PacketsSended.Add(packetToSend);
 #endif
                 }
-                */
+
+                if (Stopwatch is null)
+                    Stopwatch = Stopwatch.StartNew();
+
+                if (Stopwatch.ElapsedMilliseconds > 2000)
+                {
+                    PacketsToSend.Enqueue(new PingPacket());
+                    Stopwatch.Restart();
+                }
 
                 Thread.Sleep(15);
             }

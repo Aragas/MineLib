@@ -1,15 +1,16 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+
+using MineLib.Server.Heartbeat.Infrastructure.Data;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace MineLib.Server.Heartbeat.Controllers
 {
@@ -43,15 +44,15 @@ namespace MineLib.Server.Heartbeat.Controllers
         }
     }
 
-    [ApiController, Route("[controller]")]
-    public class ApiController : ControllerBase
+    //[ApiController, Route("[controller]")]
+    public class ApiController : Controller
     {
-        private readonly ClassicServersDbContext _classicServers;
+        private readonly ClassicServersContext _classicServerRepository;
         private readonly ILogger _logger;
 
-        public ApiController(ClassicServersDbContext classicServers, ILogger<ApiController> logger)
+        public ApiController(ClassicServersContext classicServerRepository, ILogger<ApiController> logger)
         {
-            _classicServers = classicServers;
+            _classicServerRepository = classicServerRepository;
             _logger = logger;
         }
 
@@ -61,10 +62,11 @@ namespace MineLib.Server.Heartbeat.Controllers
             return Content("");
         }
 
-        [HttpGet, Route("servers")]
-        public string Servers()
+        public IActionResult Servers(
+            //string sortOrder, string searchString
+            )
         {
-            var query = _classicServers.Servers
+            var servers = _classicServerRepository.Servers
                 .AsEnumerable()
                 .Where(s => DateTimeOffset.UtcNow < s.LastUpdate + TimeSpan.FromMinutes(2))
                 .Select(s =>
@@ -74,12 +76,7 @@ namespace MineLib.Server.Heartbeat.Controllers
                     return s;
                 });
 
-            return JsonConvert.SerializeObject(query, new JsonSerializerSettings()
-            {
-                Formatting = Formatting.Indented,
-                ContractResolver = new ShouldSerializeContractResolver(User.Identity.IsAuthenticated),
-                NullValueHandling = NullValueHandling.Ignore
-            });
+            return View(servers);
         }
     }
 }

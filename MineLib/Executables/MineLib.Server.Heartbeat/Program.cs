@@ -2,16 +2,21 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using MineLib.Server.Heartbeat.DbContext;
+
+using MineLib.Server.Heartbeat.Infrastructure.Data;
+using MineLib.Server.Heartbeat.Models;
+using MineLib.Server.Heartbeat.Services;
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Exceptions;
+
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -27,7 +32,7 @@ namespace MineLib.Server.Heartbeat
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static LogEventProperty CreateApplicationProperty(ILogEventPropertyFactory propertyFactory) =>
-            propertyFactory.CreateProperty(ApplicationPropertyName, Assembly.GetEntryAssembly().GetName().Name);
+            propertyFactory.CreateProperty(ApplicationPropertyName, Assembly.GetEntryAssembly()?.GetName().Name ?? "ERROR");
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static LogEventProperty CreateApplicationUidProperty(ILogEventPropertyFactory propertyFactory, Guid applicationUid) =>
@@ -150,21 +155,36 @@ namespace MineLib.Server.Heartbeat
             })
             .ConfigureServices((hostContext, services) =>
             {
-                //services.AddDbContext<ClassicServersDbContext>(options => options.UseNpgsql(hostContext.Configuration["PostgreSQLConnectionString"]));
+                services.AddDbContext<ClassicServersContext>(options => options.UseNpgsql(hostContext.Configuration.GetConnectionString("ClassicServers")));
+                services.AddTransient<IClassicServersRepository, EfClassicServersRepository>();
+
+                services.AddTransient<IEmailSender, AuthMessageSender>();
             })
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder
                     .ConfigureServices((hostContext, services) =>
                     {
-                        services.AddDbContext<ClassicServersDbContext>(options => options.UseNpgsql(hostContext.Configuration.GetConnectionString("ClassicServers")));
+                        services.AddDbContext<UserContext>(options => options
+                            .ConfigureWarnings(b => b.Log(CoreEventId.ManyServiceProvidersCreatedWarning))
+                            .UseNpgsql(hostContext.Configuration.GetConnectionString("Users")));
 
-                        services.AddDbContext<UserContext>(options => options.UseNpgsql(hostContext.Configuration.GetConnectionString("Users")));
-                        services
-                            .AddIdentity<User, IdentityRole>()
+                        services.AddMvc();
+
+                        services.AddIdentityCore<User>()
+                            .AddRoles<IdentityRole>()
                             .AddEntityFrameworkStores<UserContext>()
+                            .AddSignInManager()
                             .AddDefaultTokenProviders();
 
+                        services.AddAuthentication(o =>
+                        {
+                            o.DefaultScheme = IdentityConstants.ApplicationScheme;
+                            o.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+                        })
+                        .AddIdentityCookies(o => { });
+
+                        /*
                         services.Configure<IdentityOptions>(options =>
                         {
                             // Password settings.
@@ -184,13 +204,25 @@ namespace MineLib.Server.Heartbeat
                             options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@._+";
                             options.User.RequireUniqueEmail = false;
                         });
+                        */
 
-                        services.AddControllersWithViews();
-                        services.AddControllers();
+                        //services.AddControllersWithViews();
+                        //services.AddControllers();
                     })
                     .Configure(app =>
                     {
-                        app.UseDeveloperExceptionPage();
+                        /*
+                        if (env.IsDevelopment())
+                        {
+                            app.UseDeveloperExceptionPage();
+                            app.UseDatabaseErrorPage();
+                        }
+                        else
+                        {
+                            app.UseExceptionHandler("/Home/Error");
+                        }
+                        */
+
                         //app.UseHttpsRedirection();
                         app.UseStaticFiles();
 
@@ -201,10 +233,15 @@ namespace MineLib.Server.Heartbeat
 
                         app.UseEndpoints(endpoints =>
                         {
+                            endpoints.MapDefaultControllerRoute();
+                            endpoints.MapRazorPages();
+
+                            /*
                             endpoints.MapControllers();
                             endpoints.MapControllerRoute(
                                 name: "default",
                                 pattern: "{controller=Home}/{action=Index}/{id?}");
+                            */
                         });
                     })
                     .UseKestrel();
@@ -217,12 +254,12 @@ namespace MineLib.Server.Heartbeat
 
             try
             {
-                var context0 = services.GetRequiredService<ClassicServersDbContext>();
+                var context0 = services.GetRequiredService<ClassicServersContext>();
                 context0.Database.EnsureDeleted();
                 context0.Database.EnsureCreated();
 
                 var context1 = services.GetRequiredService<UserContext>();
-                context1.Database.EnsureDeleted();
+                //context1.Database.EnsureDeleted();
                 context1.Database.EnsureCreated();
             }
             catch (Exception ex)

@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
+using MineLib.Server.Heartbeat.Infrastructure.Data;
+
+using System;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -12,12 +15,12 @@ namespace MineLib.Server.Heartbeat.Controllers
     [ApiController, Route("[controller]")]
     public class ServerController : ControllerBase
     {
-        private readonly ClassicServersDbContext _classicServers;
+        private readonly IClassicServersRepository _classicServersRepository;
         private readonly ILogger _logger;
 
-        public ServerController(ClassicServersDbContext classicServers, ILogger<ServerController> logger)
+        public ServerController(IClassicServersRepository classicServersRepository, ILogger<ServerController> logger)
         {
-            _classicServers = classicServers;
+            _classicServersRepository = classicServersRepository;
             _logger = logger;
         }
 
@@ -36,30 +39,36 @@ namespace MineLib.Server.Heartbeat.Controllers
         {
             _logger.LogInformation("{TypeName}: Received /hearthbeat with url ({DisplayUrl})", GetType().FullName, Request.GetDisplayUrl());
 
-            string ip = HttpContext.Connection.RemoteIpAddress.ToString();
-            //if (HttpContext.Connection.RemoteIpAddress.IsIPv4MappedToIPv6)
-            //    ip = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-            //else
-            //    ip = HttpContext.Connection.RemoteIpAddress.MapToIPv6().ToString()
+            var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 
             using var md5 = MD5.Create();
             var hash = string.Concat(md5.ComputeHash(Encoding.UTF8.GetBytes($"{ip}:{port}")).Select(x => x.ToString("x2")));
 
-            _classicServers.AddOrUpdate(new ClassicServer()
+            var server = _classicServersRepository.GetByHash(hash);
+            if (server == null)
             {
-                Name = name,
-                IP = ip,
-                Port = port,
-                Hash = hash,
-                Salt = salt,
-                IsPublic = isPublic,
-                Players = players,
-                MaxPlayers = maxPlayers,
-                Version = version,
-                Software = software,
-                IsSupportingWeb = isSupportingWeb
-            });
-            _classicServers.SaveChanges();
+                _classicServersRepository.Add(new ClassicServer()
+                {
+                    Name = name,
+                    IP = ip,
+                    Port = port,
+                    Hash = hash,
+                    Salt = salt,
+                    IsPublic = isPublic,
+                    Players = players,
+                    MaxPlayers = maxPlayers,
+                    Version = version,
+                    Software = software,
+                    IsSupportingWeb = isSupportingWeb,
+                    LastUpdate = DateTimeOffset.UtcNow,
+                    Added = DateTimeOffset.UtcNow
+                });
+            }
+            else
+            {
+                server.LastUpdate = DateTimeOffset.UtcNow;
+                _classicServersRepository.Update(server);
+            }
 
             return Content($"{Request.Scheme}://{Request.Host}/server/play/{hash}");
         }

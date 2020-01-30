@@ -40,7 +40,9 @@ namespace MineLib.Server.Proxy.BackgroundServices
                 try
                 {
                     var args = $"port={_port}&max={_mineLibOptions.MaxConnections}&name={Uri.EscapeUriString(_mineLibOptions.Name)}&public={_isPublic}&version={_protocolVersion}&salt={_classicServerInfo.Salt}&users={_serverInfo.CurrentConnections}";
-                    var beatRequest = (HttpWebRequest)WebRequest.Create(new Uri($"{_mineLibOptions.ClassicHeartbeatUrl}?" + args));
+                    var fullUrl = $"{_mineLibOptions.ClassicHeartbeatUrl}?" + args;
+                    _logger.LogInformation("{TypeName}: Sending Heartbeat with url ({Url})", GetType().FullName, fullUrl);
+                    var beatRequest = (HttpWebRequest)WebRequest.Create(new Uri(fullUrl));
                     beatRequest.Method = "GET";
                     beatRequest.ContentType = "application/x-www-form-urlencoded";
                     beatRequest.ContentLength = args.Length;
@@ -49,28 +51,28 @@ namespace MineLib.Server.Proxy.BackgroundServices
                     responseStream.Read(responseBytes, 0, 73);
                     if (initial)
                     {
-                        _logger.LogInformation($"Received URL: {Encoding.ASCII.GetString(responseBytes)}");
+                        _logger.LogInformation("{TypeName}: Received URL: {Url}", GetType().FullName, Encoding.ASCII.GetString(responseBytes));
                         using var fileWriter = new StreamWriter(File.OpenWrite("externalurl.txt"));
                         fileWriter.Write(Encoding.ASCII.GetString(responseBytes));
                     }
                 }
                 catch (WebException ex)
                 {
-                    _logger.LogWarning(ex, "Unable to make heartbeat");
+                    _logger.LogWarning(ex, "{TypeName}: Unable to send Heartbeat", GetType().FullName);
                     if (initial)
                     {
                         //Program.server.verify_names = false;
-                        _logger.LogInformation("Initial heartbeat failed. Turning verify-names off");
+                        _logger.LogInformation("{TypeName}: Initial heartbeat failed. Turning verify-names off", GetType().FullName);
                     }
                     return false;
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error occurred during heartbeat: ");
+                    _logger.LogError(ex, "{TypeName}: Error occurred during heartbeat", GetType().FullName);
                     if (initial)
                     {
                         //Program.server.verify_names = false;
-                        _logger.LogInformation("Initial heartbeat failed. Turning verify-names off");
+                        _logger.LogInformation("{TypeName}: Initial heartbeat failed. Turning verify-names off", GetType().FullName);
                     }
                     return false;
                 }

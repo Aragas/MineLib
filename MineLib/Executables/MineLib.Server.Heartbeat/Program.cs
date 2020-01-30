@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
+using MineLib.Server.Heartbeat.DbContext;
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Core;
@@ -146,19 +148,63 @@ namespace MineLib.Server.Heartbeat
                 logging.AddDebug();
 #endif
             })
+            .ConfigureServices((hostContext, services) =>
+            {
+                //services.AddDbContext<ClassicServersDbContext>(options => options.UseNpgsql(hostContext.Configuration["PostgreSQLConnectionString"]));
+            })
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder
-                    .ConfigureServices(services =>
+                    .ConfigureServices((hostContext, services) =>
                     {
+                        services.AddDbContext<ClassicServersDbContext>(options => options.UseNpgsql(hostContext.Configuration.GetConnectionString("ClassicServers")));
+
+                        services.AddDbContext<UserContext>(options => options.UseNpgsql(hostContext.Configuration.GetConnectionString("Users")));
+                        services
+                            .AddIdentity<User, IdentityRole>()
+                            .AddEntityFrameworkStores<UserContext>()
+                            .AddDefaultTokenProviders();
+
+                        services.Configure<IdentityOptions>(options =>
+                        {
+                            // Password settings.
+                            options.Password.RequireDigit = true;
+                            options.Password.RequireLowercase = true;
+                            options.Password.RequireNonAlphanumeric = true;
+                            options.Password.RequireUppercase = true;
+                            options.Password.RequiredLength = 6;
+                            options.Password.RequiredUniqueChars = 1;
+
+                            // Lockout settings.
+                            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                            options.Lockout.MaxFailedAccessAttempts = 5;
+                            options.Lockout.AllowedForNewUsers = true;
+
+                            // User settings.
+                            options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@._+";
+                            options.User.RequireUniqueEmail = false;
+                        });
+
+                        services.AddControllersWithViews();
                         services.AddControllers();
                     })
                     .Configure(app =>
                     {
+                        app.UseDeveloperExceptionPage();
+                        //app.UseHttpsRedirection();
+                        app.UseStaticFiles();
+
                         app.UseRouting();
+
+                        app.UseAuthentication();
+                        app.UseAuthorization();
+
                         app.UseEndpoints(endpoints =>
                         {
                             endpoints.MapControllers();
+                            endpoints.MapControllerRoute(
+                                name: "default",
+                                pattern: "{controller=Home}/{action=Index}/{id?}");
                         });
                     })
                     .UseKestrel();
@@ -166,9 +212,25 @@ namespace MineLib.Server.Heartbeat
 
         private static void BeforeRun(IServiceProvider serviceProvider)
         {
-            var db = serviceProvider.CreateScope().ServiceProvider.GetService<ClassicServersDbContext>();
-            if (db != null)
-                db.Database.EnsureCreated();
+            using var scope = serviceProvider.CreateScope();
+            var services = scope.ServiceProvider;
+
+            try
+            {
+                var context0 = services.GetRequiredService<ClassicServersDbContext>();
+                context0.Database.EnsureDeleted();
+                context0.Database.EnsureCreated();
+
+                var context1 = services.GetRequiredService<UserContext>();
+                context1.Database.EnsureDeleted();
+                context1.Database.EnsureCreated();
+            }
+            catch (Exception ex)
+            {
+                var logger = services.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occurred creating the DB.");
+            }
+
         }
     }
 }

@@ -102,31 +102,44 @@ services:
       - metrics
 
 #Classic
-  heartbeat.nginx:
-    image: nginx:latest
-    ports:
-      - 12080:80
-      - 12443:443
-    volumes:
-      - ./../Classic Heartbeat/nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./../Classic Heartbeat/nginx/logs:/var/log/nginx
-      - ./../Classic Heartbeat/www:/var/www
-    networks:
-      - heartbeat
+  minelib.server.heartbeat:
+    image: ${DOCKER_REGISTRY-}minelib_server_heartbeat
     depends_on:
-      - heartbeat.php
-  heartbeat.php:
-    image: ${DOCKER_REGISTRY-}heartbeat.php
+      - seq
+      - postgres
     build:
       context: ../..
-      dockerfile: MineLib/Classic Heartbeat/Dockerfile
-    volumes:
-      - ./../Classic Heartbeat/php/php.ini:/usr/local/etc/php/conf.d/php.ini
-      - ./../Classic Heartbeat/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
-      - ./../Classic Heartbeat/www:/var/www
+      dockerfile: MineLib/Executables/MineLib.Server.Heartbeat/Dockerfile
+    ports:
+      - 12080:80
+#      - 12443:443
     networks:
-      - heartbeat
       - internal
+#  heartbeat.nginx:
+#    image: nginx:latest
+#    ports:
+#      - 12080:80
+#      - 12443:443
+#    volumes:
+#      - ./../Classic Heartbeat/nginx/default.conf:/etc/nginx/conf.d/default.conf
+#      - ./../Classic Heartbeat/nginx/logs:/var/log/nginx
+#      - ./../Classic Heartbeat/www:/var/www
+#    networks:
+#      - heartbeat
+#    depends_on:
+#      - heartbeat.php
+#  heartbeat.php:
+#    image: ${DOCKER_REGISTRY-}heartbeat.php
+#    build:
+#      context: ../..
+#      dockerfile: MineLib/Classic Heartbeat/Dockerfile
+#    volumes:
+#      - ./../Classic Heartbeat/php/php.ini:/usr/local/etc/php/conf.d/php.ini
+#      - ./../Classic Heartbeat/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+#      - ./../Classic Heartbeat/www:/var/www
+#    networks:
+#      - heartbeat
+#      - internal
 
 #Database
   postgres:
@@ -137,6 +150,8 @@ services:
      POSTGRES_PASSWORD: minelib
     volumes:
       - postgresql_data:/var/lib/postgresql
+    ports:
+      - 5432:5432
     networks:
       - internal
 
@@ -201,6 +216,7 @@ services:
       - minelib.server.entitybus
       - minelib.server.playerbus
       - minelib.server.worldbus
+      - minelib.server.heartbeat
     ports:
       - 25565:25565
       - 56552:56552

@@ -1,21 +1,13 @@
-using Microsoft.AspNetCore.Identity;
-
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace MineLib.Server.Heartbeat.Models.ManageViewModels
 {
-    public class IndexViewModel
+    public sealed class IndexViewModel
     {
-        public bool HasPassword { get; set; }
+        public string Username { get; set; }
 
-        public IList<UserLoginInfo> Logins { get; set; }
-
-        public string PhoneNumber { get; set; }
-
-        public bool TwoFactor { get; set; }
-
-        public bool BrowserRemembered { get; set; }
-
-        public string AuthenticatorKey { get; set; }
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
     }
 }

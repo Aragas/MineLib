@@ -2,7 +2,7 @@
 
 namespace MineLib.Server.Heartbeat.Models.AccountViewModels
 {
-    public class RegisterViewModel
+    public sealed class RegisterViewModel
     {
         [Required]
         [EmailAddress]

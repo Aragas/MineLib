@@ -2,7 +2,7 @@
 
 namespace MineLib.Server.Heartbeat.Models.AccountViewModels
 {
-    public class ResetPasswordViewModel
+    public sealed class ResetPasswordViewModel
     {
         [Required]
         [EmailAddress]

@@ -13,7 +13,7 @@ using System.Text;
 namespace MineLib.Server.Heartbeat.Controllers
 {
     [ApiController, Route("[controller]")]
-    public class ServerController : ControllerBase
+    public sealed class ServerController : ControllerBase
     {
         private readonly IClassicServersRepository _classicServersRepository;
         private readonly ILogger _logger;
@@ -37,7 +37,7 @@ namespace MineLib.Server.Heartbeat.Controllers
             [FromQuery(Name = "software")] string? software,
             [FromQuery(Name = "web")] bool? isSupportingWeb)
         {
-            _logger.LogInformation("{TypeName}: Received /hearthbeat with url ({DisplayUrl})", GetType().FullName, Request.GetDisplayUrl());
+            _logger.LogInformation("{Type}: Received /hearthbeat with url ({DisplayUrl})", GetType().FullName, Request.GetDisplayUrl());
 
             var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 
@@ -76,7 +76,7 @@ namespace MineLib.Server.Heartbeat.Controllers
         [HttpGet, HttpPost, Route("play/{hash}")]
         public ActionResult Play(string hash)
         {
-            _logger.LogInformation("{TypeName}: Received /play with url ({DisplayUrl})", GetType().FullName, Request.GetDisplayUrl());
+            _logger.LogInformation("{Type}: Received /play with url ({DisplayUrl})", GetType().FullName, Request.GetDisplayUrl());
 
             return Content("Not implemented yet!");
         }

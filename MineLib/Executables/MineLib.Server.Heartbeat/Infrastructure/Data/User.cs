@@ -2,7 +2,7 @@
 
 namespace MineLib.Server.Heartbeat.Models
 {
-    public class User : IdentityUser
+    public sealed class User : IdentityUser
     {
     }
 }

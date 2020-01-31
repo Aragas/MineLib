@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MineLib.Server.Heartbeat.Infrastructure.Data
 {
-    public class ClassicServer
+    public sealed class ClassicServer
     {
         [Required, MaxLength(64)]
         public string Name { get; set; } = default!;

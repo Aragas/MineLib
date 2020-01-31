@@ -2,7 +2,7 @@
 
 namespace MineLib.Server.Heartbeat.Models.ManageViewModels
 {
-    public class ChangePasswordViewModel
+    public sealed class ChangePasswordViewModel
     {
         [Required]
         [DataType(DataType.Password)]

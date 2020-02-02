@@ -9,7 +9,7 @@ volumes:
 networks:
   metrics:
   internal:
-  heartbeat:
+  website:
 
 services:
 #Network Bus
@@ -101,20 +101,19 @@ services:
     networks:
       - metrics
 
-#Classic
-  minelib.server.heartbeat:
-    image: ${DOCKER_REGISTRY-}minelib_server_heartbeat
+#WebSite
+  minelib.server.website:
+    image: ${DOCKER_REGISTRY-}minelib_server_website
     depends_on:
       - seq
       - postgres
     build:
       context: ../..
-      dockerfile: MineLib/Executables/MineLib.Server.Heartbeat/Dockerfile
+      dockerfile: MineLib/Executables/MineLib.Server.WebSite/Dockerfile
     ports:
       - 12080:80
-#      - 12443:443
     networks:
-      - internal
+      - website
 #  heartbeat.nginx:
 #    image: nginx:latest
 #    ports:
@@ -125,7 +124,7 @@ services:
 #      - ./../Classic Heartbeat/nginx/logs:/var/log/nginx
 #      - ./../Classic Heartbeat/www:/var/www
 #    networks:
-#      - heartbeat
+#      - website
 #    depends_on:
 #      - heartbeat.php
 #  heartbeat.php:
@@ -138,7 +137,7 @@ services:
 #      - ./../Classic Heartbeat/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
 #      - ./../Classic Heartbeat/www:/var/www
 #    networks:
-#      - heartbeat
+#      - website
 #      - internal
 
 #Database
@@ -153,6 +152,7 @@ services:
     ports:
       - 5432:5432
     networks:
+      - website
       - internal
 
 #Bedrock to 1.15.1
@@ -216,7 +216,7 @@ services:
       - minelib.server.entitybus
       - minelib.server.playerbus
       - minelib.server.worldbus
-      - minelib.server.heartbeat
+      - minelib.server.website
     ports:
       - 25565:25565
       - 56552:56552

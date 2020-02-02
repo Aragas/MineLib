@@ -129,7 +129,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Classic Heartbeat", "Classi
 		MineLib\Classic Heartbeat\php\xdebug.ini = MineLib\Classic Heartbeat\php\xdebug.ini
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MineLib.Server.Heartbeat", "MineLib\Executables\MineLib.Server.Heartbeat\MineLib.Server.Heartbeat.csproj", "{EEFAF90E-ECDE-4859-A437-2A02A46C9837}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MineLib.Server.WebSite", "MineLib\Executables\MineLib.Server.WebSite\MineLib.Server.WebSite.csproj", "{225B0EFE-C1E1-4FBE-9689-90D6A346373A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -289,10 +289,10 @@ Global
 		{4C9DB2A5-1DE0-4A0E-ADC3-2C3E9F70FCBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C9DB2A5-1DE0-4A0E-ADC3-2C3E9F70FCBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C9DB2A5-1DE0-4A0E-ADC3-2C3E9F70FCBA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EEFAF90E-ECDE-4859-A437-2A02A46C9837}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EEFAF90E-ECDE-4859-A437-2A02A46C9837}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EEFAF90E-ECDE-4859-A437-2A02A46C9837}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EEFAF90E-ECDE-4859-A437-2A02A46C9837}.Release|Any CPU.Build.0 = Release|Any CPU
+		{225B0EFE-C1E1-4FBE-9689-90D6A346373A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{225B0EFE-C1E1-4FBE-9689-90D6A346373A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{225B0EFE-C1E1-4FBE-9689-90D6A346373A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{225B0EFE-C1E1-4FBE-9689-90D6A346373A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -344,7 +344,7 @@ Global
 		{4C299609-DACB-4BA7-8198-6F54B7398D72} = {AEA09901-59EF-45A9-88C2-6CD9D5FE4907}
 		{4C9DB2A5-1DE0-4A0E-ADC3-2C3E9F70FCBA} = {AEA09901-59EF-45A9-88C2-6CD9D5FE4907}
 		{B11693A6-C191-4718-84EE-5BD09D170F3E} = {03646DF3-61E2-492A-BEC0-CCCD72EEBD6A}
-		{EEFAF90E-ECDE-4859-A437-2A02A46C9837} = {61966323-4B2E-48A1-A794-B719F0845F8E}
+		{225B0EFE-C1E1-4FBE-9689-90D6A346373A} = {61966323-4B2E-48A1-A794-B719F0845F8E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CE7EEC09-C11D-4199-B674-5D6D6015EDC4}

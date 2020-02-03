@@ -24,7 +24,6 @@ namespace MineLib.Server.Heartbeat.Controllers
             _logger = logger;
         }
 
-        // https://localhost:5001/server/Heartbeat
         [HttpGet, HttpPost]
         public ActionResult Heartbeat(
             [FromQuery(Name = "name")] string name,

@@ -10,6 +10,8 @@ networks:
   metrics:
   internal:
   website:
+  logger:
+  nats:
 
 services:
 #Network Bus
@@ -23,6 +25,7 @@ services:
       #- 8222:8222
     networks:
       - internal
+      - nats
 
 #Logging
   seq:
@@ -33,6 +36,7 @@ services:
       - 5341:80
     networks:
       - internal
+      - logger
     volumes:
       - seq_data:/data
 
@@ -112,8 +116,10 @@ services:
       dockerfile: MineLib/Executables/MineLib.Server.WebSite/Dockerfile
     ports:
       - 12080:80
+      - 9600:9600
     networks:
       - website
+      - logger
 #  heartbeat.nginx:
 #    image: nginx:latest
 #    ports:
@@ -222,3 +228,4 @@ services:
       - 56552:56552
     networks:
       - internal
+      - website

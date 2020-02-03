@@ -19,7 +19,6 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddHealthCheckPublisher(this IServiceCollection services, Func<IHealthBuilder, IHealthBuilder>? additional = null)
         {
             services.AddSingleton<HealthCheck, CpuHealthCheck>();
-            //services.AddSingleton<HealthCheck, NATSHealthCheck>();
             services.AddSingleton<HealthCheck, RamHealthCheck>();
 
             var builder = new HealthBuilder()
@@ -37,14 +36,12 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             var metricsBuilder = new MetricsBuilder()
                 .Configuration.Configure(options => options
-                    //.AddServiceTag()
-                    //.AddRuntimeTag()
+                    .AddMachineNameTag()
+                    .AddRuntimeTag()
                     .AddServerTag()
-                    //.AddGitTag()
-                    )
+                    .AddGitTag())
 
-                .OutputMetrics.AsPrometheusPlainText()
-                ;
+                .OutputMetrics.AsPrometheusPlainText();
             metricsBuilder = additional?.Invoke(metricsBuilder) ?? metricsBuilder;
             services.AddMetrics(metricsBuilder);
 
@@ -58,28 +55,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddHostedService(sp => new StandardMetricsService(sp.GetRequiredService<IMetrics>(), sp.GetRequiredService<ILogger<StandardMetricsService>>()));
             services.AddHostedService(sp => new CpuUsageMetricsService(sp.GetRequiredService<IMetrics>(), sp.GetRequiredService<ILogger<CpuUsageMetricsService>>()));
             services.AddHostedService(sp => new MemoryUsageMetricsService(sp.GetRequiredService<IMetrics>(), sp.GetRequiredService<ILogger<MemoryUsageMetricsService>>()));
-
-            return services;
-        }
-
-        public static IServiceCollection AddNpgSqlMetrics(this IServiceCollection services, string connectionName, string connectionString)
-        {
-            services.AddSingleton<IHostedService>(sp => new PostgreSQLMetricsService(
-                sp.GetRequiredService<IMetrics>(),
-                connectionName,
-                connectionString,
-                sp.GetRequiredService<ILogger<PostgreSQLMetricsService>>()));
-
-            return services;
-        }
-
-        public static IServiceCollection AddSqlServerMetrics(this IServiceCollection services, string connectionName, string connectionString)
-        {
-            services.AddSingleton<IHostedService>(sp => new MSSQLMetricsService(
-                sp.GetRequiredService<IMetrics>(),
-                connectionName,
-                connectionString,
-                sp.GetRequiredService<ILogger<MSSQLMetricsService>>()));
 
             return services;
         }

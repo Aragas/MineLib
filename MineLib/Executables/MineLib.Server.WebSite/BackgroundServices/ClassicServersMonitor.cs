@@ -23,7 +23,7 @@ namespace MineLib.Server.Heartbeat.BackgroundServices
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.CanBeCanceled)
+            while (!stoppingToken.IsCancellationRequested)
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {

@@ -6,6 +6,7 @@ using MineLib.Server.Proxy.Data;
 using System;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 
 namespace MineLib.Server.Proxy.BackgroundServices
@@ -22,6 +23,7 @@ namespace MineLib.Server.Proxy.BackgroundServices
         private readonly ClassicServerInfo _classicServerInfo;
         private readonly ILogger _logger;
         private readonly BeatType beatType;
+        private readonly HttpClient _httpClient;
 
         public Heartbeat(BeatType bType, ushort port, IOptions<MineLibOptions> mineLibOptions, ServerInfo serverInfo, ClassicServerInfo classicServerInfo, ILogger<Heartbeat> logger)
         {
@@ -31,6 +33,7 @@ namespace MineLib.Server.Proxy.BackgroundServices
             _classicServerInfo = classicServerInfo;
             _logger = logger;
             beatType = bType;
+            _httpClient = new HttpClient();
         }
 
         public bool Beat(bool initial)
@@ -42,18 +45,13 @@ namespace MineLib.Server.Proxy.BackgroundServices
                     var args = $"port={_port}&max={_mineLibOptions.MaxConnections}&name={Uri.EscapeUriString(_mineLibOptions.Name)}&public={_isPublic}&version={_protocolVersion}&salt={_classicServerInfo.Salt}&users={_serverInfo.CurrentConnections}";
                     var fullUrl = $"{_mineLibOptions.ClassicHeartbeatUrl}?" + args;
                     _logger.LogInformation("{TypeName}: Sending Heartbeat with url ({Url})", GetType().FullName, fullUrl);
-                    var beatRequest = (HttpWebRequest)WebRequest.Create(new Uri(fullUrl));
-                    beatRequest.Method = "GET";
-                    beatRequest.ContentType = "application/x-www-form-urlencoded";
-                    beatRequest.ContentLength = args.Length;
-                    using var responseStream = beatRequest.GetResponse().GetResponseStream();
-                    var responseBytes = new byte[73]; //URL should be 73 characters long
-                    responseStream.Read(responseBytes, 0, 73);
+                    var response = _httpClient.GetAsync(fullUrl).GetAwaiter().GetResult();
+                    var data = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                     if (initial)
                     {
-                        _logger.LogInformation("{TypeName}: Received URL: {Url}", GetType().FullName, Encoding.ASCII.GetString(responseBytes));
+                        _logger.LogInformation("{TypeName}: Received URL: {Url}", GetType().FullName, data);
                         using var fileWriter = new StreamWriter(File.OpenWrite("externalurl.txt"));
-                        fileWriter.Write(Encoding.ASCII.GetString(responseBytes));
+                        fileWriter.Write(data);
                     }
                 }
                 catch (WebException ex)

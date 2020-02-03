@@ -1,6 +1,11 @@
+using App.Metrics.Health;
+
+using Aragas.QServer.Health;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
@@ -66,6 +71,24 @@ namespace MineLib.Server.Heartbeat
                 logging.AddDebug();
 #endif
             })
+
+            // Metrics
+            .ConfigureServices((hostContext, services) =>
+            {
+                services.AddPrometheusEndpoint();
+                services.AddDefaultMetrics();
+
+                services.AddNpgSqlMetrics("ClassicServers", hostContext.Configuration.GetConnectionString("ClassicServers"));
+                services.AddNpgSqlMetrics("Users", hostContext.Configuration.GetConnectionString("Users"));
+            })
+            // HealthCheck
+            .ConfigureServices(services =>
+            {
+                services.AddSingleton<HealthCheck, CpuHealthCheck>();
+                services.AddSingleton<HealthCheck, RamHealthCheck>();
+                services.AddHealthCheckPublisher();
+            })
+
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddDbContext<ClassicServersContext>(options => options.UseNpgsql(hostContext.Configuration.GetConnectionString("ClassicServers")));
@@ -74,6 +97,8 @@ namespace MineLib.Server.Heartbeat
                 services.AddHostedService<ClassicServersMonitor>();
 
                 services.AddTransient<IEmailSender, AuthMessageSender>();
+
+                services.AddHostedService<MetricsHttpListenerMonitor>();
             })
             .ConfigureWebHostDefaults(webBuilder =>
             {
@@ -84,7 +109,8 @@ namespace MineLib.Server.Heartbeat
                             .ConfigureWarnings(b => b.Log(CoreEventId.ManyServiceProvidersCreatedWarning))
                             .UseNpgsql(hostContext.Configuration.GetConnectionString("Users")));
 
-                        services.AddMvc();
+                        services.AddMvc()
+                            .AddMetrics();
 
                         services.AddIdentityCore<User>()
                             .AddRoles<IdentityRole>()
@@ -152,7 +178,7 @@ namespace MineLib.Server.Heartbeat
                             endpoints.MapRazorPages();
                         });
                     })
-                    .UseKestrel();
+                    .UseKestrel(o => o.AllowSynchronousIO = true);
             });
 
         private static void BeforeRun(IServiceProvider serviceProvider)

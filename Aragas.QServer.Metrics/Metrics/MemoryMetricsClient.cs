@@ -64,14 +64,11 @@ namespace Aragas.QServer.Metrics
             }
 
             var lines = output.Split("\n");
-            var memory = lines[1].Split(" ", StringSplitOptions.RemoveEmptyEntries);
+            var memory = lines.Length > 1 ? lines[1].Split(" ", StringSplitOptions.RemoveEmptyEntries) : null;
 
-            return new MemoryMetrics
-            {
-                Total = double.Parse(memory[1]),
-                Used = double.Parse(memory[2]),
-                Free = double.Parse(memory[3])
-            };
+            return memory != null
+                ? new MemoryMetrics { Total = double.Parse(memory[1]), Used = double.Parse(memory[2]), Free = double.Parse(memory[3]) }
+                : new MemoryMetrics() { Total = 0, Used = 0, Free = 0 };
         }
     }
 }

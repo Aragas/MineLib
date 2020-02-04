@@ -33,7 +33,7 @@ namespace Aragas.QServer.Core.NetworkBus.Handlers
         public async Task<IMessage> HandleAsync(AppMetricsHealthRequestMessage message)
         {
             var snapshot = await _healthRoot.HealthCheckRunner.ReadAsync();
-            using var stream = new MemoryStream();
+            await using var stream = new MemoryStream();
             await _formatter.WriteAsync(stream, snapshot);
             return new AppMetricsHealthResponseMessage(Encoding.UTF8.GetString(stream.ToArray()));
         }

@@ -43,7 +43,7 @@ namespace Aragas.QServer.Core.NetworkBus.Messages
     {
         public string Name => $"services.exclusive.accepted.response-[{Response.Name}]";
 
-        public TMessage Response { get; } = new TMessage();
+        public TMessage Response { get; }
 
         public ExclusiveAcceptedResponseMessage() => Response = new TMessage();
         public ExclusiveAcceptedResponseMessage(TMessage response) => Response = response;

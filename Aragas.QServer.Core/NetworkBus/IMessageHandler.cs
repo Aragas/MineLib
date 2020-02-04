@@ -21,7 +21,7 @@ namespace Aragas.QServer.Core.NetworkBus
         Task<IMessage> HandleAsync(TMessageRequest message);
     }
 
-    public interface IEnumerableMessageHandler<in TMessageRequest, TMessageResponse>
+    public interface IEnumerableMessageHandler<in TMessageRequest, out TMessageResponse>
         where TMessageRequest : IMessage
         where TMessageResponse : IEnumerableMessage
     {

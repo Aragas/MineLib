@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Aragas.QServer.Health
 {
-    public class RamHealthCheck : HealthCheck
+    public sealed class RamHealthCheck : HealthCheck
     {
         private readonly MemoryMetricsClient _memoryMetricsClient = new MemoryMetricsClient();
         private readonly int _delay;
@@ -28,13 +28,13 @@ namespace Aragas.QServer.Health
                 var message = $"RAM Usage: {percentUsed}%. Total: {metrics.Total * 1024 * 1024} bytes, Used: {metrics.Used * 1024 * 1024} bytes, Free: {metrics.Free * 1024 * 1024} bytes";
 
                 if (percentUsed > 90)
-                    new ValueTask<HealthCheckResult>(HealthCheckResult.Unhealthy(message));
+                    return new ValueTask<HealthCheckResult>(HealthCheckResult.Unhealthy(message));
                 if (percentUsed > 80)
                     return new ValueTask<HealthCheckResult>(HealthCheckResult.Degraded(message));
 
                 return new ValueTask<HealthCheckResult>(HealthCheckResult.Healthy(message));
             }
-            catch (Exception e) when (e is Exception)
+            catch (Exception e)
             {
                 return new ValueTask<HealthCheckResult>(HealthCheckResult.Degraded(e));
             }

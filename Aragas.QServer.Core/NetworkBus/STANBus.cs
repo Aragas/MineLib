@@ -18,20 +18,20 @@ namespace Aragas.QServer.Core.NetworkBus
     [SuppressMessage("Design", "CA1063:Implement IDisposable Correctly")]
     public class STANBus : BaseNATSNetworkBus, INetworkBus
     {
-        protected IStanConnection _connection;
+        protected readonly IStanConnection Connection;
 
         public STANBus()
         {
-            _connection = new StanConnectionFactory().CreateConnection("test-cluster", Guid.NewGuid().ToString(), StanOptions.GetDefaultOptions().SetDefaultArgs());
+            Connection = new StanConnectionFactory().CreateConnection("test-cluster", Guid.NewGuid().ToString(), StanOptions.GetDefaultOptions().SetDefaultArgs());
         }
 
         public void Publish<TMessage>(TMessage message, Guid? referenceId = null) where TMessage : notnull, IMessage =>
-            _connection.Publish(GetSubject(message, referenceId), message.GetData().ToArray());
+            Connection.Publish(GetSubject(message, referenceId), message.GetData().ToArray());
         TMessageResponse INetworkBus.PublishAndWaitForReply<TMessageRequest, TMessageResponse>(TMessageRequest message, Guid? referenceId, int timeout)
         {
             var cancellationTokenSource = new CancellationTokenSource(timeout);
             var returnLock = new TaskCompletionSource<TMessageResponse>(TaskCreationOptions.RunContinuationsAsynchronously);
-            using var sub = _connection.Subscribe(GetSubject<TMessageResponse>(referenceId), (s, e) =>
+            using var sub = Connection.Subscribe(GetSubject<TMessageResponse>(referenceId), (s, e) =>
             {
                 var response = new TMessageResponse();
                 response.SetData(e.Message.Data);
@@ -43,7 +43,7 @@ namespace Aragas.QServer.Core.NetworkBus
         }
         IEnumerable<TMessageResponse> INetworkBus.PublishAndWaitForReplyEnumerable<TMessageRequest, TMessageResponse>(TMessageRequest message, Guid? referenceId, int timeout)
         {
-            var observable = _connection.Observe(GetSubject<TMessageResponse>(referenceId))
+            var observable = Connection.Observe(GetSubject<TMessageResponse>(referenceId))
                 .Select(msg =>
                 {
                     var response = new TMessageResponse();
@@ -65,14 +65,14 @@ namespace Aragas.QServer.Core.NetworkBus
         }
 
         IDisposable INetworkBus.Subscribe<TMessage>(Action<TMessage> func, Guid? referenceId) =>
-            _connection.Subscribe(GetSubject<TMessage>(referenceId), (s, e) =>
+            Connection.Subscribe(GetSubject<TMessage>(referenceId), (s, e) =>
             {
                 var request = new TMessage();
                 request.SetData(e.Message.Data);
                 func(request);
             });
         IDisposable INetworkBus.SubscribeAndReply<TMessageRequest>(Func<TMessageRequest, IMessage> func, Guid? referenceId) =>
-            _connection.Subscribe(GetSubject<TMessageRequest>(referenceId), (s, e) =>
+            Connection.Subscribe(GetSubject<TMessageRequest>(referenceId), (s, e) =>
             {
                 var request = new TMessageRequest();
                 request.SetData(e.Message.Data);
@@ -81,7 +81,7 @@ namespace Aragas.QServer.Core.NetworkBus
                 Publish(response, referenceId);
             });
         IDisposable INetworkBus.SubscribeAndReplyEnumerable<TMessageRequest, TMessageResponse>(Func<TMessageRequest, IEnumerable<TMessageResponse>> func, Guid? referenceId) =>
-            _connection.Subscribe(GetSubject<TMessageRequest>(), (s, e) =>
+            Connection.Subscribe(GetSubject<TMessageRequest>(), (s, e) =>
             {
                 var request = new TMessageRequest();
                 request.SetData(e.Message.Data);
@@ -91,19 +91,19 @@ namespace Aragas.QServer.Core.NetworkBus
 
         public void Dispose()
         {
-            _connection.Dispose();
+            Connection.Dispose();
         }
     }
 
     public class AsyncSTANBus : STANBus, IAsyncNetworkBus
     {
         public Task PublishAsync<TMessage>(TMessage message, Guid? referenceId = null) where TMessage : notnull, IMessage =>
-            Task.Run(() => _connection.Publish(GetSubject(message, referenceId), message.GetData().ToArray()));
+            Task.Run(() => Connection.Publish(GetSubject(message, referenceId), message.GetData().ToArray()));
         async Task<TMessageResponse> IAsyncNetworkBus.PublishAndWaitForReplyAsync<TMessageRequest, TMessageResponse>(TMessageRequest message, Guid? referenceId, int timeout)
         {
             var cancellationTokenSource = new CancellationTokenSource(timeout);
             var returnLock = new TaskCompletionSource<TMessageResponse>(TaskCreationOptions.RunContinuationsAsynchronously);
-            using var sub = _connection.Subscribe(GetSubject<TMessageResponse>(referenceId), (s, e) =>
+            using var sub = Connection.Subscribe(GetSubject<TMessageResponse>(referenceId), (s, e) =>
             {
                 var response = new TMessageResponse();
                 response.SetData(e.Message.Data);
@@ -115,7 +115,7 @@ namespace Aragas.QServer.Core.NetworkBus
         }
         async IAsyncEnumerable<TMessageResponse> IAsyncNetworkBus.PublishAndWaitForReplyEnumerableAsync<TMessageRequest, TMessageResponse>(TMessageRequest message, Guid? referenceId, int timeout)
         {
-            var observable = _connection.Observe(GetSubject<TMessageResponse>(referenceId))
+            var observable = Connection.Observe(GetSubject<TMessageResponse>(referenceId))
                 .Select(msg =>
                 {
                     var response = new TMessageResponse();
@@ -137,14 +137,14 @@ namespace Aragas.QServer.Core.NetworkBus
         }
 
         Task<IDisposable> IAsyncNetworkBus.SubscribeAsync<TMessage>(Func<TMessage, Task> func, Guid? referenceId) =>
-            Task.FromResult((IDisposable) _connection.Subscribe(GetSubject<TMessage>(referenceId), async (s, e) =>
+            Task.FromResult((IDisposable) Connection.Subscribe(GetSubject<TMessage>(referenceId), async (s, e) =>
             {
                 var request = new TMessage();
                 request.SetData(e.Message.Data);
                 await func(request);
             }));
         Task<IDisposable> IAsyncNetworkBus.SubscribeAndReplyAsync<TMessageRequest>(Func<TMessageRequest, Task<IMessage>> func, Guid? referenceId) =>
-            Task.FromResult((IDisposable) _connection.Subscribe(GetSubject<TMessageRequest>(referenceId), async (s, e) =>
+            Task.FromResult((IDisposable) Connection.Subscribe(GetSubject<TMessageRequest>(referenceId), async (s, e) =>
             {
                 var request = new TMessageRequest();
                 request.SetData(e.Message.Data);
@@ -152,7 +152,7 @@ namespace Aragas.QServer.Core.NetworkBus
                 await PublishAsync(response, referenceId);
             }));
         Task<IDisposable> IAsyncNetworkBus.SubscribeAndReplyEnumerableAsync<TMessageRequest, TMessageResponse>(Func<TMessageRequest, IAsyncEnumerable<TMessageResponse>> func, Guid? referenceId) =>
-            Task.FromResult((IDisposable) _connection.Subscribe(GetSubject<TMessageRequest>(), async (s, e) =>
+            Task.FromResult((IDisposable) Connection.Subscribe(GetSubject<TMessageRequest>(), async (s, e) =>
             {
                 var request = new TMessageRequest();
                 request.SetData(e.Message.Data);

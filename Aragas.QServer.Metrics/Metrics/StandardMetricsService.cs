@@ -14,32 +14,32 @@ namespace Aragas.QServer.Metrics
 {
     public class StandardMetricsService : BackgroundService
     {
-        private GaugeOptions process_start_time_milliseconds = new GaugeOptions()
+        private readonly GaugeOptions process_start_time_milliseconds = new GaugeOptions()
         {
             Name = "Process Start Time Milliseconds",
             MeasurementUnit = Unit.Custom("Milliseconds")
         };
-        private GaugeOptions process_private_memory_bytes = new GaugeOptions()
+        private readonly GaugeOptions process_private_memory_bytes = new GaugeOptions()
         {
             Name = "Process Private Memory Bytes",
             MeasurementUnit = Unit.Bytes
         };
-        private GaugeOptions process_working_set_bytes = new GaugeOptions()
+        private readonly GaugeOptions process_working_set_bytes = new GaugeOptions()
         {
             Name = "Process Working Set Bytes",
             MeasurementUnit = Unit.Bytes
         };
-        private GaugeOptions dotnet_total_memory_bytes = new GaugeOptions()
+        private readonly GaugeOptions dotnet_total_memory_bytes = new GaugeOptions()
         {
             Name = "dotnet Total Memory Bytes",
             MeasurementUnit = Unit.Bytes
         };
-        private CounterOptions dotnet_collection_count = new CounterOptions()
+        private readonly CounterOptions dotnet_collection_count = new CounterOptions()
         {
             Name = "dotnet Collection Count",
             MeasurementUnit = Unit.Items
         };
-        private CounterOptions dotnet_exception_count = new CounterOptions()
+        private readonly CounterOptions dotnet_exception_count = new CounterOptions()
         {
             Name = "dotnet Exception Count",
             MeasurementUnit = Unit.Errors
@@ -59,7 +59,6 @@ namespace Aragas.QServer.Metrics
 
             _metrics.Measure.Gauge.SetValue(process_start_time_milliseconds, new DateTimeOffset(_process.StartTime).ToUnixTimeMilliseconds());
 
-            // Инициализаця
             _metrics.Measure.Counter.Increment(dotnet_exception_count);
             _metrics.Measure.Counter.Decrement(dotnet_exception_count);
             AppDomain.CurrentDomain.FirstChanceException += (s, e) => _metrics.Measure.Counter.Increment(dotnet_exception_count);

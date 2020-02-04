@@ -17,28 +17,17 @@ namespace Aragas.QServer.Core.NetworkBus.Handlers
 {
     public class AppMetricsPrometheusHandler : IMessageHandler<AppMetricsPrometheusRequestMessage>
     {
-        protected static GaugeOptions NATSPingGauge = new GaugeOptions
-        {
-            Name = "NATS Ping",
-            MeasurementUnit = Unit.Custom("Milliseconds"),
-        };
-        protected static GaugeOptions PostgreSQLPingGauge = new GaugeOptions
-        {
-            Name = "PostgreSQL Ping",
-            MeasurementUnit = Unit.Custom("Milliseconds"),
-        };
-
-        protected static GaugeOptions ProcessCpuUsageGauge = new GaugeOptions
+        protected readonly GaugeOptions ProcessCpuUsageGauge = new GaugeOptions
         {
             Name = "Process Cpu Usage",
             MeasurementUnit = Unit.Percent,
         };
-        protected static GaugeOptions ProcessWorkingSetSizeGauge = new GaugeOptions
+        protected readonly GaugeOptions ProcessWorkingSetSizeGauge = new GaugeOptions
         {
             Name = "Process Working Set",
             MeasurementUnit = Unit.Bytes,
         };
-        protected static GaugeOptions ProcessPrivateMemorySizeGauge = new GaugeOptions
+        protected readonly GaugeOptions ProcessPrivateMemorySizeGauge = new GaugeOptions
         {
             Name = "Process Private Memory Size",
             MeasurementUnit = Unit.Bytes,
@@ -70,7 +59,7 @@ namespace Aragas.QServer.Core.NetworkBus.Handlers
             _metricsRoot.Measure.Gauge.SetValue(ProcessCpuUsageGauge, CpuHealthCheck.CpuUsagePercent);
 
             var snapshot = _metricsRoot.Snapshot.Get();
-            using var stream = new MemoryStream();
+            await using var stream = new MemoryStream();
             await _formatter.WriteAsync(stream, snapshot);
             return new AppMetricsPrometheusResponseMessage(Encoding.UTF8.GetString(stream.ToArray()));
         }

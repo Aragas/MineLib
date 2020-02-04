@@ -13,7 +13,7 @@ namespace Aragas.QServer.Metrics
 {
     public class CpuUsageMetricsService : BackgroundService
     {
-        private HistogramOptions process_start_time_milliseconds = new HistogramOptions()
+        private readonly HistogramOptions process_start_time_milliseconds = new HistogramOptions()
         {
             Name = "Process CPU Usage Percent",
             MeasurementUnit = Unit.Percent

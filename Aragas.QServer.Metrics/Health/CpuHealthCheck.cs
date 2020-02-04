@@ -7,22 +7,19 @@ using System.Threading.Tasks;
 
 namespace Aragas.QServer.Health
 {
-    public class CpuHealthCheck : HealthCheck
+    public sealed class CpuHealthCheck : HealthCheck, IDisposable
     {
         public static double CpuUsagePercent;
 
         private readonly Task _cpuUsageHealthTask;
-
-        private readonly int _delay;
+        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         public CpuHealthCheck(int delay = 3000) : base(nameof(CpuHealthCheck))
         {
-            _delay = delay;
-
             _cpuUsageHealthTask = Task.Factory.StartNew(async () =>
             {
                 var process = Process.GetCurrentProcess();
-                while (true)
+                while (!_cancellationTokenSource.IsCancellationRequested)
                 {
                     var startTime = DateTime.UtcNow;
                     process.Refresh();
@@ -52,11 +49,18 @@ namespace Aragas.QServer.Health
             var usage = CpuUsagePercent;
             var message = $"CPU Usage {usage}%";
             if (usage > 90)
-                new ValueTask<HealthCheckResult>(HealthCheckResult.Unhealthy(message));
+                return new ValueTask<HealthCheckResult>(HealthCheckResult.Unhealthy(message));
             if (usage > 80)
                 return new ValueTask<HealthCheckResult>(HealthCheckResult.Degraded(message));
 
             return new ValueTask<HealthCheckResult>(HealthCheckResult.Healthy(message));
+        }
+
+        public void Dispose()
+        {
+            _cancellationTokenSource.Cancel();
+            _cancellationTokenSource.Dispose();
+            _cpuUsageHealthTask.Dispose();
         }
     }
 }

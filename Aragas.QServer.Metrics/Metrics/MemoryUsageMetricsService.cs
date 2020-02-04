@@ -11,7 +11,7 @@ namespace Aragas.QServer.Metrics
 {
     public class MemoryUsageMetricsService : BackgroundService
     {
-        private HistogramOptions system_memory_usage_percent = new HistogramOptions()
+        private readonly HistogramOptions system_memory_usage_percent = new HistogramOptions()
         {
             Name = "System Memory Usage Percent",
             MeasurementUnit = Unit.Percent

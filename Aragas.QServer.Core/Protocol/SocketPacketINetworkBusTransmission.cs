@@ -42,14 +42,8 @@ namespace Aragas.QServer.Core.Protocol
             DefaultFactory = defaultFactory;
         }
 
-        protected override void Send(in ReadOnlySpan<byte> span)
-        {
-            _networkBus.Publish(new PlayerDataToProxyMessage() { Data = span.ToArray() }, PlayerId);
-        }
-        protected override Span<byte> Receive(long length)
-        {
-            return DataReceivedQueue.TryDequeue(out var data) ? data : Array.Empty<byte>();
-        }
+        protected override void Send(in ReadOnlySpan<byte> span) => _networkBus.Publish(new PlayerDataToProxyMessage() { Data = span.ToArray() }, PlayerId);
+        protected override Span<byte> Receive(long length) => DataReceivedQueue.TryDequeue(out var data) ? data : Array.Empty<byte>();
 
         public override void SendPacket(TPacketType packet)
         {
@@ -58,7 +52,6 @@ namespace Aragas.QServer.Core.Protocol
             packet.Serialize(serializer);
             Send(serializer.GetData());
         }
-
         public override TPacketType? ReadPacket()
         {
             if (DefaultFactory == null)

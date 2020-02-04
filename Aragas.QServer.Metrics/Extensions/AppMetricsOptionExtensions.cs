@@ -25,10 +25,10 @@ namespace App.Metrics
         }
         public static MetricsOptions AddGitTag(this MetricsOptions options)
         {
-            var metadatas = Assembly.GetEntryAssembly().GetCustomAttributes<AssemblyMetadataAttribute>();
-            options.GlobalTags["branch"] = metadatas.SingleOrDefault(a => a.Key == "GitInfo.Branch")?.Value ?? "unknown";
-            options.GlobalTags["sha"] = metadatas.SingleOrDefault(a => a.Key == "GitInfo.Sha")?.Value ?? "unknown";
-            options.GlobalTags["is_dirty"] = metadatas.SingleOrDefault(a => a.Key == "GitInfo.IsDirty")?.Value ?? "unknown";
+            var metadata = Assembly.GetEntryAssembly()?.GetCustomAttributes<AssemblyMetadataAttribute>().ToList();
+            options.GlobalTags["branch"] = metadata?.SingleOrDefault(a => a.Key == "GitInfo.Branch")?.Value ?? "unknown";
+            options.GlobalTags["sha"] = metadata?.SingleOrDefault(a => a.Key == "GitInfo.Sha")?.Value ?? "unknown";
+            options.GlobalTags["is_dirty"] = metadata?.SingleOrDefault(a => a.Key == "GitInfo.IsDirty")?.Value ?? "unknown";
 
             return options;
         }

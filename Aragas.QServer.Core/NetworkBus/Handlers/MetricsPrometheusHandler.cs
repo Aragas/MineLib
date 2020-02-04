@@ -30,7 +30,7 @@ namespace Aragas.QServer.Core.NetworkBus.Handlers
         public async Task<AppMetricsPrometheusResponseMessage> HandleAsync(AppMetricsPrometheusRequestMessage message)
         {
             var snapshot = _metricsRoot.Snapshot.Get();
-            using var stream = new MemoryStream();
+            await using var stream = new MemoryStream();
             await _formatter.WriteAsync(stream, snapshot);
             return new AppMetricsPrometheusResponseMessage(Encoding.UTF8.GetString(stream.ToArray()));
         }

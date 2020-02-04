@@ -21,8 +21,7 @@ namespace Aragas.QServer.Core.BackgroundServices
         where TSerializer : StreamSerializer, new()
         where TDeserializer : StreamDeserializer, new()
     {
-        private static bool IPv4 { get; } =
-            Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") is string str && str.Equals("true", StringComparison.OrdinalIgnoreCase);
+        private static bool InContainer { get; } = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") is string str && str.Equals("true", StringComparison.OrdinalIgnoreCase);
 
         public abstract int Port { get; }
         protected TcpListener Listener { get; }
@@ -36,7 +35,7 @@ namespace Aragas.QServer.Core.BackgroundServices
             ServiceProvider = serviceProvider;
             Logger = logger;
 
-            if (IPv4)
+            if (InContainer)
             {
                 Listener = new TcpListener(new IPEndPoint(IPAddress.Any, Port));
             }

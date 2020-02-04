@@ -35,10 +35,7 @@ namespace Aragas.QServer.Core
         }
         protected DefaultConnectionHandler(IServiceProvider serviceProvider, Socket socket, BasePacketFactory<TPacket, TIDType>? factory = null)
         {
-            if(factory == null)
-                Stream = ActivatorUtilities.CreateInstance<TPacketTransmission>(serviceProvider, new object[] { socket });
-            else
-                Stream = ActivatorUtilities.CreateInstance<TPacketTransmission>(serviceProvider, new object[] { socket, factory });
+            Stream = ActivatorUtilities.CreateInstance<TPacketTransmission>(serviceProvider, factory == null ? new object[] { socket } : new object[] { socket, factory });
         }
 
         public sealed override void Update()

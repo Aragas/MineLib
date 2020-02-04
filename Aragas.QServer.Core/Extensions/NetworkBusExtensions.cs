@@ -2,6 +2,7 @@
 using Aragas.QServer.Core.NetworkBus.Messages;
 
 using Nito.AsyncEx;
+using Nito.AsyncEx.Synchronous;
 
 using System;
 using System.Collections.Generic;
@@ -17,13 +18,13 @@ namespace Aragas.QServer.Core.Extensions
         public static IDisposable SubscribeAndReply<TMessageRequest>(this INetworkBus bus, Func<TMessageRequest, Task<IMessage>> func, Guid? referenceId)
             where TMessageRequest : notnull, IMessage, new()
         {
-            return bus.SubscribeAndReply<TMessageRequest>(message => func(message).GetAwaiter().GetResult(), referenceId);
+            return bus.SubscribeAndReply<TMessageRequest>(message => func(message).WaitAndUnwrapException(), referenceId);
         }
         public static IDisposable SubscribeAndReply<TMessageRequest, TMessageResponse>(this INetworkBus bus, Func<TMessageRequest, Task<TMessageResponse>> func, Guid? referenceId)
             where TMessageRequest : notnull, IMessage, new()
             where TMessageResponse : notnull, IMessage, new()
         {
-            return bus.SubscribeAndReply<TMessageRequest>(message => func(message).GetAwaiter().GetResult(), referenceId);
+            return bus.SubscribeAndReply<TMessageRequest>(message => func(message).WaitAndUnwrapException(), referenceId);
         }
         public static IDisposable SubscribeAndReplyEnumerable<TMessageRequest, TMessageResponse>(this INetworkBus bus, Func<TMessageRequest, IAsyncEnumerable<TMessageResponse>> func, Guid? referenceId)
             where TMessageRequest : notnull, IMessage, new()
@@ -90,7 +91,7 @@ namespace Aragas.QServer.Core.Extensions
             }, null);
             bus.Publish(new ExclusiveRequestMessage<TMessageRequest>(), null);
 
-            var firstResponse = firstResponseLock.Task.WaitAsync(firstResponseCancellationTokenSource.Token).GetAwaiter().GetResult();
+            var firstResponse = firstResponseLock.Task.WaitAsync(firstResponseCancellationTokenSource.Token).WaitAndUnwrapException();
             if (firstResponse == null) return null;
 
 
@@ -102,7 +103,7 @@ namespace Aragas.QServer.Core.Extensions
             }, firstResponse.ReferenceId);
             bus.Publish(new ExclusiveAcceptedRequestMessage<TMessageRequest>(message), firstResponse.ReferenceId);
 
-            var response = responseLock.Task.WaitAsync(responseCancellationTokenSource.Token).GetAwaiter().GetResult();
+            var response = responseLock.Task.WaitAsync(responseCancellationTokenSource.Token).WaitAndUnwrapException();
             return response.Response;
         }
         public static IDisposable SubscribeAndReplyToExclusive<TMessageRequest, TMessageResponse>(this INetworkBus bus, Func<TMessageRequest, bool> canReply, Func<TMessageRequest, TMessageResponse> func, Guid requestReferenceId)

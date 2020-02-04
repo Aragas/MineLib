@@ -1,5 +1,6 @@
 ﻿using Aragas.Network.Data;
 using Aragas.QServer.Core.Extensions;
+using Aragas.QServer.Core.MBus;
 using Aragas.QServer.Core.Packets;
 using Aragas.QServer.Core.Packets.PlayerHandler;
 using Aragas.QServer.Core.Protocol;
@@ -24,7 +25,7 @@ namespace Aragas.QServer.Core
 
 
         private static IMBus? _proxyBus;
-        public static IMBus ProxyBus => _proxyBus ?? (_proxyBus = new NatsMBus($"{Host}/qserver/server/proxybus"));
+        public static IMBus ProxyBus => _proxyBus ??= new NatsMBus($"{Host}/qserver/server/proxybus");
         public static Socket GetFirstAvailablePlayerHandlerConnection(VarInt protocolVersion, IMBus? proxyBus = null)
         {
             return HandleResponse<Socket, AvailableSocketRequestPacket, AvailableSocketResponsePacket>(proxyBus ?? ProxyBus,

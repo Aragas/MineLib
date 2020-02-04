@@ -1,10 +1,10 @@
-﻿using System;
-using System.IO;
-
-using Aragas.Network.Data;
+﻿using Aragas.Network.Data;
 using Aragas.Network.IO;
 
 using Ionic.Zlib;
+
+using System;
+using System.IO;
 
 namespace Aragas.QServer.Core.IO
 {

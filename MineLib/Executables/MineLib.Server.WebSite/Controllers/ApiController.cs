@@ -16,8 +16,8 @@ namespace MineLib.Server.Heartbeat.Controllers
 
         public ApiController(IClassicServersRepository classicServerRepository, ILogger<ApiController> logger)
         {
-            _classicServerRepository = classicServerRepository;
-            _logger = logger;
+            _classicServerRepository = classicServerRepository ?? throw new ArgumentNullException(nameof(classicServerRepository));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpGet("{data}")]

@@ -7,8 +7,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["MineLib/Executables/MineLib.Server.Heartbeat/MineLib.Server.Heartbeat.csproj", "MineLib/Executables/MineLib.Server.Heartbeat/"]
-RUN dotnet restore "MineLib/Executables/MineLib.Server.Heartbeat/MineLib.Server.Heartbeat.csproj"
+COPY ["MineLib/Executables/MineLib.Server.WebSite/MineLib.Server.WebSite.csproj", "MineLib/Executables/MineLib.Server.WebSite/"]
+COPY ["Aragas.QServer.Metrics.PostgreSQL/Aragas.QServer.Metrics.PostgreSQL.csproj", "Aragas.QServer.Metrics.PostgreSQL/"]
+COPY ["Aragas.QServer.Metrics/Aragas.QServer.Metrics.csproj", "Aragas.QServer.Metrics/"]
+RUN dotnet restore "MineLib/Executables/MineLib.Server.WebSite/MineLib.Server.WebSite.csproj"
 COPY . .
 WORKDIR "/src/MineLib/Executables/MineLib.Server.Heartbeat"
 RUN dotnet build "MineLib.Server.Heartbeat.csproj" -c Release -o /app/build

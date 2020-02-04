@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\ApiViewModels\**" />
+    <Content Remove="Models\ApiViewModels\**" />
+    <EmbeddedResource Remove="Models\ApiViewModels\**" />
+    <None Remove="Models\ApiViewModels\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="$(SolutionDir)\loggerconfig.json" Link="loggerconfig.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -32,12 +39,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\ApiViewModels\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Aragas.QServer.Metrics.PostgreSQL\Aragas.QServer.Metrics.PostgreSQL.csproj" />
-    <ProjectReference Include="..\..\..\Aragas.QServer.Metrics\Aragas.QServer.Metrics.csproj" />
+    <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Metrics.PostgreSQL\Aragas.QServer.Metrics.PostgreSQL.csproj" />
+    <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Metrics\Aragas.QServer.Metrics.csproj" />
   </ItemGroup>
 
 </Project>

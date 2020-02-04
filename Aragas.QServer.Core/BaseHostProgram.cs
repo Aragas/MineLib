@@ -48,7 +48,7 @@ namespace Aragas.QServer.Core
 
                 await host.RunAsync();
             }
-            catch (Exception ex) when (ex is Exception)
+            catch (Exception ex)
             {
                 Log.Fatal(ex, "{TypeName}: Fatal exception.", typeof(TProgram).FullName);
                 throw;

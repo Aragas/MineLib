@@ -1,4 +1,5 @@
-﻿using Aragas.QServer.Core.NetworkBus;
+﻿using Aragas.QServer.Core.Extensions;
+using Aragas.QServer.Core.NetworkBus;
 using Aragas.QServer.Core.NetworkBus.Messages;
 
 using Microsoft.Extensions.Hosting;
@@ -14,14 +15,15 @@ namespace Aragas.QServer.Prometheus.Exporter
     public class PingService : BackgroundService, IPingService, IMessageReceiver<ServicesPongMessage>
     {
         public List<ServiceEntry> Services => _services.Select(kp => kp.Key).ToList();
-        private ConcurrentDictionary<ServiceEntry, object> _services = new ConcurrentDictionary<ServiceEntry, object>();
-        private IAsyncNetworkBus NetworkBus { get; }
+
+        private readonly ConcurrentDictionary<ServiceEntry, object> _services = new ConcurrentDictionary<ServiceEntry, object>();
+        private readonly IAsyncNetworkBus _networkBus;
 
         public PingService(SubscriptionStorage subscriptionStorage, IAsyncNetworkBus networkBus)
         {
-            NetworkBus = networkBus;
+            _networkBus = networkBus;
 
-            subscriptionStorage.ReceiveServicesPong<PingService>(this);
+            subscriptionStorage.ReceiveServicesPong(this);
         }
 
         public Task HandleAsync(ServicesPongMessage message)
@@ -50,7 +52,7 @@ namespace Aragas.QServer.Prometheus.Exporter
                 foreach (var item in toRemove)
                     _services.TryRemove(item, out _);
 
-                await NetworkBus.PublishAsync(new ServicesPingMessage());
+                await _networkBus.PublishAsync(new ServicesPingMessage());
                 await Task.Delay(2000, stoppingToken);
             }
         }

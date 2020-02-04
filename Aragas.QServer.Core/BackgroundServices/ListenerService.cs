@@ -61,7 +61,7 @@ namespace Aragas.QServer.Core.BackgroundServices
                 {
                     var socket = await Listener.AcceptSocketAsync();
                     socket.NoDelay = true;
-                    var client = (TConnection) ClientFactory(ServiceProvider, new[] { socket });
+                    var client = (TConnection) ClientFactory(ServiceProvider, new object [] { socket });
                     OnClientConnected(client);
                 }
                 catch (Exception ex) when (ex is SocketException)

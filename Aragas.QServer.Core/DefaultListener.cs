@@ -17,16 +17,22 @@ namespace Aragas.QServer.Core
         where TSerializer : StreamSerializer, new()
         where TDeserializer : StreamDeserializer, new()
     {
+        private static bool InContainer => Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") is string str && str == "true";
+
         protected List<TConnection> Connections { get; } = new List<TConnection>();
 
         public sealed override void Start()
         {
-#if IPV6
-            Listener = new TcpListener(new IPEndPoint(IPAddress.IPv6Any, Port));
-            Listener.Server.DualMode = true;
-#else
-            Listener = new TcpListener(new IPEndPoint(IPAddress.Any, Port));
-#endif
+            if (InContainer)
+            {
+                Listener = new TcpListener(new IPEndPoint(IPAddress.IPv6Any, Port));
+                Listener.Server.DualMode = true;
+            }
+            else
+            {
+                Listener = new TcpListener(new IPEndPoint(IPAddress.Any, Port));
+            }
+
             Listener.Server.ReceiveTimeout = 5000;
             Listener.Server.SendTimeout = 5000;
             Listener.Start();
@@ -91,7 +97,7 @@ namespace Aragas.QServer.Core
                         Stream = new TPacketTransmission()
                         {
                             Socket = Listener.AcceptSocket(),
-                            Factory = new TFactory()
+                            DefaultFactory = new TFactory()
                         }
                     };
                     OnClientConnected(client);

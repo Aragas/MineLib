@@ -17,9 +17,9 @@ namespace Aragas.QServer.Core.Extensions
                 using var enumerator = source.GetEnumerator();
                 var isFirst = true;
                 var hasNext = enumerator.MoveNext();
-                for (int index = 0; hasNext; index++)
+                for (var index = 0; hasNext; index++)
                 {
-                    T current = enumerator.Current;
+                    var current = enumerator.Current;
                     hasNext = enumerator.MoveNext();
                     yield return new IterationElement<T>(index, current, isFirst, !hasNext);
                     isFirst = false;

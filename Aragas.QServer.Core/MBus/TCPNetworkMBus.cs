@@ -7,11 +7,14 @@ using System;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
-namespace Aragas.QServer.Core
+namespace Aragas.QServer.Core.MBus
 {
     // mbus://<host>:<port>/<name>
     public sealed class TCPNetworkMBus : InternalConnectionHandler, IMBus
     {
+        private static bool InContainer => Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") is string str && str == "true";
+
+        private static ushort DefaultPort = 0x5000;
         public static (string Host, ushort Port, string Name) ParseURI(ReadOnlySpan<char> span)
         {
             if (!span.StartsWith("mbus://".AsSpan()))
@@ -24,38 +27,36 @@ namespace Aragas.QServer.Core
             ReadOnlySpan<char> host;
             ReadOnlySpan<char> port;
             ReadOnlySpan<char> name;
-            var hostDelimeterIndex = span.IndexOf('/');
-            if (hostDelimeterIndex == -1)
+            var hostDelimiterIndex = span.IndexOf('/');
+            if (hostDelimiterIndex == -1)
             {
                 return default;
             }
             else
             {
-                host = span.Slice(0, hostDelimeterIndex);
-                var portDelimeterIndex = span.IndexOf(':');
-                if (portDelimeterIndex == -1)
+                host = span.Slice(0, hostDelimiterIndex);
+                var portDelimiterIndex = span.IndexOf(':');
+                if (portDelimiterIndex == -1)
                 {
-                    port = DefaultValues.MBus_Port.ToString().AsSpan();
+                    port = DefaultPort.ToString().AsSpan();
                 }
                 else
                 {
-                    host = span.Slice(0, portDelimeterIndex);
-                    port = span.Slice(portDelimeterIndex + 1, hostDelimeterIndex - portDelimeterIndex - 1);
+                    host = span.Slice(0, portDelimiterIndex);
+                    port = span.Slice(portDelimiterIndex + 1, hostDelimiterIndex - portDelimiterIndex - 1);
                 }
 
-                name = span.Slice(hostDelimeterIndex + 1);
+                name = span.Slice(hostDelimiterIndex + 1);
             }
 
 
-            return (host.ToString(), ushort.TryParse(port.ToString(), out var parsedPort) ? parsedPort : DefaultValues.MBus_Port, name.ToString());
+            return (host.ToString(), ushort.TryParse(port.ToString(), out var parsedPort) ? parsedPort : DefaultPort, name.ToString());
         }
         private static Socket Connect(string host, ushort port)
         {
-#if IPV6
-            var socket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp) { DualMode = true };
-#else
-            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-#endif
+            var socket = InContainer
+                ? new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp) { DualMode = true }
+                : new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.Connect(host, port);
             return socket;
         }

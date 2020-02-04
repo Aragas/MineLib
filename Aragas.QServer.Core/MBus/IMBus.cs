@@ -3,7 +3,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Aragas.QServer.Core
+namespace Aragas.QServer.Core.MBus
 {
     public interface IMBus : IDisposable
     {

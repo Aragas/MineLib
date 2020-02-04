@@ -48,11 +48,7 @@ namespace MineLib.Protocol5.Server
             NetworkBus = networkBus;
 
             PlayerId = playerId;
-            Stream = new Protocol5Transmission()
-            {
-                State = state,
-                PlayerId = playerId
-            };
+            Stream = new Protocol5Transmission(networkBus, playerId, state);
             new Thread(PacketReceiver).Start();
         }
 

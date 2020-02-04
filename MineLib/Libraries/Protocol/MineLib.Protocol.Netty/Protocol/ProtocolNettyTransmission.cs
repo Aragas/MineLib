@@ -1,5 +1,6 @@
 ﻿using Aragas.Network.Data;
 using Aragas.Network.IO;
+using Aragas.QServer.Core.NetworkBus;
 
 using MineLib.Protocol.Packets;
 using MineLib.Protocol.Protocol;
@@ -19,6 +20,11 @@ namespace MineLib.Protocol.Netty.Protocol
         private StatusFactory<TStatusPacket> StatusFactory { get; } = new StatusFactory<TStatusPacket>();
         private LoginFactory<TLoginPacket> LoginFactory { get; } = new LoginFactory<TLoginPacket>();
         private PlayFactory<TPlayPacket> PlayFactory { get; } = new PlayFactory<TPlayPacket>();
+
+        public ProtocolNettyTransmission(IAsyncNetworkBus networkBus, Guid playerId, State state) : base(networkBus, playerId)
+        {
+            State = state;
+        }
 
         public override MinecraftPacket? ReadPacket()
         {
@@ -69,6 +75,11 @@ namespace MineLib.Protocol.Netty.Protocol
         private StatusEnumFactory<TStatusEnum> StatusFactory { get; } = new StatusEnumFactory<TStatusEnum>();
         private LoginEnumFactory<TLoginEnum> LoginFactory { get; } = new LoginEnumFactory<TLoginEnum>();
         private PlayEnumFactory<TPlayEnum> PlayFactory { get; } = new PlayEnumFactory<TPlayEnum>();
+
+        public ProtocolNettyEnumTransmission(IAsyncNetworkBus networkBus, Guid playerId, State state) : base(networkBus, playerId)
+        {
+            State = state;
+        }
 
         public override MinecraftEnumPacket? ReadPacket()
         {

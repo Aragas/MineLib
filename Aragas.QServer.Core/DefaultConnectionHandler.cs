@@ -31,7 +31,7 @@ namespace Aragas.QServer.Core
         protected DefaultConnectionHandler() { } // Stream is set in generic new()
         protected DefaultConnectionHandler(Socket socket, BasePacketFactory<TPacket, TIDType>? factory = null)
         {
-            Stream = (TPacketTransmission )Activator.CreateInstance(typeof(TPacketTransmission), new object[] { socket, factory });
+            Stream = (TPacketTransmission ) Activator.CreateInstance(typeof(TPacketTransmission), new object[] { socket, factory });
         }
         protected DefaultConnectionHandler(IServiceProvider serviceProvider, Socket socket, BasePacketFactory<TPacket, TIDType>? factory = null)
         {

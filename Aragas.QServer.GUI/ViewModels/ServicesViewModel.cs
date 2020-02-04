@@ -1,4 +1,4 @@
-﻿using Aragas.QServer.Core;
+﻿using Aragas.QServer.Core.NetworkBus;
 using Aragas.QServer.Core.NetworkBus.Messages;
 
 using System.Collections.Generic;
@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Caliburn.Micro;
 
 namespace Aragas.QServer.GUI.ViewModels
 {
@@ -23,17 +24,17 @@ namespace Aragas.QServer.GUI.ViewModels
 
         public ICommand MenuItemPrometheusCommand => new TaskCommand(async _ =>
         {
-            var message = await BaseSingleton.Instance.PublishAndWaitForReplyAsync<AppMetricsPrometheusRequestMessage, AppMetricsPrometheusResponseMessage>(
+            var message = await _networkBus.PublishAndWaitForReplyAsync<AppMetricsPrometheusRequestMessage, AppMetricsPrometheusResponseMessage>(
                 new AppMetricsPrometheusRequestMessage(), ComboBoxSelectedItem.ServiceId);
 
-            Application.Current.Dispatcher.Invoke(() => Text = message == null ? "Received null!" : message.Report);
+            Application.Current.Dispatcher?.Invoke(() => Text = message == null ? "Received null!" : message.Report);
         });
         public ICommand MenuItemHealthCommand => new TaskCommand(async _ =>
         {
-            var message = await BaseSingleton.Instance.PublishAndWaitForReplyAsync<AppMetricsHealthRequestMessage, AppMetricsHealthResponseMessage>(
+            var message = await _networkBus.PublishAndWaitForReplyAsync<AppMetricsHealthRequestMessage, AppMetricsHealthResponseMessage>(
                 new AppMetricsHealthRequestMessage(), ComboBoxSelectedItem.ServiceId);
 
-            Application.Current.Dispatcher.Invoke(() => Text = message == null ? "Received null!" : message.Report);
+            Application.Current.Dispatcher?.Invoke(() => Text = message == null ? "Received null!" : message.Report);
         });
         public ICommand MenuItemCopyCommand => new TaskCommand(_ =>
         {
@@ -41,8 +42,12 @@ namespace Aragas.QServer.GUI.ViewModels
             return Task.CompletedTask;
         });
 
+        private readonly IAsyncNetworkBus _networkBus;
+
         public ServicesViewModel()
         {
+            _networkBus = IoC.Get<IAsyncNetworkBus>();
+
             var token = CancellationToken.None;
             Task.Factory.StartNew(async () =>
             {
@@ -56,18 +61,18 @@ namespace Aragas.QServer.GUI.ViewModels
                             toRemove.Add(item);
                     }
                     foreach (var item in toRemove)
-                        Application.Current.Dispatcher.Invoke(() => ComboBoxItems.Remove(item));
+                        Application.Current.Dispatcher?.Invoke(() => ComboBoxItems.Remove(item));
 
-                    await BaseSingleton.Instance.PublishAsync(new ServicesPingMessage());
+                    await _networkBus.PublishAsync(new ServicesPingMessage());
                     await Task.Delay(2000, token);
                 }
             }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
-            BaseSingleton.Instance.Subscribe<ServicesPongMessage>(message =>
+            _networkBus.Subscribe<ServicesPongMessage>(message =>
             {
                 var item = ComboBoxItems.FirstOrDefault(i => i.ServiceType == message.ServiceType && i.ServiceId == message.ServiceId);
                 if (item == null)
-                    Application.Current.Dispatcher.Invoke(() => ComboBoxItems.Add(new Entry(message.ServiceType, message.ServiceId)));
+                    Application.Current.Dispatcher?.Invoke(() => ComboBoxItems.Add(new Entry(message.ServiceType, message.ServiceId)));
                 else
                     item.NotFoundCounter = 0;
             });

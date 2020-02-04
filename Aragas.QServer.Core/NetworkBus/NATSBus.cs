@@ -112,6 +112,7 @@ namespace Aragas.QServer.Core.NetworkBus
             var returnLock = new TaskCompletionSource<TMessageResponse>(TaskCreationOptions.RunContinuationsAsynchronously);
             using var sub = _connection.SubscribeAsync(GetSubject<TMessageResponse>(referenceId), (s, e) =>
             {
+                // TODO:
                 try
                 {
                     var response = new TMessageResponse();

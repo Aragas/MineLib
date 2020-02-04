@@ -23,8 +23,8 @@ namespace MineLib.Server.Heartbeat.BackgroundServices
 
         public MetricsHttpListenerMonitor(IMetricsRoot metricsRoot, IHealthRoot healthRoot, ILogger<MetricsHttpListenerMonitor> logger)
         {
-            _metricsRoot = metricsRoot;
-            _healthRoot = healthRoot;
+            _metricsRoot = metricsRoot ?? throw new ArgumentNullException(nameof(metricsRoot));
+            _healthRoot = healthRoot ?? throw new ArgumentNullException(nameof(healthRoot));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _httpListener = new HttpListener();
         }

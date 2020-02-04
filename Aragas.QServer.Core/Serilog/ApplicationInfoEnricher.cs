@@ -14,7 +14,7 @@ namespace Aragas.QServer.Core.Serilog
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static LogEventProperty CreateApplicationProperty(ILogEventPropertyFactory propertyFactory) =>
-            propertyFactory.CreateProperty(ApplicationPropertyName, Assembly.GetEntryAssembly().GetName().Name);
+            propertyFactory.CreateProperty(ApplicationPropertyName, Assembly.GetEntryAssembly()?.GetName().Name ?? "UNKNOWN");
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static LogEventProperty CreateApplicationUidProperty(ILogEventPropertyFactory propertyFactory, Guid applicationUid) =>
@@ -37,9 +37,9 @@ namespace Aragas.QServer.Core.Serilog
         }
 
         private LogEventProperty GetApplicationLogEventProperty(ILogEventPropertyFactory propertyFactory) =>
-            _cachedApplicationNameProperty ?? (_cachedApplicationNameProperty = CreateApplicationProperty(propertyFactory));
+            _cachedApplicationNameProperty ??= CreateApplicationProperty(propertyFactory);
 
         private LogEventProperty GetApplicationUidLogEventProperty(ILogEventPropertyFactory propertyFactory) =>
-            _cachedApplicationUidProperty ?? (_cachedApplicationUidProperty = CreateApplicationUidProperty(propertyFactory, _applicationUid));
+            _cachedApplicationUidProperty ??= CreateApplicationUidProperty(propertyFactory, _applicationUid);
     }
 }

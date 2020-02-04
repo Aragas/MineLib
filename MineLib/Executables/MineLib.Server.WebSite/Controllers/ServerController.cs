@@ -20,8 +20,8 @@ namespace MineLib.Server.Heartbeat.Controllers
 
         public ServerController(IClassicServersRepository classicServersRepository, ILogger<ServerController> logger)
         {
-            _classicServersRepository = classicServersRepository;
-            _logger = logger;
+            _classicServersRepository = classicServersRepository ?? throw new ArgumentNullException(nameof(classicServersRepository));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpGet, HttpPost]

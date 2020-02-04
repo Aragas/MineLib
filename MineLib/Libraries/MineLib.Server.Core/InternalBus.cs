@@ -1,4 +1,5 @@
 ﻿using Aragas.QServer.Core;
+using Aragas.QServer.Core.MBus;
 
 using MineLib.Core;
 using MineLib.Core.Anvil;
@@ -16,7 +17,7 @@ namespace MineLib.Server.Core
     public class InternalBus : BaseInternalBus
     {
         private static IMBus? _worldBus;
-        public static IMBus WorldBus => _worldBus ?? (_worldBus = new NatsMBus($"{Host}/minelib/server/worldbus", TimeSpan.FromMilliseconds(Timeout)));
+        public static IMBus WorldBus => _worldBus ??= new NatsMBus($"{Host}/minelib/server/worldbus", TimeSpan.FromMilliseconds(Timeout));
         public static object? GetWorldInfo()
         {
             // Spawn position (0, 0, 0)
@@ -51,7 +52,7 @@ namespace MineLib.Server.Core
         }
 
         private static IMBus? _entityBus;
-        public static IMBus EntityBus => _entityBus ?? (_entityBus = new NatsMBus($"{Host}/minelib/server/entitybus"));
+        public static IMBus EntityBus => _entityBus ??= new NatsMBus($"{Host}/minelib/server/entitybus");
         public static int? GetEntityID(IMBus? entityBus = null)
         {
             return HandleResponse<int?, EntityIDRequest, EntityIDResponse>(entityBus ?? EntityBus,
@@ -60,7 +61,7 @@ namespace MineLib.Server.Core
         }
 
         private static IMBus? _playerBus;
-        public static IMBus PlayerBus => _playerBus ?? (_playerBus = new NatsMBus($"{Host}/minelib/server/playerbus"));
+        public static IMBus PlayerBus => _playerBus ??= new NatsMBus($"{Host}/minelib/server/playerbus");
         public static IPlayer? GetPlayerData(string username, IMBus? playerBus = null)
         {
             return HandleResponse<IPlayer?, GetPlayerDataRequestPacket, GetPlayerDataResponsePacket>(playerBus ?? PlayerBus,
@@ -89,7 +90,7 @@ namespace MineLib.Server.Core
 
 
         private static IMBus? _forgeBus;
-        public static IMBus ForgeBus => _forgeBus ?? (_forgeBus = new NatsMBus($"{Host}/minelib/server/forgebus"));
+        public static IMBus ForgeBus => _forgeBus ??= new NatsMBus($"{Host}/minelib/server/forgebus");
 
 
         public static int SquareSize(int radius) => (int) Math.Pow(Math.Pow(radius, 2) + 1, 2);

@@ -1,5 +1,4 @@
 ﻿using Aragas.Network.Data;
-using Aragas.Network.IO;
 using Aragas.Network.Packets;
 
 using Aragas.QServer.Core.Packets;

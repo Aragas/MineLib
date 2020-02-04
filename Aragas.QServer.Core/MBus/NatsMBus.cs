@@ -6,7 +6,7 @@ using NATS.Client;
 using System;
 using System.Threading.Tasks;
 
-namespace Aragas.QServer.Core
+namespace Aragas.QServer.Core.MBus
 {
     public sealed class NatsMBus : IMBus
     {

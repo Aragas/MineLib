@@ -1,5 +1,6 @@
 ﻿using Aragas.QServer.Core.NetworkBus;
 using Aragas.QServer.Core.NetworkBus.Messages;
+
 using Nito.AsyncEx;
 
 using System;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Aragas.QServer.Core.Extensions
 {
-    public static class INetworkBusExtensions
+    public static class NetworkBusExtensions
     {
         public static IDisposable SubscribeAndReply<TMessageRequest>(this INetworkBus bus, Func<TMessageRequest, Task<IMessage>> func, Guid? referenceId)
             where TMessageRequest : notnull, IMessage, new()
@@ -83,9 +84,9 @@ namespace Aragas.QServer.Core.Extensions
         {
             using var firstResponseCancellationTokenSource = new CancellationTokenSource(timeout);
             var firstResponseLock = new TaskCompletionSource<ExclusiveResponseMessage<TMessageRequest>>(TaskCreationOptions.RunContinuationsAsynchronously);
-            using var _ = bus.Subscribe<ExclusiveResponseMessage<TMessageRequest>>(message =>
+            using var _ = bus.Subscribe<ExclusiveResponseMessage<TMessageRequest>>(msg =>
             {
-                firstResponseLock.SetResult(message);
+                firstResponseLock.SetResult(msg);
             }, null);
             bus.Publish(new ExclusiveRequestMessage<TMessageRequest>(), null);
 
@@ -95,9 +96,9 @@ namespace Aragas.QServer.Core.Extensions
 
             using var responseCancellationTokenSource = new CancellationTokenSource(timeout);
             var responseLock = new TaskCompletionSource<ExclusiveAcceptedResponseMessage<TMessageResponse>>(TaskCreationOptions.RunContinuationsAsynchronously);
-            using var __ = bus.Subscribe<ExclusiveAcceptedResponseMessage<TMessageResponse>>(message =>
+            using var __ = bus.Subscribe<ExclusiveAcceptedResponseMessage<TMessageResponse>>(msg =>
             {
-                responseLock.SetResult(message);
+                responseLock.SetResult(msg);
             }, firstResponse.ReferenceId);
             bus.Publish(new ExclusiveAcceptedRequestMessage<TMessageRequest>(message), firstResponse.ReferenceId);
 
@@ -108,15 +109,15 @@ namespace Aragas.QServer.Core.Extensions
             where TMessageRequest : notnull, IMessage, new()
             where TMessageResponse : notnull, IMessage, new()
         {
-            var disposable1 = bus.Subscribe<ExclusiveRequestMessage<TMessageRequest>>(message =>
+            var disposable1 = bus.Subscribe<ExclusiveRequestMessage<TMessageRequest>>(msg =>
             {
-                if (canReply(message.Request))
+                if (canReply(msg.Request))
                     bus.Publish(new ExclusiveResponseMessage<TMessageRequest>(requestReferenceId), null);
             }, null);
 
-            var disposable2 = bus.SubscribeAndReply<ExclusiveAcceptedRequestMessage<TMessageRequest>>(message =>
+            var disposable2 = bus.SubscribeAndReply<ExclusiveAcceptedRequestMessage<TMessageRequest>>(msg =>
             {
-                return new ExclusiveAcceptedResponseMessage<TMessageResponse>(func(message.Request));
+                return new ExclusiveAcceptedResponseMessage<TMessageResponse>(func(msg.Request));
             }, requestReferenceId);
 
             return new CompositeDisposable(disposable1, disposable2);

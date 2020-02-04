@@ -36,10 +36,7 @@ namespace MineLib.Protocol.Classic.Server
             NetworkBus = networkBus;
 
             PlayerId = playerId;
-            Stream = new ProtocolClassicTransmission()
-            {
-                PlayerId = playerId
-            };
+            Stream = new ProtocolClassicTransmission(networkBus, playerId);
             new Thread(PacketReceiver).Start();
         }
 

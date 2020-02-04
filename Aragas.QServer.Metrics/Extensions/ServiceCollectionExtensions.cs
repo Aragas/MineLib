@@ -7,9 +7,6 @@ using App.Metrics.Health.Formatters.Json;
 using Aragas.QServer.Health;
 using Aragas.QServer.Metrics;
 
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-
 using System;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -52,9 +49,9 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IServiceCollection AddDefaultMetrics(this IServiceCollection services)
         {
-            services.AddHostedService(sp => new StandardMetricsService(sp.GetRequiredService<IMetrics>(), sp.GetRequiredService<ILogger<StandardMetricsService>>()));
-            services.AddHostedService(sp => new CpuUsageMetricsService(sp.GetRequiredService<IMetrics>(), sp.GetRequiredService<ILogger<CpuUsageMetricsService>>()));
-            services.AddHostedService(sp => new MemoryUsageMetricsService(sp.GetRequiredService<IMetrics>(), sp.GetRequiredService<ILogger<MemoryUsageMetricsService>>()));
+            services.AddHostedService<StandardMetricsService>();
+            services.AddHostedService<CpuUsageMetricsService>();
+            services.AddHostedService<MemoryUsageMetricsService>();
 
             return services;
         }

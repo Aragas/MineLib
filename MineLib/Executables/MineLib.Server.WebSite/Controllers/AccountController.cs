@@ -7,6 +7,7 @@ using MineLib.Server.Heartbeat.Models;
 using MineLib.Server.Heartbeat.Models.AccountViewModels;
 using MineLib.Server.Heartbeat.Services;
 
+using System;
 using System.Threading.Tasks;
 
 namespace MineLib.Server.Heartbeat.Controllers
@@ -21,10 +22,10 @@ namespace MineLib.Server.Heartbeat.Controllers
 
         public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSender emailSender, ILogger<AccountController> logger)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _emailSender = emailSender;
-            _logger = logger;
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
+            _emailSender = emailSender ?? throw new ArgumentNullException(nameof(emailSender));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         // GET: /Account/Login

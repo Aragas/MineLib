@@ -14,7 +14,7 @@ namespace Aragas.QServer.Core.Serilog
         private static LogEventProperty CreateLevelProperty(ILogEventPropertyFactory propertyFactory, LogEventLevel level) =>
             propertyFactory.CreateProperty(LevelPropertyName, level.ToString());
 
-        private Dictionary<LogEventLevel, LogEventProperty> _cachedLevelProperty = new Dictionary<LogEventLevel, LogEventProperty>();
+        private readonly Dictionary<LogEventLevel, LogEventProperty> _cachedLevelProperty = new Dictionary<LogEventLevel, LogEventProperty>();
 
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {

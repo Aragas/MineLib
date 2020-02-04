@@ -1,14 +1,19 @@
 ﻿using Aragas.Network.IO;
+using Aragas.QServer.Core.NetworkBus;
 using Aragas.QServer.Core.Protocol;
 
 using MineLib.Protocol.Classic.Packets;
 using MineLib.Protocol.Classic.Protocol.Factory;
 
+using System;
+
 namespace MineLib.Protocol.Classic.Protocol
 {
     public class ProtocolClassicTransmission : SocketPacketINetworkBusTransmission<ClassicPacket, byte, StandardSerializer, StandardDeserializer>
     {
-        private ClientClassicFactory Factory { get; } = new ClientClassicFactory();
+        public new ClientClassicFactory Factory = new ClientClassicFactory();
+
+        public ProtocolClassicTransmission(IAsyncNetworkBus networkBus, Guid playerId) : base(networkBus, playerId) { }
 
         public override ClassicPacket? ReadPacket()
         {
@@ -22,7 +27,6 @@ namespace MineLib.Protocol.Classic.Protocol
             if (packet != null)
             {
                 packet.Deserialize(deserializer);
-
 
                 return packet;
             }

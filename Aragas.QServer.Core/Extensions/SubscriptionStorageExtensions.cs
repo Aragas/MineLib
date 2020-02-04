@@ -1,9 +1,10 @@
-﻿using Aragas.QServer.Core.NetworkBus.Handlers;
+﻿using Aragas.QServer.Core.NetworkBus;
+using Aragas.QServer.Core.NetworkBus.Handlers;
 using Aragas.QServer.Core.NetworkBus.Messages;
 
 using System;
 
-namespace Aragas.QServer.Core.NetworkBus
+namespace Aragas.QServer.Core.Extensions
 {
     public static class SubscriptionStorageExtensions
     {

@@ -31,14 +31,14 @@ namespace Aragas.Network.IO
         public virtual bool IsConnected => Socket?.Connected == true;
         public override long AvailableData => Socket?.Available ?? -1;
 
-        public BasePacketFactory<TPacketType, TPacketIDType>? Factory { get; set; }
+        public BasePacketFactory<TPacketType, TPacketIDType>? DefaultFactory { get; set; }
 
         protected SocketPacketTransmission() : base() { }
         protected SocketPacketTransmission(Socket socket, Stream? socketStream = null, BasePacketFactory<TPacketType, TPacketIDType>? factory = null)
             : base(socketStream ?? new SocketClientStream(socket))
         {
             Socket = socket;
-            Factory = factory;
+            DefaultFactory = factory;
         }
 
         public virtual void Connect(string ip, ushort port) { Socket.Connect(ip, port); }
@@ -69,14 +69,14 @@ namespace Aragas.Network.IO
         }
         public override TPacketType? ReadPacket()
         {
-            if (Factory == null)
-                throw new NullReferenceException($"Property {nameof(Factory)} is null. Provide an implementation or override {nameof(ReadPacket)} with your implementation.");
+            if (DefaultFactory == null)
+                throw new NullReferenceException($"Property {nameof(DefaultFactory)} is null. Provide an implementation or override {nameof(ReadPacket)} with your implementation.");
 
             if (Socket.Available > 0)
             {
                 using var deserializer = StreamDeserializer.Create<TDeserializer>(Stream);
                 var id = deserializer.Read<TPacketIDType>();
-                var packet = Factory.Create(id);
+                var packet = DefaultFactory.Create(id);
                 if (packet != null)
                 {
                     packet.Deserialize(deserializer);

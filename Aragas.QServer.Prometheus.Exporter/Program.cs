@@ -41,14 +41,14 @@ namespace Aragas.QServer.Prometheus.Exporter
                 webBuilder
                     .Configure(app =>
                     {
-                        var networkBus = app.ApplicationServices.GetRequiredService<IAsyncNetworkBus>();
-                        var pingService = app.ApplicationServices.GetRequiredService<IPingService>();
-
                         app.UseRouting();
                         app.UseEndpoints(endpoints =>
                         {
                             endpoints.MapGet("/metrics", async context =>
                             {
+                                var networkBus = context.RequestServices.GetRequiredService<IAsyncNetworkBus>();
+                                var pingService = context.RequestServices.GetRequiredService<IPingService>();
+
                                 var sb = new StringBuilder();
                                 foreach (var service in pingService.Services)
                                 {

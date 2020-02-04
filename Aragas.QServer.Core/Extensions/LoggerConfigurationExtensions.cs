@@ -14,8 +14,7 @@ namespace Serilog
             return loggerConfiguration
                 .Enrich.WithExceptionDetails()
                 .Enrich.WithApplicationInfo(applicationUid)
-                .Enrich.WithLogLevel()
-                ;
+                .Enrich.WithLogLevel();
         }
 
         public static LoggerConfiguration WithApplicationInfo(this LoggerEnrichmentConfiguration enrichmentConfiguration, Guid applicationUid)

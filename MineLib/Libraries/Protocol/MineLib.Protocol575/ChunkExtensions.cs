@@ -1,15 +1,18 @@
-﻿using System;
-using System.Buffers;
-using System.Linq;
-
-using Aragas.Network.Data;
+﻿using Aragas.Network.Data;
 using Aragas.Network.IO;
+
+using fNbt;
+
 using Ionic.Zlib;
+
 using MineLib.Core;
 using MineLib.Core.Anvil;
 using MineLib.Core.Extensions;
-
 using MineLib.Protocol575.Packets.Client.Play;
+
+using System;
+using System.Buffers;
+using System.Linq;
 
 namespace MineLib.Protocol5.Extensions
 {
@@ -195,7 +198,7 @@ namespace MineLib.Protocol5.Extensions
             return serializer.GetData();
         }
 
-        private static fNbt.NbtCompound GetHeightMap(this in Chunk chunk) => new fNbt.NbtCompound("") { new fNbt.Tags.NbtLongArray("MOTION_BLOCKING", compute_height_map(in chunk)) };
+        private static NbtCompound GetHeightMap(this in Chunk chunk) => new fNbt.NbtCompound("") { new NbtLongArray("MOTION_BLOCKING", compute_height_map(in chunk)) };
         private static long[] compute_height_map(in Chunk chunk)
         {
             var height_map = new long[256];

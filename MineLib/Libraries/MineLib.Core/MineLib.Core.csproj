@@ -9,8 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="fNbt" Version="0.6.5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\Third Party\Aragas.Network-2\src\Aragas.Network-2.Standard\Aragas.Network-2.csproj" />
-    <ProjectReference Include="$(SolutionDir)\Third Party\NiclasOlofsson-fNbt\fNbt\NiclasOlofsson-fNbt.csproj" />
   </ItemGroup>
 
 </Project>

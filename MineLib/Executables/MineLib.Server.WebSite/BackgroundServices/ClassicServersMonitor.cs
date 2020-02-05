@@ -1,14 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
-using MineLib.Server.Heartbeat.Infrastructure.Data;
-
+using MineLib.Server.WebSite.Repositories;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MineLib.Server.Heartbeat.BackgroundServices
+namespace MineLib.Server.WebSite.BackgroundServices
 {
     public class ClassicServersMonitor : BackgroundService
     {

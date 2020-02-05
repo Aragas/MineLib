@@ -13,17 +13,19 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-using MineLib.Server.Heartbeat.BackgroundServices;
-using MineLib.Server.Heartbeat.Infrastructure.Data;
-using MineLib.Server.Heartbeat.Models;
-using MineLib.Server.Heartbeat.Services;
+using MineLib.Server.WebSite.BackgroundServices;
+using MineLib.Server.WebSite.Data;
+using MineLib.Server.WebSite.Extensions;
+using MineLib.Server.WebSite.Models;
+using MineLib.Server.WebSite.Repositories;
+using MineLib.Server.WebSite.Services;
 
 using Serilog;
 
 using System;
 using System.Threading.Tasks;
 
-namespace MineLib.Server.Heartbeat
+namespace MineLib.Server.WebSite
 {
     public sealed class Program
     {
@@ -50,7 +52,7 @@ namespace MineLib.Server.Heartbeat
 
                 await host.RunAsync();
             }
-            catch (Exception ex) when (ex is Exception)
+            catch (Exception ex)
             {
                 Log.Fatal(ex, "{TypeName}: Fatal exception.", typeof(Program).FullName);
                 throw;

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 using System;
 
-namespace MineLib.Server.Heartbeat.Views.Manage
+namespace MineLib.Server.WebSite.Views.Manage
 {
     public static class ManageNavPages
     {

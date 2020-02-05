@@ -2,7 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace MineLib.Server.Heartbeat.Models.ManageViewModels
+namespace MineLib.Server.WebSite.Models.ManageViewModels
 {
     public class EnableAuthenticatorViewModel
     {

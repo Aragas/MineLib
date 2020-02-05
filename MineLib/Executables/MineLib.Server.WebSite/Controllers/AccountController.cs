@@ -3,14 +3,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-using MineLib.Server.Heartbeat.Models;
-using MineLib.Server.Heartbeat.Models.AccountViewModels;
-using MineLib.Server.Heartbeat.Services;
+using MineLib.Server.WebSite.Models;
+using MineLib.Server.WebSite.Models.AccountViewModels;
+using MineLib.Server.WebSite.Services;
 
 using System;
 using System.Threading.Tasks;
 
-namespace MineLib.Server.Heartbeat.Controllers
+namespace MineLib.Server.WebSite.Controllers
 {
     [Authorize]
     public sealed class AccountController : Controller
@@ -270,7 +270,7 @@ namespace MineLib.Server.Heartbeat.Controllers
                 else if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User with ID {UserId} account locked out.", user.Id);
-                    return RedirectToAction("Lockout");
+                    return RedirectToAction(nameof(Lockout));
                 }
                 else
                 {
@@ -334,7 +334,7 @@ namespace MineLib.Server.Heartbeat.Controllers
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User with ID {UserId} account locked out.", user.Id);
-                    return RedirectToAction("Lockout");
+                    return RedirectToAction(nameof(Lockout));
                 }
                 else
                 {
@@ -344,6 +344,13 @@ namespace MineLib.Server.Heartbeat.Controllers
                 }
             }
             return View("Error");
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Lockout()
+        {
+            return View();
         }
 
 
@@ -447,7 +454,7 @@ namespace MineLib.Server.Heartbeat.Controllers
             if (result.IsLockedOut)
             {
                 _logger.LogInformation("{Type}: '{Email}' account locked out (Code Verification).", GetType().FullName, user.Email);
-                return View("Lockout");
+                return View(nameof(Lockout));
             }
             else
             {
@@ -496,7 +503,7 @@ namespace MineLib.Server.Heartbeat.Controllers
             if (result.IsLockedOut)
             {
                 _logger.LogInformation("{Type}: '{Email}' account locked out (2FA Verification).", GetType().FullName, user.Email);
-                return View("Lockout");
+                return View(nameof(Lockout));
             }
             else
             {

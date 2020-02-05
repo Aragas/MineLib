@@ -29,7 +29,7 @@ namespace Aragas.QServer.Core.IO
             var packetLength = Read<VarInt>();
             var dataLength = Read<VarInt>();
             var actualDataLength = packetLength - new VarInt(dataLength).Size;
-            var actualData = Read<byte[]>(Array.Empty<byte>(), actualDataLength);
+            var actualData = Read(Array.Empty<byte>(), actualDataLength);
 
             var data = dataLength == 0 ? actualData : ZlibStream.UncompressBuffer(actualData);
             Stream = new MemoryStream(data);

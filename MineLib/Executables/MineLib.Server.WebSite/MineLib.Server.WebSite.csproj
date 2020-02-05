@@ -9,13 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\ApiViewModels\**" />
-    <Content Remove="Models\ApiViewModels\**" />
-    <EmbeddedResource Remove="Models\ApiViewModels\**" />
-    <None Remove="Models\ApiViewModels\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="$(SolutionDir)\loggerconfig.json" Link="loggerconfig.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -23,6 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="App.Metrics.AspNetCore.Mvc" Version="4.0.0-preview1.0.3" />
+    <PackageReference Include="BuildBundlerMinifier" Version="3.2.435" />
     <PackageReference Include="MailKit" Version="2.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.1" />

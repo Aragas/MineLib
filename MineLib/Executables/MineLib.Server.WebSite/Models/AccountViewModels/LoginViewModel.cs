@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MineLib.Server.Heartbeat.Models.AccountViewModels
+namespace MineLib.Server.WebSite.Models.AccountViewModels
 {
     public sealed class LoginViewModel
     {

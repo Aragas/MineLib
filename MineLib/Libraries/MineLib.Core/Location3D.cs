@@ -19,8 +19,12 @@ namespace MineLib.Core
         public Location3D(int x, int y, int z) { X = x; Y = y; Z = z; }
         public Location3D(in Location3D location) { X = location.X; Y = location.Y; Z = location.Z; }
 
+        public static Location3D FromLong(in ulong value) => new Location3D((int) (value >> 38), (int) (value & 0b11111111_1111), (int) (value << 26 >> 38));
+        public ulong ToLong() => (((ulong) X & 0b11111111_11111111_11111111_11) << 38) | (((ulong) Z & 0b11111111_11111111_11111111_11) << 12) | ((ulong) Y & 0b11111111_1111);
+        /*
         public static Location3D FromLong(in ulong value) => new Location3D((int) (value >> 38), (int) (value >> 26) & 0xFFF, (int) value << 38 >> 38);
         public ulong ToLong() => (((ulong) X & 0b1111111_11111111_1111111_11) << 38) | (((ulong) Y & 0b11111111_1111) << 26) | ((ulong) Z & 0b11111111_11111111_11111111_11);
+        */
 
         /// <summary>
         /// Converts this Location to a string.

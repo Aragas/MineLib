@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-using MineLib.Server.Heartbeat.Models;
-using MineLib.Server.Heartbeat.Models.ManageViewModels;
-using MineLib.Server.Heartbeat.Services;
+using MineLib.Server.WebSite.Models;
+using MineLib.Server.WebSite.Models.ManageViewModels;
+using MineLib.Server.WebSite.Services;
 
 using System;
 using System.Linq;
@@ -13,7 +13,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
-namespace MineLib.Server.Heartbeat.Controllers
+namespace MineLib.Server.WebSite.Controllers
 {
     [Authorize]
     public sealed class ManageController : Controller

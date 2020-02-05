@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-
-using MineLib.Server.Heartbeat.Infrastructure.Data;
-
+using MineLib.Server.WebSite.Models.ApiViewModels;
+using MineLib.Server.WebSite.Repositories;
 using System;
 using System.Linq;
 using System.Net;
 
-namespace MineLib.Server.Heartbeat.Controllers
+namespace MineLib.Server.WebSite.Controllers
 {
     public sealed class ApiController : Controller
     {
@@ -38,7 +37,7 @@ namespace MineLib.Server.Heartbeat.Controllers
                     return s;
                 });
 
-            return View(servers);
+            return View("Servers", new ServerViewModel { Servers = servers });
         }
 
         public IActionResult Servers()
@@ -54,7 +53,7 @@ namespace MineLib.Server.Heartbeat.Controllers
                     return s;
                 });
 
-            return View(servers);
+            return View(new ServerViewModel { Servers = servers });
         }
     }
 }

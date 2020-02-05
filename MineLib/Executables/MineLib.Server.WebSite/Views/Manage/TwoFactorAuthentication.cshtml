@@ -1,4 +1,4 @@
-﻿@model TwoFactorAuthenticationViewModel
+﻿@model MineLib.Server.WebSite.Models.ManageViewModels.TwoFactorAuthenticationViewModel
 @{
     ViewData["Title"] = "Two-factor authentication";
     ViewData.AddActivePage(ManageNavPages.TwoFactorAuthentication);
@@ -29,7 +29,7 @@
         </div>
     }
 
-    <a asp-action="Disable2FAWarning" class="btn btn-default">Disable 2FA</a>
+    <a asp-action="DisableAuthenticatorWarning" class="btn btn-default">Disable 2FA</a>
     <a asp-action="GenerateRecoveryCodesWarning" class="btn btn-default">Reset recovery codes</a>
 }
 

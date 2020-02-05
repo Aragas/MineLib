@@ -59,7 +59,7 @@ namespace MineLib.Server.Proxy.BackgroundServices
                 finally
                 {
                     // Wait until the task completes or the stop token triggers
-                    await Task.WhenAny(_hearthbeat, Task.Delay(System.Threading.Timeout.Infinite, cancellationToken));
+                    await Task.WhenAny(_hearthbeat, Task.Delay(Timeout.Infinite, cancellationToken));
                 }
             }
 

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MineLib.Server.Heartbeat.Models.ManageViewModels
+namespace MineLib.Server.WebSite.Models.ManageViewModels
 {
     public sealed class SetPasswordViewModel
     {

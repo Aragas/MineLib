@@ -2,6 +2,7 @@ using Aragas.QServer.Core;
 using Aragas.QServer.Core.Data;
 using Aragas.QServer.Core.NetworkBus;
 using Aragas.QServer.Core.NetworkBus.Messages;
+using Aragas.QServer.Prometheus.Exporter.Services;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

@@ -1,16 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
+﻿using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-
-using MineLib.Server.Heartbeat.Infrastructure.Data;
-
+using MineLib.Server.WebSite.Models;
+using MineLib.Server.WebSite.Repositories;
 using System;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace MineLib.Server.Heartbeat.Controllers
+namespace MineLib.Server.WebSite.Controllers
 {
     [ApiController, Route("[controller]/[action]")]
     public sealed class ServerController : ControllerBase

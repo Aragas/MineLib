@@ -1,4 +1,4 @@
-﻿using MineLib.Server.Heartbeat.Serilog;
+﻿using MineLib.Server.WebSite.Serilog;
 
 using Serilog;
 using Serilog.Configuration;
@@ -6,7 +6,7 @@ using Serilog.Exceptions;
 
 using System;
 
-namespace Serilog
+namespace MineLib.Server.WebSite.Extensions
 {
     // Aragas.QServer.Core
     public static class LoggerConfigurationExtensions

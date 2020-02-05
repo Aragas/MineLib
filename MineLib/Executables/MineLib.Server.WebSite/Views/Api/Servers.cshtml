@@ -1,113 +1,109 @@
 ﻿@inject SignInManager<User> SignInManager
 
-@model IEnumerable<ClassicServer>
+
+@model ServerViewModel
 
 @{
     ViewData["Title"] = "Servers";
+    var dummy = Model.Servers.FirstOrDefault();
 }
 
 <h2>Classic Servers</h2>
 @if (SignInManager.IsSignedIn(User))
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.IP)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Port)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Hash)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Salt)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Players)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.MaxPlayers)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Added)
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => dummy.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => dummy.IP)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => dummy.Port)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => dummy.Hash)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => dummy.Players)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => dummy.MaxPlayers)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => dummy.Added)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Servers)
             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.IP)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Port)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Hash)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Salt)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Players)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.MaxPlayers)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Added)
-                    </td>
-                </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name) | <a href="mc://@item.IP:@item.Port/@Model.User/@item.Hash">Direct link</a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IP)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Port)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Hash)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Players)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaxPlayers)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Added)
+            </td>
+        </tr>
             }
-        </tbody>
-    </table>
+    </tbody>
+</table>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Players)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.MaxPlayers)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Added)
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => dummy.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => dummy.Players)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => dummy.MaxPlayers)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => dummy.Added)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Servers)
             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Players)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.MaxPlayers)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Added)
-                    </td>
-                </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Players)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaxPlayers)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Added)
+            </td>
+        </tr>
             }
-        </tbody>
-    </table>
+    </tbody>
+</table>
 }

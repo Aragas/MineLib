@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace MineLib.Server.Heartbeat.Controllers
+namespace MineLib.Server.WebSite.Controllers
 {
     public sealed class HomeController : Controller
     {

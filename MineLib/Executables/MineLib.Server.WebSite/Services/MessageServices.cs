@@ -8,7 +8,7 @@ using MimeKit.Text;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
-namespace MineLib.Server.Heartbeat.Services
+namespace MineLib.Server.WebSite.Services
 {
     public class MailKitOptions
     {

@@ -7,7 +7,6 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 
 namespace MineLib.Server.Proxy.BackgroundServices
 {
@@ -22,23 +21,22 @@ namespace MineLib.Server.Proxy.BackgroundServices
         private readonly ServerInfo _serverInfo;
         private readonly ClassicServerInfo _classicServerInfo;
         private readonly ILogger _logger;
-        private readonly BeatType beatType;
-        private readonly HttpClient _httpClient;
+        private readonly BeatType _beatType;
+        private readonly HttpClient _httpClient = new HttpClient();
 
-        public Heartbeat(BeatType bType, ushort port, IOptions<MineLibOptions> mineLibOptions, ServerInfo serverInfo, ClassicServerInfo classicServerInfo, ILogger<Heartbeat> logger)
+        public Heartbeat(BeatType beatType, ushort port, IOptions<MineLibOptions> mineLibOptions, ServerInfo serverInfo, ClassicServerInfo classicServerInfo, ILogger<Heartbeat> logger)
         {
             _port = port;
             _mineLibOptions = mineLibOptions.Value;
             _serverInfo = serverInfo;
             _classicServerInfo = classicServerInfo;
             _logger = logger;
-            beatType = bType;
-            _httpClient = new HttpClient();
+            _beatType = beatType;
         }
 
         public bool Beat(bool initial)
         {
-            if (beatType == BeatType.Minecraft)
+            if (_beatType == BeatType.Minecraft)
             {
                 try
                 {

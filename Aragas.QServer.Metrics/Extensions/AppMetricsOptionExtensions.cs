@@ -17,7 +17,7 @@ namespace App.Metrics
 
             return options;
         }
-        public static MetricsOptions AddUUIDTag(this MetricsOptions options, Guid uuid)
+        public static MetricsOptions AddUuidTag(this MetricsOptions options, Guid uuid)
         {
             options.GlobalTags["uuid"] = uuid.ToString();
 

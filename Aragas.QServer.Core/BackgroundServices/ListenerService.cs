@@ -63,13 +63,9 @@ namespace Aragas.QServer.Core.BackgroundServices
                     var client = (TConnection) ClientFactory(ServiceProvider, new object [] { socket });
                     OnClientConnected(client);
                 }
-                catch (Exception ex) when (ex is SocketException)
+                catch (SocketException ex)
                 {
                     Logger.LogWarning(ex, "{TypeName}: SocketException.", GetType().Name);
-                }
-                catch (Exception)
-                {
-                    throw;
                 }
             }
         }

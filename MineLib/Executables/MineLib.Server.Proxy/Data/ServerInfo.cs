@@ -13,6 +13,8 @@ namespace MineLib.Server.Proxy.Data
 
     public class ClassicServerInfo
     {
+        private const string SaltChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-.~";
+
         /// <summary> Secret string used to verify players' names.
         /// Randomly generated at startup, and can be randomized by "/reload salt"
         /// Known only to this server and to heartbeat server(s). </summary>
@@ -20,11 +22,10 @@ namespace MineLib.Server.Proxy.Data
 
         public ClassicServerInfo()
         {
-            const string SALT_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-.~";
             var rand = new Random();
             var sb = new StringBuilder(0);
             for (var i = 0; i < 16; i++)
-                sb.Append(SALT_CHARS[rand.Next(0, SALT_CHARS.Length - 1)]);
+                sb.Append(SaltChars[rand.Next(0, SaltChars.Length - 1)]);
             Salt = sb.ToString();
         }
     }

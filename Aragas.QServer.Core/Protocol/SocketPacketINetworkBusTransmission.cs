@@ -15,19 +15,7 @@ namespace Aragas.QServer.Core.Protocol
         where TSerializer : StreamSerializer, new()
         where TDeserializer : StreamDeserializer, new()
     {
-        private Guid? _playerId;
-        public Guid PlayerId
-        {
-            get => _playerId!.Value; // Because we can't create a Generic with new() with properties
-            set
-            {
-                if (_playerId != null)
-                    throw new InvalidOperationException("You can't set Socket once it's initialized");
-                _playerId = value;
-
-                Events.Add(_networkBus.Subscribe<PlayerDataToBusMessage>(message => DataReceivedQueue.Enqueue(message.Data), PlayerId));
-            }
-        }
+        public Guid PlayerId { get; }
 
         private ConcurrentQueue<byte[]> DataReceivedQueue { get; } = new ConcurrentQueue<byte[]>();
 

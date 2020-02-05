@@ -7,23 +7,24 @@ using System.Reactive.Disposables;
 
 namespace Aragas.QServer.Core.NetworkBus
 {
-    public class SubscriptionStorage : IDisposable
+    public sealed class SubscriptionStorage : IDisposable
     {
-        protected CompositeDisposable Events { get; } = new CompositeDisposable();
-        protected IAsyncNetworkBus NetworkBus { get; }
-        protected IServiceProvider ServiceProvider { get; }
+        private CompositeDisposable Events { get; } = new CompositeDisposable();
+
+        private readonly IServiceProvider _serviceProvider;
+        private readonly IAsyncNetworkBus _networkBus;
 
         public SubscriptionStorage(IServiceProvider serviceProvider, IAsyncNetworkBus networkBus)
         {
-            ServiceProvider = serviceProvider;
-            NetworkBus = networkBus;
+            _serviceProvider = serviceProvider;
+            _networkBus = networkBus;
         }
 
         public void Handle<TMessageHandler, TMessageRequest>(Guid? referenceId = null, TMessageHandler? messageHandler = null)
             where TMessageHandler : class, IMessageHandler<TMessageRequest>
             where TMessageRequest : IMessage, new()
         {
-            var handler = messageHandler ?? ActivatorUtilities.GetServiceOrCreateInstance<TMessageHandler>(ServiceProvider);
+            var handler = messageHandler ?? ActivatorUtilities.GetServiceOrCreateInstance<TMessageHandler>(_serviceProvider);
             RegisterHandler(handler, referenceId);
         }
         public void Handle<TMessageHandler, TMessageRequest, TMessageResponse>(Guid? referenceId = null, TMessageHandler? messageHandler = null)
@@ -31,7 +32,7 @@ namespace Aragas.QServer.Core.NetworkBus
             where TMessageRequest : IMessage, new()
             where TMessageResponse : IMessage, new()
         {
-            var handler = messageHandler ?? ActivatorUtilities.GetServiceOrCreateInstance<TMessageHandler>(ServiceProvider);
+            var handler = messageHandler ?? ActivatorUtilities.GetServiceOrCreateInstance<TMessageHandler>(_serviceProvider);
             RegisterHandler(handler, referenceId);
         }
         public void EnumerableHandle<TEnumerableMessageHandler, TMessageRequest, TMessageResponse>(Guid? referenceId = null, TEnumerableMessageHandler? messageHandler = null)
@@ -39,7 +40,7 @@ namespace Aragas.QServer.Core.NetworkBus
             where TMessageRequest : IMessage, new()
             where TMessageResponse : IEnumerableMessage, new()
         {
-            var handler = messageHandler ?? ActivatorUtilities.GetServiceOrCreateInstance<TEnumerableMessageHandler>(ServiceProvider);
+            var handler = messageHandler ?? ActivatorUtilities.GetServiceOrCreateInstance<TEnumerableMessageHandler>(_serviceProvider);
             RegisterEnumerableHandler(handler, referenceId);
         }
         public void ExclusiveHandle<TExclusiveMessageHandler, TMessageRequest, TMessageResponse>(Guid referenceId, TExclusiveMessageHandler? messageHandler = null)
@@ -47,14 +48,14 @@ namespace Aragas.QServer.Core.NetworkBus
             where TMessageRequest : IMessage, new()
             where TMessageResponse : IMessage, new()
         {
-            var handler = messageHandler ?? ActivatorUtilities.GetServiceOrCreateInstance<TExclusiveMessageHandler>(ServiceProvider);
+            var handler = messageHandler ?? ActivatorUtilities.GetServiceOrCreateInstance<TExclusiveMessageHandler>(_serviceProvider);
             RegisterExclusiveHandler(handler, referenceId);
         }
         public void Receive<TMessageReceiver, TMessageRequest>(Guid? referenceId = null, TMessageReceiver? messageReceiver = null)
             where TMessageReceiver : class, IMessageReceiver<TMessageRequest>
             where TMessageRequest : IMessage, new()
         {
-            var receiver = messageReceiver ?? ActivatorUtilities.CreateInstance<TMessageReceiver>(ServiceProvider);
+            var receiver = messageReceiver ?? ActivatorUtilities.CreateInstance<TMessageReceiver>(_serviceProvider);
             RegisterReceiver(receiver, referenceId);
         }
 
@@ -62,47 +63,34 @@ namespace Aragas.QServer.Core.NetworkBus
             where TMessageRequest : notnull, IMessage, new()
             where TMessageResponse : notnull, IMessage, new()
         {
-            Events.Add(NetworkBus.RegisterHandler(handler, referenceId));
+            Events.Add(_networkBus.RegisterHandler(handler, referenceId));
         }
         public void RegisterHandler<TMessageRequest>(IMessageHandler<TMessageRequest> handler, Guid? referenceId = null)
             where TMessageRequest : IMessage, new()
         {
-            Events.Add(NetworkBus.RegisterHandler(handler, referenceId));
+            Events.Add(_networkBus.RegisterHandler(handler, referenceId));
         }
         public void RegisterEnumerableHandler<TMessageRequest, TMessageResponse>(IEnumerableMessageHandler<TMessageRequest, TMessageResponse> handler, Guid? referenceId = null)
             where TMessageRequest : notnull, IMessage, new()
             where TMessageResponse : notnull, IEnumerableMessage, new()
         {
-            Events.Add(NetworkBus.RegisterEnumerableHandler(handler, referenceId));
+            Events.Add(_networkBus.RegisterEnumerableHandler(handler, referenceId));
         }
         public void RegisterExclusiveHandler<TMessageRequest, TMessageResponse>(IExclusiveMessageHandler<TMessageRequest, TMessageResponse> handler, Guid referenceId)
             where TMessageRequest : notnull, IMessage, new()
             where TMessageResponse : notnull, IMessage, new()
         {
-            Events.Add(NetworkBus.RegisterExclusiveHandler(handler, referenceId));
+            Events.Add(_networkBus.RegisterExclusiveHandler(handler, referenceId));
         }
         public void RegisterReceiver<TMessageRequest>(IMessageReceiver<TMessageRequest> receiver, Guid? referenceId = null)
             where TMessageRequest : IMessage, new()
         {
-            Events.Add(NetworkBus.RegisterReceiver(receiver, referenceId));
+            Events.Add(_networkBus.RegisterReceiver(receiver, referenceId));
         }
 
-        private bool disposedValue = false;
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    Events.Dispose();
-                }
-
-                disposedValue = true;
-            }
-        }
         public void Dispose()
         {
-            Dispose(true);
+            Events.Dispose();
         }
     }
 }

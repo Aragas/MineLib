@@ -12,7 +12,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MineLib.Server.Heartbeat.BackgroundServices
+namespace MineLib.Server.WebSite.BackgroundServices
 {
     public class MetricsHttpListenerMonitor : BackgroundService
     {

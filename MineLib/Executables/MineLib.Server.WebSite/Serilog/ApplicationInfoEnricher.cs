@@ -5,7 +5,7 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace MineLib.Server.Heartbeat.Serilog
+namespace MineLib.Server.WebSite.Serilog
 {
     // Aragas.QServer.Core
     public sealed class ApplicationInfoEnricher : ILogEventEnricher

@@ -1,8 +1,6 @@
-﻿using System.Windows.Controls;
-
-namespace Aragas.QServer.GUI.Views
+﻿namespace Aragas.QServer.GUI.Views
 {
-    public partial class ServicesView : UserControl
+    public partial class ServicesView
     {
         public ServicesView()
         {

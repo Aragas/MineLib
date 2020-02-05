@@ -10,7 +10,7 @@ namespace Aragas.QServer.GUI
             "Command",
             typeof(ICommand),
             typeof(CommandReference),
-            new PropertyMetadata(new PropertyChangedCallback(OnCommandChanged)));
+            new PropertyMetadata(OnCommandChanged));
 
         private static void OnCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

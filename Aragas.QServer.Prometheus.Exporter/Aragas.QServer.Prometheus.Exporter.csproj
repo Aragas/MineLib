@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Core\Aragas.QServer.Core.csproj" />
+    <ProjectReference Include="$(SolutionDir)\Aragas.QServer.NetworkBus\Aragas.QServer.NetworkBus.csproj" />
   </ItemGroup>
 
 </Project>

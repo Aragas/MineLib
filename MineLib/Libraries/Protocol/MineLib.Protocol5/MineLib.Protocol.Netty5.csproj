@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Iconic.Zlib.Netstandard" Version="1.0.0" />
-    <PackageReference Include="System.Linq.Async" Version="4.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\MineLib\Libraries\Protocol\MineLib.Protocol.Netty\MineLib.Protocol.Netty.csproj" />
   </ItemGroup>
 

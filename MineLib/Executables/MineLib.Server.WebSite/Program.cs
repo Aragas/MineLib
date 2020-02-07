@@ -16,7 +16,6 @@ using Microsoft.Extensions.Logging;
 
 using MineLib.Server.WebSite.BackgroundServices;
 using MineLib.Server.WebSite.Data;
-using MineLib.Server.WebSite.Extensions;
 using MineLib.Server.WebSite.Models;
 using MineLib.Server.WebSite.Repositories;
 using MineLib.Server.WebSite.Services;

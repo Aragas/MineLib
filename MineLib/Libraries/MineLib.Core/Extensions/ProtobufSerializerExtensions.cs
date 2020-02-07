@@ -1,10 +1,9 @@
 ﻿using Aragas.Network.Data;
-using Aragas.Network.IO;
 using Aragas.Network.Packets;
 
 using System;
 
-namespace MineLib.Core.Extensions
+namespace Aragas.Network.IO
 {
     public static class ProtobufSerializerExtensions
     {

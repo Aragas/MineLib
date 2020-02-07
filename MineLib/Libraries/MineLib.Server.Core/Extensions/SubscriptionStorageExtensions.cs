@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Aragas.QServer.Core.NetworkBus
+namespace Aragas.QServer.NetworkBus
 {
     public static class SubscriptionStorageExtensions
     {

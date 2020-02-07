@@ -1,7 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using Aragas.QServer.NetworkBus;
 
-using Aragas.QServer.Core.NetworkBus;
 using MineLib.Server.Core.NetworkBus.Messages;
+
+using System.Threading.Tasks;
 
 namespace MineLib.Server.PlayerBus
 {

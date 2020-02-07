@@ -1,6 +1,5 @@
-﻿using Aragas.QServer.Core.Extensions;
-using Aragas.QServer.Core.NetworkBus;
-using Aragas.QServer.GUI.ViewModels;
+﻿using Aragas.QServer.GUI.ViewModels;
+using Aragas.QServer.NetworkBus;
 
 using Caliburn.Micro;
 

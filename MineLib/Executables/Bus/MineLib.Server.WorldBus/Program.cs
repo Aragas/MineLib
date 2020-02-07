@@ -1,6 +1,6 @@
-﻿using Aragas.QServer.Core.Data;
-using Aragas.QServer.Core.NetworkBus;
-using Microsoft.Extensions.Configuration;
+﻿using Aragas.QServer.NetworkBus;
+using Aragas.QServer.NetworkBus.Data;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MineLib.Core.Extensions
+﻿namespace System
 {
     public static class SpanExtensions
     {

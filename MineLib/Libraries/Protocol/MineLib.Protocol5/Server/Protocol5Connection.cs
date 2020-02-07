@@ -1,6 +1,5 @@
-﻿using Aragas.QServer.Core;
-using Aragas.QServer.Core.IO;
-using Aragas.QServer.Core.NetworkBus;
+﻿using Aragas.QServer.Core.IO;
+using Aragas.QServer.NetworkBus;
 
 using MineLib.Core;
 using MineLib.Core.Anvil;

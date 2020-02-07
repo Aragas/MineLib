@@ -1,5 +1,7 @@
-﻿using Aragas.QServer.Core.NetworkBus;
-using Aragas.QServer.Core.NetworkBus.Messages;
+﻿using Aragas.QServer.NetworkBus;
+using Aragas.QServer.NetworkBus.Messages;
+
+using Caliburn.Micro;
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Caliburn.Micro;
 
 namespace Aragas.QServer.GUI.ViewModels
 {

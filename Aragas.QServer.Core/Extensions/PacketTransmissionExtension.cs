@@ -1,7 +1,6 @@
-﻿using Aragas.Network.IO;
-using Aragas.Network.Packets;
+﻿using Aragas.Network.Packets;
 
-namespace Aragas.QServer.Core.Extensions
+namespace Aragas.Network.IO
 {
     public static class PacketTransmissionExtension
     {

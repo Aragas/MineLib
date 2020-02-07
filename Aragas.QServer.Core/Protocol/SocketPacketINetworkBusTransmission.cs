@@ -1,7 +1,7 @@
 ﻿using Aragas.Network.IO;
 using Aragas.Network.Packets;
-using Aragas.QServer.Core.NetworkBus;
-using Aragas.QServer.Core.NetworkBus.Messages;
+using Aragas.QServer.NetworkBus;
+using Aragas.QServer.NetworkBus.Messages;
 
 using System;
 using System.Collections.Concurrent;

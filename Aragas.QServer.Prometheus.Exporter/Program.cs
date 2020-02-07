@@ -1,7 +1,7 @@
 using Aragas.QServer.Core;
-using Aragas.QServer.Core.Data;
-using Aragas.QServer.Core.NetworkBus;
-using Aragas.QServer.Core.NetworkBus.Messages;
+using Aragas.QServer.NetworkBus;
+using Aragas.QServer.NetworkBus.Data;
+using Aragas.QServer.NetworkBus.Messages;
 using Aragas.QServer.Prometheus.Exporter.Services;
 
 using Microsoft.AspNetCore.Builder;

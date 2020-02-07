@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Aragas.QServer.Core.Extensions
+﻿namespace System.Collections.Generic
 {
     public static class EnumerableExtensions
     {

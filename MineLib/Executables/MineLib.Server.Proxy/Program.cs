@@ -1,4 +1,4 @@
-﻿using Aragas.QServer.Core.Data;
+﻿using Aragas.QServer.NetworkBus.Data;
 
 using I18Next.Net.Backends;
 using I18Next.Net.Extensions;

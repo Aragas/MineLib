@@ -1,4 +1,4 @@
-﻿using Aragas.QServer.Core.NetworkBus;
+﻿using Aragas.QServer.NetworkBus;
 
 using MineLib.Protocol.Netty;
 using MineLib.Protocol.Netty.Protocol;

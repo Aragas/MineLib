@@ -4,8 +4,6 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
-    <!-- <NoWarn>1701;1702;RCS1231;RCS1029;RCS1139;RCS1057</NoWarn> -->
-    <NoWarn>1701;1702;RCS1029;RCS1139;RCS1057;RCS1036</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

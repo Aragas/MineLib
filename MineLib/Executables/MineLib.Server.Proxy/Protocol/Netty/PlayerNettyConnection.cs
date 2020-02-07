@@ -1,9 +1,8 @@
 ﻿using Aragas.Network.Data;
 using Aragas.Network.IO;
 using Aragas.QServer.Core;
-using Aragas.QServer.Core.Extensions;
-using Aragas.QServer.Core.NetworkBus;
-using Aragas.QServer.Core.NetworkBus.Messages;
+using Aragas.QServer.NetworkBus;
+using Aragas.QServer.NetworkBus.Messages;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;

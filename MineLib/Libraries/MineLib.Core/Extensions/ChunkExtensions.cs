@@ -1,6 +1,4 @@
-﻿using MineLib.Core.Anvil;
-
-namespace MineLib.Core.Extensions
+﻿namespace MineLib.Core.Anvil
 {
     public static class ChunkExtensions
     {

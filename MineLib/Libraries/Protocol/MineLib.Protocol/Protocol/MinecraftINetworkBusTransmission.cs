@@ -1,7 +1,7 @@
 ﻿using Aragas.Network.Data;
 using Aragas.Network.Packets;
-using Aragas.QServer.Core.NetworkBus;
 using Aragas.QServer.Core.Protocol;
+using Aragas.QServer.NetworkBus;
 
 using MineLib.Protocol.Packets;
 

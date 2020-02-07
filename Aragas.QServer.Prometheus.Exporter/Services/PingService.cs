@@ -1,6 +1,5 @@
-﻿using Aragas.QServer.Core.Extensions;
-using Aragas.QServer.Core.NetworkBus;
-using Aragas.QServer.Core.NetworkBus.Messages;
+﻿using Aragas.QServer.NetworkBus;
+using Aragas.QServer.NetworkBus.Messages;
 using Aragas.QServer.Prometheus.Exporter.Data;
 
 using Microsoft.Extensions.Hosting;

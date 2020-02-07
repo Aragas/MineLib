@@ -117,6 +117,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MineLib.Server.WebSite", "M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aragas.QServer.Metrics.PostgreSQL", "Aragas.QServer.Metrics.PostgreSQL\Aragas.QServer.Metrics.PostgreSQL.csproj", "{27CDA55C-644B-44F7-A058-838ECF2BCAF4}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aragas.QServer.NetworkBus", "Aragas.QServer.NetworkBus\Aragas.QServer.NetworkBus.csproj", "{4DE70F74-3404-491A-9D9D-FA07DA1B4AAA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aragas.QServer.Logging", "Aragas.QServer.Logging\Aragas.QServer.Logging.csproj", "{54ED921A-52EE-4CF6-9992-A616C430B299}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -267,6 +271,14 @@ Global
 		{27CDA55C-644B-44F7-A058-838ECF2BCAF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27CDA55C-644B-44F7-A058-838ECF2BCAF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27CDA55C-644B-44F7-A058-838ECF2BCAF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DE70F74-3404-491A-9D9D-FA07DA1B4AAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DE70F74-3404-491A-9D9D-FA07DA1B4AAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DE70F74-3404-491A-9D9D-FA07DA1B4AAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DE70F74-3404-491A-9D9D-FA07DA1B4AAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54ED921A-52EE-4CF6-9992-A616C430B299}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54ED921A-52EE-4CF6-9992-A616C430B299}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54ED921A-52EE-4CF6-9992-A616C430B299}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54ED921A-52EE-4CF6-9992-A616C430B299}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

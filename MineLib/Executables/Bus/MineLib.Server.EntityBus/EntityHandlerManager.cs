@@ -1,5 +1,5 @@
-﻿using Aragas.QServer.Core.Data;
-using Aragas.QServer.Core.NetworkBus;
+﻿using Aragas.QServer.NetworkBus;
+using Aragas.QServer.NetworkBus.Data;
 
 using Microsoft.Extensions.Options;
 

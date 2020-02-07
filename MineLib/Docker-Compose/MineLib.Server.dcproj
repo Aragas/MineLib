@@ -11,5 +11,10 @@
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+    <None Include="grafana\config.monitoring" />
+    <None Include="nats\nats-server.conf" />
+    <None Include="nginx_proxy\nginx.conf" />
+    <None Include="nginx_website\nginx.conf" />
+    <None Include="prometheus\prometheus.yml" />
   </ItemGroup>
 </Project>

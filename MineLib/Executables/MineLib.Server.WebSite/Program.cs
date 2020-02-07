@@ -4,6 +4,7 @@ using Aragas.QServer.Health;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,7 @@ using MineLib.Server.WebSite.Services;
 using Serilog;
 
 using System;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace MineLib.Server.WebSite
@@ -107,6 +109,12 @@ namespace MineLib.Server.WebSite
                 webBuilder
                     .ConfigureServices((hostContext, services) =>
                     {
+                        services.Configure<ForwardedHeadersOptions>(options =>
+                        {
+                            foreach (var address in Dns.GetHostEntry("minelib.server.website.nginx").AddressList)
+                                options.KnownProxies.Add(address);
+                        });
+
                         services.AddDbContext<UserContext>(options => options
                             .ConfigureWarnings(b => b.Log(CoreEventId.ManyServiceProvidersCreatedWarning))
                             .UseNpgsql(hostContext.Configuration.GetConnectionString("Users")));
@@ -165,6 +173,11 @@ namespace MineLib.Server.WebSite
                             app.UseExceptionHandler("/Home/Error");
                         }
                         */
+
+                        app.UseForwardedHeaders(new ForwardedHeadersOptions
+                        {
+                            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+                        });
 
                         //app.UseHttpsRedirection();
                         app.UseStaticFiles();

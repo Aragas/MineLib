@@ -121,17 +121,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MineLib.Protocol.Generator.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MineLib.Protocol.Generator.ProtoDef", "MineLib\Libraries\Protocol\MineLib.Protocol.Generator.Json\MineLib.Protocol.Generator.ProtoDef.csproj", "{4C9DB2A5-1DE0-4A0E-ADC3-2C3E9F70FCBA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Classic Heartbeat", "Classic Heartbeat", "{B11693A6-C191-4718-84EE-5BD09D170F3E}"
-	ProjectSection(SolutionItems) = preProject
-		MineLib\Classic Heartbeat\nginx\default.conf = MineLib\Classic Heartbeat\nginx\default.conf
-		MineLib\Classic Heartbeat\Dockerfile = MineLib\Classic Heartbeat\Dockerfile
-		MineLib\Classic Heartbeat\php\php.ini = MineLib\Classic Heartbeat\php\php.ini
-		MineLib\Classic Heartbeat\php\xdebug.ini = MineLib\Classic Heartbeat\php\xdebug.ini
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MineLib.Server.WebSite", "MineLib\Executables\MineLib.Server.WebSite\MineLib.Server.WebSite.csproj", "{225B0EFE-C1E1-4FBE-9689-90D6A346373A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aragas.QServer.Metrics.PostgreSQL", "Aragas.QServer.Metrics.PostgreSQL\Aragas.QServer.Metrics.PostgreSQL.csproj", "{27CDA55C-644B-44F7-A058-838ECF2BCAF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aragas.QServer.Metrics.PostgreSQL", "Aragas.QServer.Metrics.PostgreSQL\Aragas.QServer.Metrics.PostgreSQL.csproj", "{27CDA55C-644B-44F7-A058-838ECF2BCAF4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -349,7 +341,6 @@ Global
 		{7B6F1F19-4966-4695-966B-8584246A3B9A} = {AEA09901-59EF-45A9-88C2-6CD9D5FE4907}
 		{4C299609-DACB-4BA7-8198-6F54B7398D72} = {AEA09901-59EF-45A9-88C2-6CD9D5FE4907}
 		{4C9DB2A5-1DE0-4A0E-ADC3-2C3E9F70FCBA} = {AEA09901-59EF-45A9-88C2-6CD9D5FE4907}
-		{B11693A6-C191-4718-84EE-5BD09D170F3E} = {03646DF3-61E2-492A-BEC0-CCCD72EEBD6A}
 		{225B0EFE-C1E1-4FBE-9689-90D6A346373A} = {61966323-4B2E-48A1-A794-B719F0845F8E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

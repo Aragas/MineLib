@@ -10,13 +10,13 @@ networks:
   metrics:
   internal:
   website:
-  logger:
-  nats:
+  server:
 
 services:
 #Network Bus
   nats:
     image: nats-streaming
+    container_name: minelib_nats_streaming
     volumes:
       - ./nats/nats-server.conf:/opt/bitnami/nats/nats-server.conf
     ports:
@@ -25,24 +25,26 @@ services:
       #- 8222:8222
     networks:
       - internal
-      - nats
+      - website
 
 #Logging
   seq:
     image: datalust/seq:latest
+    container_name: minelib_seq
     environment:
       - ACCEPT_EULA=Y
     ports:
       - 5341:80
     networks:
       - internal
-      - logger
+      - website
     volumes:
       - seq_data:/data
 
 #Metrics
   grafana:
     image: grafana/grafana
+    container_name: minelib_grafana
     user: "104"
     depends_on:
       - prometheus
@@ -58,6 +60,7 @@ services:
       - metrics
   prometheus:
     image: prom/prometheus
+    container_name: minelib_prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -72,34 +75,43 @@ services:
       - metrics
   prometheus.aragas_qserver_exporter:
     image: ${DOCKER_REGISTRY-}aragas_qserver_prometheus_exporter
+    #container_name: minelib_aragas_qserver_prometheus_exporter
     build:
       context: ../..
       dockerfile: Aragas.QServer.Prometheus.Exporter/Dockerfile
     depends_on:
+      - prometheus
       - nats
     networks:
       - internal
       - metrics
   prometheus.postgres_exporter:
     image: wrouesnel/postgres_exporter
+    container_name: minelib_postgres_exporter
     environment:
       DATA_SOURCE_NAME: "postgresql://minelib:minelib@postgres:5432/?sslmode=disable"
     depends_on:
+      - prometheus
       - postgres
     networks:
       - internal
       - metrics
   prometheus.nats_exporter:
     image: synadia/prometheus-nats-exporter
+    container_name: minelib_prometheus_nats_exporter
     command: "-varz http://nats:8222"
     depends_on:
+      - prometheus
       - nats
     networks:
       - internal
       - metrics
   prometheus.docker_exporter:
     image: prometheusnet/docker_exporter
+    container_name: minelib_docker_exporter
     user: root
+    depends_on:
+      - prometheus
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
@@ -108,47 +120,38 @@ services:
 #WebSite
   minelib.server.website:
     image: ${DOCKER_REGISTRY-}minelib_server_website
+    #container_name: minelib_server_website
     depends_on:
       - seq
       - postgres
+      - nats
     build:
       context: ../..
       dockerfile: MineLib/Executables/MineLib.Server.WebSite/Dockerfile
-    ports:
-      - 12080:80
-      - 9600:9600
     networks:
       - website
-      - logger
-#  heartbeat.nginx:
-#    image: nginx:latest
-#    ports:
-#      - 12080:80
-#      - 12443:443
-#    volumes:
-#      - ./../Classic Heartbeat/nginx/default.conf:/etc/nginx/conf.d/default.conf
-#      - ./../Classic Heartbeat/nginx/logs:/var/log/nginx
-#      - ./../Classic Heartbeat/www:/var/www
-#    networks:
-#      - website
-#    depends_on:
-#      - heartbeat.php
-#  heartbeat.php:
-#    image: ${DOCKER_REGISTRY-}heartbeat.php
-#    build:
-#      context: ../..
-#      dockerfile: MineLib/Classic Heartbeat/Dockerfile
-#    volumes:
-#      - ./../Classic Heartbeat/php/php.ini:/usr/local/etc/php/conf.d/php.ini
-#      - ./../Classic Heartbeat/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
-#      - ./../Classic Heartbeat/www:/var/www
-#    networks:
-#      - website
-#      - internal
+  minelib.server.website.nginx:
+    image: nginx:alpine
+    container_name: minelib_server_website_nginx
+    ports:
+      - 12080:80
+      - 12443:443
+    volumes:
+      - ./nginx_website/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx_website/logs:/var/log/nginx
+    ports:
+      - 12080:80
+    #  - 9600:9600
+    networks:
+      - website
+    depends_on:
+      - minelib.server.website
+
 
 #Database
   postgres:
     image: postgres
+    container_name: minelib_postgres
     environment:
      POSTGRES_DB: minelib
      POSTGRES_USER: minelib
@@ -161,24 +164,10 @@ services:
       - website
       - internal
 
-#Bedrock to 1.15.1
-#  geyser:
-#    image: ${DOCKER_REGISTRY-}geyser
-#    build:
-#      context: ../..
-#      dockerfile: MineLib/BedrockProxy/Dockerfile
-#    depends_on:
-#      - minelib.server.proxy
-#    volumes:
-#      - ./../BedrockProxy/config.yml:/app/config.yml
-#    ports:
-#      - 19132:19132
-#    networks:
-#      - internal
-
 #Server
   minelib.server.entitybus:
     image: ${DOCKER_REGISTRY-}minelib_server_entitybus
+    #container_name: minelib_server_entitybus
     depends_on:
       - seq
       - postgres
@@ -190,6 +179,7 @@ services:
       - internal
   minelib.server.playerbus:
     image: ${DOCKER_REGISTRY-}minelib_server_playerbus
+    #container_name: minelib_server_playerbus
     build:
       context: ../..
       dockerfile: MineLib/Executables/Bus/MineLib.Server.PlayerBus/Dockerfile
@@ -201,6 +191,7 @@ services:
       - internal
   minelib.server.worldbus:
     image: ${DOCKER_REGISTRY-}minelib_server_worldbus
+    #container_name: minelib_server_worldbus
     build:
       context: ../..
       dockerfile: MineLib/Executables/Bus/MineLib.Server.WorldBus/Dockerfile
@@ -213,6 +204,7 @@ services:
 
   minelib.server.proxy:
     image: ${DOCKER_REGISTRY-}minelib_server_proxy
+    #container_name: minelib_server_proxy
     build:
       context: ../..
       dockerfile: MineLib/Executables/MineLib.Server.Proxy/Dockerfile
@@ -222,10 +214,25 @@ services:
       - minelib.server.entitybus
       - minelib.server.playerbus
       - minelib.server.worldbus
-      - minelib.server.website
-    ports:
-      - 25565:25565
-      - 56552:56552
+      - minelib.server.website.nginx
+    #ports:
+    #  - 25565:25565
+    #  - 56552:56552
     networks:
       - internal
       - website
+      - server
+  minelib.server.proxy.nginx:
+    image: nginx:alpine
+    container_name: minelib_server_proxy_nginx
+    #restart: unless-stopped
+    ports:
+      - 25565:25565
+      - 56552:56552
+    volumes:
+      - ./nginx_proxy/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx_proxy/logs:/var/log/nginx
+    networks:
+      - server
+    depends_on:
+      - minelib.server.proxy

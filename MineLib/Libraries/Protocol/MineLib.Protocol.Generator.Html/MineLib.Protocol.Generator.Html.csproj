@@ -13,9 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Third Party\Aragas.Network-2\src\Aragas.Network-2.Standard\Aragas.Network-2.csproj" />
-    <ProjectReference Include="..\..\MineLib.Core\MineLib.Core.csproj" />
-    <ProjectReference Include="..\MineLib.Protocol5\MineLib.Protocol.Netty5.csproj" />
+    <ProjectReference Include="$(SolutionDir)\MineLib\Libraries\Protocol\MineLib.Protocol5\MineLib.Protocol.Netty5.csproj" />
   </ItemGroup>
 
 </Project>

@@ -6,6 +6,7 @@
     <UserSecretsId>cc9ef091-bece-42a4-961c-117f452e4b25</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..\..</DockerfileContext>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
   </PropertyGroup>
 
   <ItemGroup>

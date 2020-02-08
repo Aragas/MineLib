@@ -19,7 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\Third Party\Aragas.Network-2\src\Aragas.Network-2.Standard\Aragas.Network-2.csproj" />
     <ProjectReference Include="$(SolutionDir)\Third Party\Aragas.TupleEventSystem\src\Aragas.TupleEventSystem\Aragas.TupleEventSystem.csproj" />
-    <ProjectReference Include="..\Aragas.QServer.Hosting\Aragas.QServer.Hosting.csproj" />
+    <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Hosting\Aragas.QServer.Hosting.csproj" />
   </ItemGroup>
 
 </Project>

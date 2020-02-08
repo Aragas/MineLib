@@ -16,10 +16,10 @@ COPY ["Aragas.QServer.NetworkBus/Aragas.QServer.NetworkBus.csproj", "Aragas.QSer
 RUN dotnet restore "MineLib/Executables/MineLib.Server.WebSite/MineLib.Server.WebSite.csproj"
 COPY . .
 WORKDIR "/src/MineLib/Executables/MineLib.Server.WebSite"
-RUN dotnet build "MineLib.Server.WebSite.csproj" -c Release -o /app/build
+RUN dotnet build "MineLib.Server.WebSite.csproj" -c Release -o /app/build -p:SolutionDir='/src'
 
 FROM build AS publish
-RUN dotnet publish "MineLib.Server.WebSite.csproj" -c Release -o /app/publish
+RUN dotnet publish "MineLib.Server.WebSite.csproj" -c Release -o /app/publish -p:SolutionDir='/src'
 
 FROM base AS final
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT false

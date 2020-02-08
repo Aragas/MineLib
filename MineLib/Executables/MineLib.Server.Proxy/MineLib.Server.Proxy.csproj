@@ -8,7 +8,6 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..\..</DockerfileContext>
     <StartupObject>MineLib.Server.Proxy.Program</StartupObject>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
   </PropertyGroup>
 
   <!--

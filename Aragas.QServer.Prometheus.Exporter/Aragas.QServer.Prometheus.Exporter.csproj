@@ -4,7 +4,6 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>d6d12ed8-1ccb-4a72-bee9-0bb45b58977f</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'"></SolutionDir>
   </PropertyGroup>
 
   <ItemGroup>

@@ -78,7 +78,7 @@ services:
     #container_name: minelib_aragas_qserver_prometheus_exporter
     build:
       context: ../..
-      dockerfile: Aragas.QServer.Prometheus.Exporter/Dockerfile
+      dockerfile: Aragas.QServer.Prometheus.Exporter/Dockerfile.arm64v8
     depends_on:
       - prometheus
       - nats
@@ -122,12 +122,12 @@ services:
     image: ${DOCKER_REGISTRY-}minelib_server_website
     #container_name: minelib_server_website
     depends_on:
-      - seq
+    #  - seq
       - postgres
       - nats
     build:
       context: ../..
-      dockerfile: MineLib/Executables/MineLib.Server.WebSite/Dockerfile
+      dockerfile: MineLib/Executables/MineLib.Server.WebSite/Dockerfile.arm64v8
     networks:
       - website
   minelib.server.website.nginx:
@@ -169,12 +169,12 @@ services:
     image: ${DOCKER_REGISTRY-}minelib_server_entitybus
     #container_name: minelib_server_entitybus
     depends_on:
-      - seq
+    #  - seq
       - postgres
       - nats
     build:
       context: ../..
-      dockerfile: MineLib/Executables/Bus/MineLib.Server.EntityBus/Dockerfile
+      dockerfile: MineLib/Executables/Bus/MineLib.Server.EntityBus/Dockerfile.arm64v8
     networks:
       - internal
   minelib.server.playerbus:
@@ -182,9 +182,9 @@ services:
     #container_name: minelib_server_playerbus
     build:
       context: ../..
-      dockerfile: MineLib/Executables/Bus/MineLib.Server.PlayerBus/Dockerfile
+      dockerfile: MineLib/Executables/Bus/MineLib.Server.PlayerBus/Dockerfile.arm64v8
     depends_on:
-      - seq
+    #  - seq
       - postgres
       - nats
     networks:
@@ -194,9 +194,9 @@ services:
     #container_name: minelib_server_worldbus
     build:
       context: ../..
-      dockerfile: MineLib/Executables/Bus/MineLib.Server.WorldBus/Dockerfile
+      dockerfile: MineLib/Executables/Bus/MineLib.Server.WorldBus/Dockerfile.arm64v8
     depends_on:
-      - seq
+    #  - seq
       - postgres
       - nats
     networks:
@@ -207,9 +207,9 @@ services:
     #container_name: minelib_server_proxy
     build:
       context: ../..
-      dockerfile: MineLib/Executables/MineLib.Server.Proxy/Dockerfile
+      dockerfile: MineLib/Executables/MineLib.Server.Proxy/Dockerfile.arm64v8
     depends_on:
-      - seq
+    #  - seq
       - nats
       - minelib.server.entitybus
       - minelib.server.playerbus

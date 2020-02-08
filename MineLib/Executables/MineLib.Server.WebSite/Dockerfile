@@ -15,11 +15,11 @@ COPY ["Aragas.QServer.Logging/Aragas.QServer.Logging.csproj", "Aragas.QServer.Lo
 COPY ["Aragas.QServer.NetworkBus/Aragas.QServer.NetworkBus.csproj", "Aragas.QServer.NetworkBus/"]
 RUN dotnet restore "MineLib/Executables/MineLib.Server.WebSite/MineLib.Server.WebSite.csproj"
 COPY . .
-WORKDIR "/src/MineLib/Executables/MineLib.Server.Heartbeat"
-RUN dotnet build "MineLib.Server.Heartbeat.csproj" -c Release -o /app/build
+WORKDIR "/src/MineLib/Executables/MineLib.Server.WebSite"
+RUN dotnet build "MineLib.Server.WebSite.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "MineLib.Server.Heartbeat.csproj" -c Release -o /app/publish
+RUN dotnet publish "MineLib.Server.WebSite.csproj" -c Release -o /app/publish
 
 FROM base AS final
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT false
@@ -30,4 +30,4 @@ ENV LANG en_US.UTF-8
 
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "MineLib.Server.Heartbeat.dll"]
+ENTRYPOINT ["dotnet", "MineLib.Server.WebSite.dll"]

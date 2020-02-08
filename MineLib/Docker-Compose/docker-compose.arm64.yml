@@ -15,7 +15,7 @@ networks:
 services:
 #Network Bus
   nats:
-    image: nats-streaming
+    image: arm64v8/nats-streaming
     container_name: minelib_nats_streaming
     volumes:
       - ./nats/nats-server.conf:/opt/bitnami/nats/nats-server.conf
@@ -28,22 +28,22 @@ services:
       - website
 
 #Logging
-  seq:
-    image: datalust/seq:latest
-    container_name: minelib_seq
-    environment:
-      - ACCEPT_EULA=Y
-    ports:
-      - 5341:80
-    networks:
-      - internal
-      - website
-    volumes:
-      - seq_data:/data
+#  seq:
+#    image: datalust/seq:latest
+#    container_name: minelib_seq
+#    environment:
+#      - ACCEPT_EULA=Y
+#    ports:
+#      - 5341:80
+#    networks:
+#      - internal
+#      - website
+#    volumes:
+#      - seq_data:/data
 
 #Metrics
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana-arm64v8-linux
     container_name: minelib_grafana
     user: "104"
     depends_on:
@@ -59,7 +59,7 @@ services:
     networks:
       - metrics
   prometheus:
-    image: prom/prometheus
+    image: prom/prometheus-linux-arm64
     container_name: minelib_prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -85,37 +85,37 @@ services:
     networks:
       - internal
       - metrics
-  prometheus.postgres_exporter:
-    image: wrouesnel/postgres_exporter
-    container_name: minelib_postgres_exporter
-    environment:
-      DATA_SOURCE_NAME: "postgresql://minelib:minelib@postgres:5432/?sslmode=disable"
-    depends_on:
-      - prometheus
-      - postgres
-    networks:
-      - internal
-      - metrics
-  prometheus.nats_exporter:
-    image: synadia/prometheus-nats-exporter
-    container_name: minelib_prometheus_nats_exporter
-    command: "-varz http://nats:8222"
-    depends_on:
-      - prometheus
-      - nats
-    networks:
-      - internal
-      - metrics
-  prometheus.docker_exporter:
-    image: prometheusnet/docker_exporter
-    container_name: minelib_docker_exporter
-    user: root
-    depends_on:
-      - prometheus
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - metrics
+#  prometheus.postgres_exporter:
+#    image: wrouesnel/postgres_exporter
+#    container_name: minelib_postgres_exporter
+#    environment:
+#      DATA_SOURCE_NAME: "postgresql://minelib:minelib@postgres:5432/?sslmode=disable"
+#    depends_on:
+#      - prometheus
+#      - postgres
+#    networks:
+#      - internal
+#      - metrics
+#  prometheus.nats_exporter:
+#    image: synadia/prometheus-nats-exporter
+#    container_name: minelib_prometheus_nats_exporter
+#    command: "-varz http://nats:8222"
+#    depends_on:
+#      - prometheus
+#      - nats
+#    networks:
+#      - internal
+#      - metrics
+#  prometheus.docker_exporter:
+#    image: prometheusnet/docker_exporter
+#    container_name: minelib_docker_exporter
+#    user: root
+#    depends_on:
+#      - prometheus
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#    networks:
+#      - metrics
 
 #WebSite
   minelib.server.website:
@@ -131,7 +131,7 @@ services:
     networks:
       - website
   minelib.server.website.nginx:
-    image: nginx:alpine
+    image: arm64v8/nginx:alpine
     container_name: minelib_server_website_nginx
     ports:
       - 12080:80
@@ -150,7 +150,7 @@ services:
 
 #Database
   postgres:
-    image: postgres:alpine
+    image: arm64v8/postgres:alpine
     container_name: minelib_postgres
     environment:
      POSTGRES_DB: minelib
@@ -223,7 +223,7 @@ services:
       - website
       - server
   minelib.server.proxy.nginx:
-    image: nginx:alpine
+    image: arm64v8/nginx:alpine
     container_name: minelib_server_proxy_nginx
     #restart: unless-stopped
     ports:

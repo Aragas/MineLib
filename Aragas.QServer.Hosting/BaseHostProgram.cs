@@ -33,7 +33,7 @@ namespace Aragas.QServer.Hosting
             {
                 Log.Information("{TypeName}: Starting.", typeof(TProgram).FullName);
 
-                var hostBuilder = QServerHost.CreateDefaultBuilder(args ?? Array.Empty<string>());
+                var hostBuilder = QServerHost.CreateDefaultBuilder(args ?? Array.Empty<string>(), Uid);
                 hostBuilderFunc?.Invoke(hostBuilder);
 
                 var host = hostBuilder.Build();

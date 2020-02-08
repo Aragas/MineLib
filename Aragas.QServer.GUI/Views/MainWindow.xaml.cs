@@ -1,8 +1,8 @@
 ﻿namespace Aragas.QServer.GUI.Views
 {
-    public partial class ShellView
+    public partial class MainWindow
     {
-        public ShellView()
+        public MainWindow()
         {
             InitializeComponent();
         }

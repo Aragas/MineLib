@@ -10,15 +10,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="I18Next.Net" Version="0.7.1" />
+    <PackageReference Include="I18Next.Net.Extensions" Version="0.7.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Core\Aragas.QServer.Core.csproj" />
-    <ProjectReference Include="$(SolutionDir)\Third Party\Aragas.Network-2\src\Aragas.Network-2.Standard\Aragas.Network-2.csproj" />
-    <ProjectReference Include="$(SolutionDir)\Third Party\Aragas.TupleEventSystem\src\Aragas.TupleEventSystem\Aragas.TupleEventSystem.csproj" />
     <ProjectReference Include="$(SolutionDir)\PokeD\Libraries\PokeD.Server.Core\PokeD.Server.Core.csproj" />
-    <ProjectReference Include="$(SolutionDir)\PokeD\Libraries\PokeD.Core\PokeD.Core\PokeD.Core.csproj" />
   </ItemGroup>
 
 </Project>

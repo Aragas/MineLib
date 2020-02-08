@@ -1,4 +1,4 @@
-﻿using Aragas.QServer.Core.NetworkBus.Messages;
+﻿using Aragas.QServer.NetworkBus.Messages;
 
 using PokeD.Server.Core.Data;
 
@@ -18,6 +18,6 @@ namespace PokeD.Server.Core.NetworkBus.Messages
         public override string Name => "poked.server.playerbus.player.playerhandler.getexisting.response";
 
         public Guid? ServiceId { get; set; } = default!;
-        public int State { get; set; } = default!;
+        //public int State { get; set; } = default!;
     }
 }

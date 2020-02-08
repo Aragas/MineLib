@@ -1,25 +1,25 @@
-﻿using Aragas.QServer.Core;
+﻿using Aragas.QServer.NetworkBus;
 
 using PokeD.Core.Data;
 using PokeD.Core.Data.P3D;
-using PokeD.Core.IO;
 using PokeD.Core.Extensions;
 using PokeD.Core.Packets.P3D;
 using PokeD.Core.Packets.P3D.Battle;
 using PokeD.Core.Packets.P3D.Chat;
+using PokeD.Core.Packets.P3D.Client;
 using PokeD.Core.Packets.P3D.Server;
 using PokeD.Core.Packets.P3D.Shared;
 using PokeD.Core.Packets.P3D.Trade;
 using PokeD.Server.Core.Protocol;
 
 using System;
+using System.Collections.Concurrent;
 using System.Globalization;
 using System.Threading;
-using System.Collections.Concurrent;
 
 namespace PokeD.Server.PlayerBus.P3D
 {
-    public partial class P3DPlayer
+    public sealed partial class P3DPlayer : IDisposable
     {
         private static CultureInfo CultureInfo => CultureInfo.InvariantCulture;
 
@@ -72,13 +72,10 @@ namespace PokeD.Server.PlayerBus.P3D
         private Guid PlayerId { get; }
         private P3DINetworkBusTransmission Stream { get; }
         private ConcurrentQueue<P3DPacket> PacketsToSend { get; } = new ConcurrentQueue<P3DPacket>();
-        public P3DPlayer(Guid playerId)
+        public P3DPlayer(IAsyncNetworkBus networkBus, Guid playerId)
         {
             PlayerId = playerId;
-            Stream = new P3DINetworkBusTransmission()
-            {
-                PlayerId = playerId
-            };
+            Stream = new P3DINetworkBusTransmission(networkBus, playerId);
             new Thread(PacketReceiver).Start();
         }
         private void PacketReceiver()
@@ -105,79 +102,79 @@ namespace PokeD.Server.PlayerBus.P3D
 
         public void HandlePacket(P3DPacket packet)
         {
-            switch ((P3DPacketTypes) packet.ID)
+            switch(packet)
             {
-                case P3DPacketTypes.GameData:
-                    HandleGameData((GameDataPacket)packet);
+                case GameDataPacket gameDataPacket:
+                    HandleGameData(gameDataPacket);
                     break;
 
-                case P3DPacketTypes.ChatMessagePrivate:
-                    HandlePrivateMessage((ChatMessagePrivatePacket)packet);
+                case ChatMessagePrivatePacket chatMessagePrivatePacket:
+                    HandlePrivateMessage(chatMessagePrivatePacket);
                     break;
 
-                case P3DPacketTypes.ChatMessageGlobal:
-                    HandleChatMessage((ChatMessageGlobalPacket)packet);
+                case ChatMessageGlobalPacket chatMessageGlobalPacket:
+                    HandleChatMessage(chatMessageGlobalPacket);
                     break;
 
-                case P3DPacketTypes.Ping:
+                case PingPacket pingPacket:
                     break;
 
-                case P3DPacketTypes.GameStateMessage:
-                    HandleGameStateMessage((GameStateMessagePacket)packet);
-                    break;
-
-
-                case P3DPacketTypes.TradeRequest:
-                    HandleTradeRequest((TradeRequestPacket)packet);
-                    break;
-
-                case P3DPacketTypes.TradeJoin:
-                    HandleTradeJoin((TradeJoinPacket)packet);
-                    break;
-
-                case P3DPacketTypes.TradeQuit:
-                    HandleTradeQuit((TradeQuitPacket)packet);
-                    break;
-
-                case P3DPacketTypes.TradeOffer:
-                    HandleTradeOffer((TradeOfferPacket)packet);
-                    break;
-
-                case P3DPacketTypes.TradeStart:
-                    HandleTradeStart((TradeStartPacket)packet);
+                case GameStateMessagePacket gameStateMessagePacket:
+                    HandleGameStateMessage(gameStateMessagePacket);
                     break;
 
 
-                case P3DPacketTypes.BattleRequest:
-                    HandleBattleRequest((BattleRequestPacket)packet);
+                case TradeRequestPacket tradeRequestPacket:
+                    HandleTradeRequest(tradeRequestPacket);
                     break;
 
-                case P3DPacketTypes.BattleJoin:
-                    HandleBattleJoin((BattleJoinPacket)packet);
+                case TradeJoinPacket tradeJoinPacket:
+                    HandleTradeJoin(tradeJoinPacket);
                     break;
 
-                case P3DPacketTypes.BattleQuit:
-                    HandleBattleQuit((BattleQuitPacket)packet);
+                case TradeQuitPacket tradeQuitPacket:
+                    HandleTradeQuit(tradeQuitPacket);
                     break;
 
-                case P3DPacketTypes.BattleOffer:
-                    HandleBattleOffer((BattleOfferPacket)packet);
+                case TradeOfferPacket tradeOfferPacket:
+                    HandleTradeOffer(tradeOfferPacket);
                     break;
 
-                case P3DPacketTypes.BattleStart:
-                    HandleBattleStart((BattleStartPacket)packet);
+                case TradeStartPacket tradeStartPacket:
+                    HandleTradeStart(tradeStartPacket);
                     break;
 
-                case P3DPacketTypes.BattleClientData:
-                    HandleBattleClientData((BattleClientDataPacket)packet);
+
+                case BattleRequestPacket battleRequestPacket:
+                    HandleBattleRequest(battleRequestPacket);
                     break;
 
-                case P3DPacketTypes.BattleHostData:
-                    HandleBattleHostData((BattleHostDataPacket)packet);
+                case BattleJoinPacket battleJoinPacket:
+                    HandleBattleJoin(battleJoinPacket);
                     break;
 
-                case P3DPacketTypes.BattleEndRoundData:
-                    HandleBattlePokemonData((BattleEndRoundDataPacket)packet);
+                case BattleQuitPacket battleQuitPacket:
+                    HandleBattleQuit(battleQuitPacket);
+                    break;
+
+                case BattleOfferPacket battleOfferPacket:
+                    HandleBattleOffer(battleOfferPacket);
+                    break;
+
+                case BattleStartPacket battleStartPacket:
+                    HandleBattleStart(battleStartPacket);
+                    break;
+
+                case BattleClientDataPacket battleClientDataPacket:
+                    HandleBattleClientData(battleClientDataPacket);
+                    break;
+
+                case BattleHostDataPacket battleHostDataPacket:
+                    HandleBattleHostData(battleHostDataPacket);
+                    break;
+
+                case BattleEndRoundDataPacket battleEndRoundDataPacket:
+                    HandleBattlePokemonData(battleEndRoundDataPacket);
                     break;
             }
         }
@@ -263,21 +260,9 @@ namespace PokeD.Server.PlayerBus.P3D
         }
         public GameDataPacket GetDataPacket() => new GameDataPacket { Origin = ID, DataItems = GenerateDataItems() };
 
-
-        /*
-        protected virtual Dispose(bool disposing)
+        public void Dispose()
         {
-            if (!IsDisposing)
-            {
-                if (disposing)
-                {
 
-                }
-
-
-                IsDisposing = true;
-            }
         }
-        */
     }
 }

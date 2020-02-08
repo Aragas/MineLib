@@ -1,17 +1,20 @@
-﻿using PokeD.Core;
+﻿using Aragas.QServer.NetworkBus;
+using Microsoft.Extensions.Hosting;
+
+using PokeD.Core;
+using PokeD.Server.Core.NetworkBus.Messages;
 
 using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
+using System.Threading.Tasks;
 
-namespace PokeD.Server.WorldBus
+namespace PokeD.Server.WorldBus.BackgroundServices
 {
-    public class WorldService : IDisposable
+    public sealed class WorldService : BackgroundService,
+        IMessageHandler<GetWorldStateRequestMessage, GetWorldStateResponseMessage>
     {
-        private CancellationTokenSource UpdateToken { get; set; } = new CancellationTokenSource();
-        private ManualResetEventSlim UpdateLock { get; } = new ManualResetEventSlim(false);
-
         public bool UseLocation { get; set; }
         private bool LocationChanged { get; set; }
 
@@ -44,8 +47,6 @@ namespace PokeD.Server.WorldBus
         //private int TimeOffset { get; set; }
 
         private DateTime WorldUpdateTime { get; set; } = DateTime.UtcNow;
-
-        private bool IsDisposed { get; set; }
 
 
         public WorldService() { }
@@ -109,12 +110,10 @@ namespace PokeD.Server.WorldBus
             }
         }
 
-        public void UpdateCycle()
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            UpdateLock.Reset();
-
             var watch = Stopwatch.StartNew();
-            while (!UpdateToken.IsCancellationRequested)
+            while (!stoppingToken.IsCancellationRequested)
             {
                 if (WorldUpdateTime < DateTime.UtcNow)
                 {
@@ -126,62 +125,25 @@ namespace PokeD.Server.WorldBus
                 {
                     var time = (int)(10 - watch.ElapsedMilliseconds);
                     if (time < 0) time = 0;
-                    Thread.Sleep(time);
+                    await Task.Delay(time);
                 }
                 TimeSpanOffset.Add(TimeSpan.FromMilliseconds(watch.ElapsedMilliseconds));
                 watch.Reset();
                 watch.Start();
             }
-
-            UpdateLock.Set();
         }
 
-        public bool Start()
+        Task<GetWorldStateResponseMessage> IMessageHandler<GetWorldStateRequestMessage, GetWorldStateResponseMessage>.HandleAsync(GetWorldStateRequestMessage message)
         {
-            UpdateToken = new CancellationTokenSource();
-            new Thread(UpdateCycle)
+            return Task.FromResult(new GetWorldStateResponseMessage()
             {
-                Name = "ModuleManagerUpdateTread",
-                IsBackground = true
-            }.Start();
-
-            return true;
-        }
-        public bool Stop()
-        {
-            if (UpdateToken?.IsCancellationRequested == false)
-            {
-                UpdateToken.Cancel();
-                UpdateLock.Wait();
-            }
-
-            return true;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        protected void Dispose(bool disposing)
-        {
-            if (!IsDisposed)
-            {
-                if (disposing)
-                {
-                    if (UpdateToken?.IsCancellationRequested == false)
-                    {
-                        UpdateToken.Cancel();
-                        UpdateLock.Wait();
-                    }
-                }
-
-                IsDisposed = true;
-            }
-        }
-        ~WorldService()
-        {
-            Dispose(false);
+                Season = Season,
+                Weather = Weather,
+                DoDayCycle = DoDayCycle,
+                Time = CurrentTime,
+                TimeSpanOffset = TimeSpanOffset,
+                UseRealTime = UseRealTime,
+            });
         }
     }
 }

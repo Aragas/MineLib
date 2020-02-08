@@ -1,32 +1,27 @@
-﻿/*
-using Aragas.QServer.NetworkBus;
+﻿using Aragas.QServer.NetworkBus;
 using Aragas.QServer.NetworkBus.Data;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-
-using NATS.Client;
 
 using Serilog;
 
 using System;
 using System.Threading.Tasks;
 
-namespace Aragas.QServer.Core
+namespace Aragas.QServer.Hosting
 {
-    public class BaseHostProgram
+    public static class QServerHostProgram
     {
-        private static Guid Uid { get; } = Guid.NewGuid();
+        public static Guid Uid { get; } = Guid.NewGuid();
 
-        public static async Task Main<TProgram>(Func<IHostBuilder, IHostBuilder>? hostBuilderFunc = null, Action<IServiceProvider>? beforeRunAction = null, string[]? args = null) where TProgram : BaseHostProgram
+        public static async Task Main<TProgram>(
+            Func<IHostBuilder, IHostBuilder>? hostBuilderFunc = null,
+            Action<IHost>? beforeRunAction = null,
+            string[]? args = null)
         {
-            Aragas.Network.Extensions.PacketExtensions.Init();
-            //MineLib.Core.Extensions.PacketExtensions.Init();
-            //MineLib.Server.Core.Extensions.PacketExtensions.Init();
-
             var configuration = new ConfigurationBuilder().AddJsonFile("loggerconfig.json").Build();
             Log.Logger = new LoggerConfiguration()
                 .ConfigureSerilog(Uid)
@@ -38,13 +33,13 @@ namespace Aragas.QServer.Core
             {
                 Log.Information("{TypeName}: Starting.", typeof(TProgram).FullName);
 
-                var hostBuilder = CreateHostBuilder(args ?? Array.Empty<string>());
+                var hostBuilder = QServerHost.CreateDefaultBuilder(args ?? Array.Empty<string>());
                 hostBuilderFunc?.Invoke(hostBuilder);
 
                 var host = hostBuilder.Build();
 
-                BeforeRun(host.Services);
-                beforeRunAction?.Invoke(host.Services);
+                BeforeRun(host);
+                beforeRunAction?.Invoke(host);
 
                 await host.RunAsync();
             }
@@ -60,26 +55,17 @@ namespace Aragas.QServer.Core
             }
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) => Host
-            .CreateDefaultBuilder(args ?? Array.Empty<string>())
-            .UseSerilog()
-            .UseServiceOptions(Uid)
-            .UseNATSNetworkBus()
-            .UseMetricsWithDefault()
-            .UseHealthChecks();
-
-        private static void BeforeRun(IServiceProvider serviceProvider)
+        private static void BeforeRun(IHost host)
         {
-            var serviceOptions = serviceProvider.GetRequiredService<IOptions<ServiceOptions>>().Value;
-            var subscriptionStorage = serviceProvider.GetRequiredService<SubscriptionStorage>();
+            var serviceOptions = host.Services.GetRequiredService<IOptions<ServiceOptions>>().Value;
+            var subscriptionStorage = host.Services.GetRequiredService<SubscriptionStorage>();
 
             subscriptionStorage.HandleServiceDiscoveryHandler();
             subscriptionStorage.HandleMetricsPrometheusHandler(serviceOptions.Uid);
             subscriptionStorage.HandleHealthHandler(serviceOptions.Uid);
 
-            var lifeTime = serviceProvider.GetRequiredService<IHostApplicationLifetime>();
+            var lifeTime = host.Services.GetRequiredService<IHostApplicationLifetime>();
             lifeTime.ApplicationStopping.Register(() => subscriptionStorage.Dispose());
         }
     }
 }
-*/

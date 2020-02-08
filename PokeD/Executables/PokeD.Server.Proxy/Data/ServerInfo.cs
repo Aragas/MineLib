@@ -1,4 +1,4 @@
-﻿namespace MineLib.Server.Proxy.Data
+﻿namespace PokeD.Server.Proxy.Data
 {
     public class ServerInfo
     {

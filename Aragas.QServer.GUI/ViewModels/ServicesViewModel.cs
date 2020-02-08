@@ -1,8 +1,6 @@
 ﻿using Aragas.QServer.NetworkBus;
 using Aragas.QServer.NetworkBus.Messages;
 
-using Caliburn.Micro;
-
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -45,9 +43,9 @@ namespace Aragas.QServer.GUI.ViewModels
 
         private readonly IAsyncNetworkBus _networkBus;
 
-        public ServicesViewModel()
+        public ServicesViewModel(IAsyncNetworkBus networkBus)
         {
-            _networkBus = IoC.Get<IAsyncNetworkBus>();
+            _networkBus = networkBus;
 
             var token = CancellationToken.None;
             Task.Factory.StartNew(async () =>

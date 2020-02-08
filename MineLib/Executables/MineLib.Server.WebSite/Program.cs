@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
@@ -67,31 +66,19 @@ namespace MineLib.Server.WebSite
 
         public static IHostBuilder CreateHostBuilder(string[] args) => Host
             .CreateDefaultBuilder(args ?? Array.Empty<string>())
-            .ConfigureLogging(logging =>
-            {
-                logging.AddSerilog(dispose: false);
-#if DEBUG
-                logging.AddDebug();
-#endif
-            })
-
-            // Metrics
+            .UseSerilog()
+            .UseServiceOptions(Uid)
+            .UseNATSNetworkBus()
+            .UseMetricsWithDefault()
+            .UseHealthChecks()
             .ConfigureServices((hostContext, services) =>
             {
-                services.AddPrometheusEndpoint();
-                services.AddDefaultMetrics();
-
                 services.AddNpgSqlMetrics("ClassicServers", hostContext.Configuration.GetConnectionString("ClassicServers"));
                 services.AddNpgSqlMetrics("Users", hostContext.Configuration.GetConnectionString("Users"));
-            })
-            // HealthCheck
-            .ConfigureServices(services =>
-            {
+
                 services.AddSingleton<HealthCheck, CpuHealthCheck>();
                 services.AddSingleton<HealthCheck, RamHealthCheck>();
-                services.AddHealthCheckPublisher();
             })
-
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddDbContext<ClassicServersContext>(options => options.UseNpgsql(hostContext.Configuration.GetConnectionString("ClassicServers")));
@@ -118,8 +105,7 @@ namespace MineLib.Server.WebSite
                             .ConfigureWarnings(b => b.Log(CoreEventId.ManyServiceProvidersCreatedWarning))
                             .UseNpgsql(hostContext.Configuration.GetConnectionString("Users")));
 
-                        services.AddMvc()
-                            .AddMetrics();
+                        services.AddMvc();
 
                         services.AddIdentityCore<User>()
                             .AddRoles<IdentityRole>()

@@ -7,35 +7,18 @@ using Microsoft.Extensions.Options;
 
 using MineLib.Server.Core;
 
-using System;
 using System.Threading.Tasks;
 
 namespace MineLib.Server.WorldBus
 {
-    public class Program : MineLibHostProgram
+    public class Program
     {
         public static async Task Main(string[] args)
         {
-            await Main<Program>(CreateHostBuilder, BeforeRun, args);
+            await MineLibHostProgram.Main<Program>(CreateHostBuilder, BeforeRun, args);
         }
 
         public static IHostBuilder CreateHostBuilder(IHostBuilder hostBuilder) => hostBuilder
-            /*
-            .ConfigureHostConfiguration(configurationBuilder =>
-            {
-                var environmentName = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
-
-                if (environmentName == "Production")
-                {
-                    configurationBuilder.AddJsonFile("appsettings.json", optional: true);
-                    //configurationBuilder.AddJsonFile("connections.json", optional: false);
-                }
-                else
-                {
-                    configurationBuilder.AddJsonFile($"appsettings.{environmentName}.json", optional: true);
-                }
-            })
-            */
             // Options
             .ConfigureServices((hostContext, services) =>
             {
@@ -56,10 +39,10 @@ namespace MineLib.Server.WorldBus
 
             .UseConsoleLifetime();
 
-        private static void BeforeRun(IServiceProvider serviceProvider)
+        private static void BeforeRun(IHost host)
         {
-            var serviceOptions = serviceProvider.GetRequiredService<IOptions<ServiceOptions>>().Value;
-            var subscriptionStorage = serviceProvider.GetRequiredService<SubscriptionStorage>();
+            var serviceOptions = host.Services.GetRequiredService<IOptions<ServiceOptions>>().Value;
+            var subscriptionStorage = host.Services.GetRequiredService<SubscriptionStorage>();
             subscriptionStorage.HandleChunksInSquare<WorldHandlerManager>();
             subscriptionStorage.HandleChunksInCircle<WorldHandlerManager>();
         }

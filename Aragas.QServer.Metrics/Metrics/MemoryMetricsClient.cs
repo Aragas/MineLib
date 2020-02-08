@@ -24,7 +24,8 @@ namespace Aragas.QServer.Metrics
             {
                 FileName = "wmic",
                 Arguments = "OS get FreePhysicalMemory,TotalVisibleMemorySize /Value",
-                RedirectStandardOutput = true
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
             };
 
             using (var process = Process.Start(info))

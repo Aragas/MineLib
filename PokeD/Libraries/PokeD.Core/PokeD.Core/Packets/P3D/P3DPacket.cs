@@ -33,7 +33,7 @@ namespace PokeD.Core.Packets.P3D
         public override int GetHashCode() => HashCode.Combine(_value);
     }
 
-    public abstract class P3DPacket : PacketWithAttribute<int>
+    public abstract class P3DPacket : PacketWithIDAttribute<int>
     {
         public Origin Origin { get; set; }
 

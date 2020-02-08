@@ -10,20 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="App.Metrics" Version="4.0.0-preview1.0.3" />
-    <PackageReference Include="App.Metrics.Health" Version="3.2.0" />
-    <PackageReference Include="App.Metrics.Health.Checks.Network" Version="3.2.0" />
-    <PackageReference Include="App.Metrics.Health.Checks.Process" Version="3.2.0" />
-    <PackageReference Include="App.Metrics.Health.Checks.Sql" Version="3.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Core\Aragas.QServer.Core.csproj" />
-    <ProjectReference Include="$(SolutionDir)\Third Party\Aragas.Network-2\src\Aragas.Network-2.Standard\Aragas.Network-2.csproj" />
-    <ProjectReference Include="$(SolutionDir)\Third Party\Aragas.TupleEventSystem\src\Aragas.TupleEventSystem\Aragas.TupleEventSystem.csproj" />
     <ProjectReference Include="$(SolutionDir)\PokeD\Libraries\PokeD.Server.Core\PokeD.Server.Core.csproj" />
-    <ProjectReference Include="$(SolutionDir)\PokeD\Libraries\PokeD.Core\PokeD.Core\PokeD.Core.csproj" />
   </ItemGroup>
 
 </Project>

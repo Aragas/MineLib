@@ -11,7 +11,6 @@ using MineLib.Server.Core;
 using MineLib.Server.Proxy.BackgroundServices;
 using MineLib.Server.Proxy.Data;
 
-using System;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -44,13 +43,13 @@ namespace MineLib.Server.Proxy
     /// Based on that response, either attempt to fill the biggest PlayerHandler
     /// or fill the smallest one (Player.Count context).
     /// </summary>
-    public sealed class Program : MineLibHostProgram
+    public sealed class Program
     {
         public static async Task Main(string[] args)
         {
             ServicePointManager.UseNagleAlgorithm = false;
             MineLib.Server.Proxy.Extensions.PacketExtensions.Init();
-            await Main<Program>(CreateHostBuilder, BeforeRun, args);
+            await MineLibHostProgram.Main<Program>(CreateHostBuilder, BeforeRun, args);
         }
 
         public static IHostBuilder CreateHostBuilder(IHostBuilder hostBuilder) => hostBuilder
@@ -79,9 +78,9 @@ namespace MineLib.Server.Proxy
 
             .UseConsoleLifetime();
 
-        private static void BeforeRun(IServiceProvider serviceProvider)
+        private static void BeforeRun(IHost host)
         {
-            var serviceOptions = serviceProvider.GetRequiredService<IOptions<ServiceOptions>>().Value;
+            var serviceOptions = host.Services.GetRequiredService<IOptions<ServiceOptions>>().Value;
         }
     }
 }

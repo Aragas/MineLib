@@ -5,14 +5,14 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Threading.Tasks;
 
-namespace MineLib.Server.Core
+namespace PokeD.Server.Core
 {
-    public static class MineLibHostProgram
+    public static class PokeDHostProgram
     {
         public static async new Task Main<TProgram>(Func<IHostBuilder, IHostBuilder>? hostBuilderFunc = null, Action<IHost>? beforeRunAction = null, string[]? args = null)
         {
-            MineLib.Core.Extensions.PacketExtensions.Init();
-            MineLib.Server.Core.Extensions.PacketExtensions.Init();
+            PokeD.Core.Extensions.PacketExtensions.Init();
+            PokeD.Server.Core.Extensions.PacketExtensions.Init();
 
             await QServerHostProgram.Main<TProgram>(hostBuilderFunc, beforeRunAction, args);
         }

@@ -2,11 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <RootNamespace>PokeD.Core</RootNamespace>
-    <AssemblyName>PokeD.Core</AssemblyName>
     <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
 	  <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
-    <NoWarn>RCS1057;RCS1037;RCS1036;RCS1003</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,4 +1,4 @@
-﻿using Aragas.QServer.Core.NetworkBus.Messages;
+﻿using Aragas.QServer.NetworkBus.Messages;
 
 using PokeD.Server.Core.Data;
 

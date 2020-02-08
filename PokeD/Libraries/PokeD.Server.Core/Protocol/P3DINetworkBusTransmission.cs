@@ -1,19 +1,15 @@
-﻿using Aragas.Network.Packets;
-using Aragas.QServer.Core.Protocol;
+﻿using Aragas.QServer.Core.Protocol;
+using Aragas.QServer.NetworkBus;
 
 using PokeD.Core.IO;
 using PokeD.Core.Packets.P3D;
+
+using System;
 
 namespace PokeD.Server.Core.Protocol
 {
     public class P3DINetworkBusTransmission : SocketPacketINetworkBusTransmission<P3DPacket, int, P3DSerializer, P3DDeserializer>
     {
-        /// <summary>
-        /// For internal use only.
-        /// </summary>
-        public P3DINetworkBusTransmission() : base()
-        {
-            Factory = new DefaultPacketFactory<P3DPacket, int>();
-        }
+        public P3DINetworkBusTransmission(IAsyncNetworkBus networkBus, Guid playerId) : base(networkBus, playerId) { }
     }
 }

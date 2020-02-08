@@ -1,4 +1,4 @@
-using Aragas.QServer.Core;
+using Aragas.QServer.Hosting;
 using Aragas.QServer.NetworkBus;
 using Aragas.QServer.NetworkBus.Data;
 using Aragas.QServer.NetworkBus.Messages;
@@ -11,17 +11,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
-using System;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Aragas.QServer.Prometheus.Exporter
 {
-    public sealed class Program : BaseHostProgram
+    public sealed class Program
     {
         public static async Task Main(string[] args)
         {
-            await Main<Program>(CreateHostBuilder, BeforeRun, args);
+            await QServerHostProgram.Main<Program>(CreateHostBuilder, BeforeRun, args);
         }
 
         public static IHostBuilder CreateHostBuilder(IHostBuilder hostBuilder) => hostBuilder
@@ -67,9 +66,9 @@ namespace Aragas.QServer.Prometheus.Exporter
                     .UseKestrel();
             });
 
-        private static void BeforeRun(IServiceProvider serviceProvider)
+        private static void BeforeRun(IHost host)
         {
-            var serviceOptions = serviceProvider.GetRequiredService<IOptions<ServiceOptions>>().Value;
+            var serviceOptions = host.Services.GetRequiredService<IOptions<ServiceOptions>>().Value;
         }
     }
 }

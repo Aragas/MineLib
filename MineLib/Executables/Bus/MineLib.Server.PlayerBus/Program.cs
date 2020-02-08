@@ -7,7 +7,6 @@ using Microsoft.Extensions.Options;
 
 using MineLib.Server.Core;
 
-using System;
 using System.Threading.Tasks;
 
 namespace MineLib.Server.PlayerBus
@@ -57,11 +56,11 @@ namespace MineLib.Server.PlayerBus
     /// all the classes that will be needed to interact with ModAPIBus
     /// ---
     /// </summary>
-    public class Program : MineLibHostProgram
+    public class Program
     {
         public static async Task Main(string[] args)
         {
-            await Main<Program>(CreateHostBuilder, BeforeRun, args);
+            await MineLibHostProgram.Main<Program>(CreateHostBuilder, BeforeRun, args);
         }
 
         public static IHostBuilder CreateHostBuilder(IHostBuilder hostBuilder) => hostBuilder
@@ -71,33 +70,23 @@ namespace MineLib.Server.PlayerBus
                 services.Configure<ServiceOptions>(o => o.Name = "PlayerBus");
             })
 
-            // Metrics
-            .ConfigureServices((hostContext, services) =>
+            .ConfigureServices(services =>
             {
                 services.AddSingleton<PlayerHandlerManager>();
                 services.AddSingleton<PlayerTest>();
             })
 
-            // Metrics
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddNpgSqlMetrics("Database", hostContext.Configuration["PostgreSQLConnectionString"]);
             })
 
-            // NATS
-            .ConfigureServices(services =>
-            {
-                services.AddSingleton<IAsyncNetworkBus>(new AsyncNATSBus());
-                services.AddSingleton<INetworkBus>(sp => sp.GetRequiredService<IAsyncNetworkBus>());
-                services.AddSingleton<SubscriptionStorage>();
-            })
-
             .UseConsoleLifetime();
 
-        private static void BeforeRun(IServiceProvider serviceProvider)
+        private static void BeforeRun(IHost host)
         {
-            var serviceOptions = serviceProvider.GetRequiredService<IOptions<ServiceOptions>>().Value;
-            var subscriptionStorage = serviceProvider.GetRequiredService<SubscriptionStorage>();
+            var serviceOptions = host.Services.GetRequiredService<IOptions<ServiceOptions>>().Value;
+            var subscriptionStorage = host.Services.GetRequiredService<SubscriptionStorage>();
 
             subscriptionStorage.HandleGetExistingPlayerHandler<PlayerHandlerManager>();
             subscriptionStorage.HandleGetNewPlayerHandler<PlayerHandlerManager>(serviceOptions.Uid);

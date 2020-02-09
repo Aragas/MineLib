@@ -6,12 +6,16 @@
     <ProjectGuid>2ce8b254-1fe3-4691-8941-0a49644eb98a</ProjectGuid>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="docker-compose.override.yml">
+    <None Include="docker-compose.arm64v8.yml">
+      <DependentUpon>docker-compose.yml</DependentUpon>
+    </None>
+    <None Include="docker-compose.x86_64.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
     <None Include="grafana\config.monitoring" />
+    <None Include="loki\local-config.yaml" />
     <None Include="nats\nats-server.conf" />
     <None Include="nginx_proxy\nginx.conf" />
     <None Include="nginx_website\nginx.conf" />

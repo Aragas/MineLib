@@ -65,12 +65,6 @@ services:
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
-    depends_on:
-      - prometheus.nodeexporter
-      - prometheus.aragas_qserver_exporter
-    #  - prometheus.postgres_exporter
-    #  - prometheus.nats_exporter
-    #  - prometheus.docker_exporter
     volumes:
       - ./prometheus/:/etc/prometheus/
       - prometheus_data:/prometheus

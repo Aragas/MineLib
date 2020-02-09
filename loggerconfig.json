@@ -18,7 +18,7 @@
       {
         "Name": "LokiHttp",
         "Args": {
-          "serverUrl": "http://logger:3100"
+          "serverUrl": "http://loki:3100"
         }
       }
     ]

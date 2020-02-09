@@ -50,7 +50,7 @@ scrape_configs:
     static_configs:
       - targets: ['prometheus.aragas_qserver_exporter:80']
       
-  - job_name: 'ethereum'
+  - job_name: 'nodeexporter'
     scrape_interval: 5s
     static_configs:
-      - targets: ['host.docker.internal:5000']
+      - targets: ['prometheus.nodeexporter:9100']

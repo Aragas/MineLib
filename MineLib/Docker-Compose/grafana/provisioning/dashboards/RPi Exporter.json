@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 8,
-  "iteration": 1581263989029,
+  "iteration": 1581265442684,
   "links": [],
   "panels": [
     {
@@ -140,8 +139,8 @@
           "format": "percentunit",
           "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
+          "max": "6",
+          "min": "0",
           "show": true
         },
         {
@@ -333,5 +332,5 @@
   "timezone": "",
   "title": "RPi Exporter",
   "uid": "mTXViU8Wk",
-  "version": 4
+  "version": 7
 }

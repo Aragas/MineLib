@@ -10,7 +10,6 @@
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
     <None Include="docker-compose.yml" />
-    <None Include="docker-compose.arm64.yml" />
     <None Include=".dockerignore" />
     <None Include="grafana\config.monitoring" />
     <None Include="nats\nats-server.conf" />

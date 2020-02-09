@@ -1,10 +1,9 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM mcr.microsoft.com/dotnet/core/runtime:3.1-alpine AS base
-RUN apk add --no-cache procps
+FROM mcr.microsoft.com/dotnet/core/runtime:3.1 AS base
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-alpine AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
 COPY ["MineLib/Executables/Bus/MineLib.Server.WorldBus/MineLib.Server.WorldBus.csproj", "MineLib/Executables/Bus/MineLib.Server.WorldBus/"]
 COPY ["Third Party/Aragas.TupleEventSystem/src/Aragas.TupleEventSystem/Aragas.TupleEventSystem.csproj", "Third Party/Aragas.TupleEventSystem/src/Aragas.TupleEventSystem/"]
@@ -25,13 +24,6 @@ FROM build AS publish
 RUN dotnet publish "MineLib.Server.WorldBus.csproj" -c Release -o /app/publish -p:SolutionDir='/src'
 
 FROM base AS final
-
-ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT false
-RUN apk add --no-cache icu-libs
-
-ENV LC_ALL en_US.UTF-8
-ENV LANG en_US.UTF-8
-
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "MineLib.Server.WorldBus.dll"]

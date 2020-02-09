@@ -88,30 +88,30 @@ services:
     networks:
       - internal
       - prometheus
-  prometheus.postgres_exporter:
-    image: wrouesnel/postgres_exporter
-    environment:
-      DATA_SOURCE_NAME: "postgresql://minelib:minelib@postgres:5432/?sslmode=disable"
-    depends_on:
-      - postgres
-    networks:
-      - internal
-      - prometheus
-  prometheus.nats_exporter:
-    image: synadia/prometheus-nats-exporter
-    command: "-varz http://nats:8222"
-    depends_on:
-      - nats
-    networks:
-      - internal
-      - prometheus
-  prometheus.docker_exporter:
-    image: prometheusnet/docker_exporter
-    user: root
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - prometheus
+#  prometheus.postgres_exporter:
+#    image: wrouesnel/postgres_exporter
+#    environment:
+#      DATA_SOURCE_NAME: "postgresql://minelib:minelib@postgres:5432/?sslmode=disable"
+#    depends_on:
+#      - postgres
+#    networks:
+#      - internal
+#      - prometheus
+#  prometheus.nats_exporter:
+#    image: synadia/prometheus-nats-exporter
+#    command: "-varz http://nats:8222"
+#    depends_on:
+#      - nats
+#    networks:
+#      - internal
+#      - prometheus
+#  prometheus.docker_exporter:
+#    image: prometheusnet/docker_exporter
+#    user: root
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#    networks:
+#      - prometheus
 
 #WebSite
   minelib.server.website:
@@ -127,20 +127,16 @@ services:
       - website
   minelib.server.website.nginx:
     image: nginx:alpine
-    container_name: minelib_server_website_nginx
-    ports:
-      - 12080:80
-      - 12443:443
+    depends_on:
+      - minelib.server.website
     volumes:
       - ./nginx_website/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx_website/logs:/var/log/nginx
     ports:
       - 12080:80
-    #  - 9600:9600
+      - 12443:443
     networks:
       - website
-    depends_on:
-      - minelib.server.website
 
 
 #Database

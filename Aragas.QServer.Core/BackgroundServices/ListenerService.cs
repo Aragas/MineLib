@@ -44,7 +44,7 @@ namespace Aragas.QServer.Core.BackgroundServices
                 Listener = new TcpListener(new IPEndPoint(IPAddress.IPv6Any, Port));
                 Listener.Server.DualMode = true;
             }
-            Listener.Server.NoDelay = true;
+            //Listener.Server.NoDelay = true;
             Listener.Server.ReceiveTimeout = 5000;
             Listener.Server.SendTimeout = 5000;
         }
@@ -59,7 +59,7 @@ namespace Aragas.QServer.Core.BackgroundServices
                 try
                 {
                     var socket = await Listener.AcceptSocketAsync();
-                    socket.NoDelay = true;
+                    //socket.NoDelay = true;
                     var client = (TConnection) ClientFactory(ServiceProvider, new object [] { socket });
                     OnClientConnected(client);
                 }

@@ -47,7 +47,7 @@ namespace MineLib.Server.Proxy
     {
         public static async Task Main(string[] args)
         {
-            ServicePointManager.UseNagleAlgorithm = false;
+            //ServicePointManager.UseNagleAlgorithm = false;
             MineLib.Server.Proxy.Extensions.PacketExtensions.Init();
             await MineLibHostProgram.Main<Program>(CreateHostBuilder, BeforeRun, args);
         }

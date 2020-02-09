@@ -28,6 +28,8 @@ namespace Aragas.QServer.Core.Protocol
             _networkBus = networkBus;
             PlayerId = playerId;
             DefaultFactory = defaultFactory;
+
+            Events.Add(_networkBus.Subscribe<PlayerDataToBusMessage>(message => DataReceivedQueue.Enqueue(message.Data), PlayerId));
         }
 
         protected override void Send(in ReadOnlySpan<byte> span) => _networkBus.Publish(new PlayerDataToProxyMessage() { Data = span.ToArray() }, PlayerId);

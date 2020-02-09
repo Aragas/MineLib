@@ -2,6 +2,7 @@
 
 using Serilog.Configuration;
 using Serilog.Exceptions;
+using Serilog.Sinks.Loki;
 
 using System;
 
@@ -9,6 +10,11 @@ namespace Serilog
 {
     public static class LoggerConfigurationExtensions
     {
+        public static LoggerConfiguration LokiHttp(this LoggerSinkConfiguration sinkConfiguration, string serverUrl)
+            => sinkConfiguration.LokiHttp(new NoAuthCredentials(serverUrl));
+        public static LoggerConfiguration LokiHttp(this LoggerSinkConfiguration sinkConfiguration, string serverUrl, string username, string password)
+            => sinkConfiguration.LokiHttp(new BasicAuthCredentials(serverUrl, username, password));
+
         public static LoggerConfiguration ConfigureSerilog(this LoggerConfiguration loggerConfiguration, Guid applicationUid)
         {
             return loggerConfiguration

@@ -4,13 +4,13 @@ volumes:
   prometheus_data: {}
   grafana_data: {}
   postgresql_data: {}
-  seq_data: {}
 
 networks:
-  metrics:
+  prometheus:
   internal:
   website:
   server:
+  grafana:
 
 services:
 #Network Bus
@@ -30,26 +30,25 @@ services:
       - website
 
 #Logging
-  seq:
-    image: datalust/seq:latest
-    container_name: minelib_seq
-    environment:
-      - ACCEPT_EULA=Y
+  loki:
+    image: grafana/loki:latest
+    command: -config.file=/etc/loki/local-config.yaml
     ports:
-      - 5341:80
+      - 3100:3100
     networks:
+      - grafana
       - internal
       - website
     volumes:
-      - seq_data:/data
+      - ./loki:/etc/loki
 
 #Metrics
   grafana:
     image: grafana/grafana
-    container_name: minelib_grafana
     user: "104"
     depends_on:
       - prometheus
+      - loki
     ports:
       - 3000:3000
     environment:
@@ -59,72 +58,66 @@ services:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning/:/etc/grafana/provisioning/
     networks:
-      - metrics
+      - grafana
   prometheus:
     image: prom/prometheus
-    container_name: minelib_prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
+    #depends_on:
+    #  - prometheus.postgres_exporter
+    #  - prometheus.nats_exporter
+    #  - prometheus.docker_exporter
     volumes:
       - ./prometheus/:/etc/prometheus/
       - prometheus_data:/prometheus
     ports:
       - 9090:9090
     networks:
-      - metrics
+      - grafana
+      - prometheus
   prometheus.aragas_qserver_exporter:
     image: ${DOCKER_REGISTRY-}aragas_qserver_prometheus_exporter
-    #container_name: minelib_aragas_qserver_prometheus_exporter
     build:
       context: ../..
       dockerfile: Aragas.QServer.Prometheus.Exporter/Dockerfile
     depends_on:
-      - prometheus
       - nats
     networks:
       - internal
-      - metrics
+      - prometheus
   prometheus.postgres_exporter:
     image: wrouesnel/postgres_exporter
-    container_name: minelib_postgres_exporter
     environment:
       DATA_SOURCE_NAME: "postgresql://minelib:minelib@postgres:5432/?sslmode=disable"
     depends_on:
-      - prometheus
       - postgres
     networks:
       - internal
-      - metrics
+      - prometheus
   prometheus.nats_exporter:
     image: synadia/prometheus-nats-exporter
-    container_name: minelib_prometheus_nats_exporter
     command: "-varz http://nats:8222"
     depends_on:
-      - prometheus
       - nats
     networks:
       - internal
-      - metrics
+      - prometheus
   prometheus.docker_exporter:
     image: prometheusnet/docker_exporter
-    container_name: minelib_docker_exporter
     user: root
-    depends_on:
-      - prometheus
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - metrics
+      - prometheus
 
 #WebSite
   minelib.server.website:
     image: ${DOCKER_REGISTRY-}minelib_server_website
-    #container_name: minelib_server_website
     depends_on:
-      - seq
+      - loki
       - postgres
       - nats
     build:
@@ -169,9 +162,8 @@ services:
 #Server
   minelib.server.entitybus:
     image: ${DOCKER_REGISTRY-}minelib_server_entitybus
-    #container_name: minelib_server_entitybus
     depends_on:
-      - seq
+      - loki
       - postgres
       - nats
     build:
@@ -181,24 +173,22 @@ services:
       - internal
   minelib.server.playerbus:
     image: ${DOCKER_REGISTRY-}minelib_server_playerbus
-    #container_name: minelib_server_playerbus
     build:
       context: ../..
       dockerfile: MineLib/Executables/Bus/MineLib.Server.PlayerBus/Dockerfile
     depends_on:
-      - seq
+      - loki
       - postgres
       - nats
     networks:
       - internal
   minelib.server.worldbus:
     image: ${DOCKER_REGISTRY-}minelib_server_worldbus
-    #container_name: minelib_server_worldbus
     build:
       context: ../..
       dockerfile: MineLib/Executables/Bus/MineLib.Server.WorldBus/Dockerfile
     depends_on:
-      - seq
+      - loki
       - postgres
       - nats
     networks:
@@ -206,20 +196,16 @@ services:
 
   minelib.server.proxy:
     image: ${DOCKER_REGISTRY-}minelib_server_proxy
-    #container_name: minelib_server_proxy
     build:
       context: ../..
       dockerfile: MineLib/Executables/MineLib.Server.Proxy/Dockerfile
     depends_on:
-      - seq
+      - loki
       - nats
       - minelib.server.entitybus
       - minelib.server.playerbus
       - minelib.server.worldbus
       - minelib.server.website.nginx
-    #ports:
-    #  - 25565:25565
-    #  - 56552:56552
     networks:
       - internal
       - website

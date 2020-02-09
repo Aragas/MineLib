@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Serilog;
-using System;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace Microsoft.Extensions.Hosting
 {

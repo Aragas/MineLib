@@ -78,6 +78,19 @@ services:
     networks:
       - grafana
       - prometheus
+  nodeexporter:
+    image: prom/node-exporter:latest
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+    networks:
+      - prometheus
   prometheus.aragas_qserver_exporter:
     image: ${DOCKER_REGISTRY-}aragas_qserver_prometheus_exporter
     build:

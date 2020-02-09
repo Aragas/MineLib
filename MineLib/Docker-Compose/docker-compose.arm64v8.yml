@@ -1,0 +1,9 @@
+version: '3.7'
+
+services:
+  nats:
+    image: carlosedp/arm_exporter
+    ports:
+      - 9243:9243
+    networks:
+      - prometheus

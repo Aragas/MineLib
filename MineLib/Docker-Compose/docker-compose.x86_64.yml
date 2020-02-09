@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+  prometheus.postgres_exporter:
+    image: wrouesnel/postgres_exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://minelib:minelib@postgres:5432/?sslmode=disable"
+    depends_on:
+      - postgres
+    networks:
+      - internal
+      - prometheus
+  prometheus.nats_exporter:
+    image: synadia/prometheus-nats-exporter
+    command: "-varz http://nats:8222"
+    depends_on:
+      - nats
+    networks:
+      - internal
+      - prometheus
+  prometheus.docker_exporter:
+    image: prometheusnet/docker_exporter
+    user: root
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - prometheus

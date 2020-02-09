@@ -77,17 +77,17 @@ namespace MineLib.Server.Proxy.Protocol.Netty
         private Guid PlayerId { get; } = Guid.NewGuid();
 
         private CompositeDisposable Events { get; } = new CompositeDisposable();
-        private INetworkBus NetworkBus { get; }
+        private IAsyncNetworkBus NetworkBus { get; }
         private MineLibOptions MineLibOptions { get; }
         private ServerInfo ServerInfo { get; }
         private IStringLocalizer Localizer { get; }
 
-        public PlayerNettyConnection(IServiceProvider serviceProvider, Socket socket) : base(serviceProvider, socket)
+        public PlayerNettyConnection(IServiceProvider serviceProvider, IOptions<MineLibOptions> mineLibOptions, ServerInfo serverInfo, IAsyncNetworkBus networkBus, IStringLocalizer<PlayerNettyConnection> localizer, Socket socket) : base(serviceProvider, socket)
         {
-            MineLibOptions = serviceProvider.GetRequiredService<IOptions<MineLibOptions>>().Value;
-            ServerInfo = serviceProvider.GetRequiredService<ServerInfo>();
-            NetworkBus = serviceProvider.GetRequiredService<INetworkBus>();
-            Localizer = serviceProvider.GetRequiredService<IStringLocalizer<PlayerNettyConnection>>();
+            MineLibOptions = mineLibOptions.Value;
+            ServerInfo = serverInfo;
+            NetworkBus = networkBus;
+            Localizer = localizer;
         }
 
         protected override void HandlePacket(MinecraftPacket packet)

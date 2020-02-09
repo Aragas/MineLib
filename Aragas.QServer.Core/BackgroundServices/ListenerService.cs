@@ -24,7 +24,7 @@ namespace Aragas.QServer.Core.BackgroundServices
         private static bool InContainer { get; } = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") is string str && str.Equals("true", StringComparison.OrdinalIgnoreCase);
 
         public abstract int Port { get; }
-        protected TcpListener Listener { get; }
+        protected Socket Listener { get; }
         protected ConcurrentDictionary<TConnection, object?> Connections { get; } = new ConcurrentDictionary<TConnection, object?>();
         protected IServiceProvider ServiceProvider { get; }
         protected ILogger Logger { get; }
@@ -37,28 +37,35 @@ namespace Aragas.QServer.Core.BackgroundServices
 
             if (InContainer)
             {
-                Listener = new TcpListener(new IPEndPoint(IPAddress.Any, Port));
+                var address = new IPEndPoint(IPAddress.Any, Port);
+                Listener = new Socket(address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                Listener.Bind(address);
             }
             else
             {
-                Listener = new TcpListener(new IPEndPoint(IPAddress.IPv6Any, Port));
-                Listener.Server.DualMode = true;
+                var address = new IPEndPoint(IPAddress.IPv6Any, Port);
+                Listener = new Socket(address.AddressFamily, SocketType.Stream, ProtocolType.Tcp)
+                {
+                    DualMode = true
+                };
+                Listener.Bind(address);
+                Listener.Listen(1000);
             }
             //Listener.Server.NoDelay = true;
-            Listener.Server.ReceiveTimeout = 5000;
-            Listener.Server.SendTimeout = 5000;
+            Listener.ReceiveTimeout = 5000;
+            Listener.SendTimeout = 5000;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            Listener.Start();
-            stoppingToken.Register(() => Listener.Stop());
+            Listener.Listen(1000);
+            stoppingToken.Register(() => Listener.Disconnect(false));
 
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
-                    var socket = await Listener.AcceptSocketAsync();
+                    var socket = await Listener.AcceptAsync();
                     //socket.NoDelay = true;
                     var client = (TConnection) ClientFactory(ServiceProvider, new object [] { socket });
                     OnClientConnected(client);

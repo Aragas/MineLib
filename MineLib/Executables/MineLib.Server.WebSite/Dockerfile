@@ -13,6 +13,9 @@ COPY ["Aragas.QServer.Logging/Aragas.QServer.Logging.csproj", "Aragas.QServer.Lo
 COPY ["Aragas.QServer.Metrics/Aragas.QServer.Metrics.csproj", "Aragas.QServer.Metrics/"]
 COPY ["Aragas.QServer.NetworkBus/Aragas.QServer.NetworkBus.csproj", "Aragas.QServer.NetworkBus/"]
 COPY ["Aragas.QServer.Core/Aragas.QServer.Core.csproj", "Aragas.QServer.Core/"]
+
+RUN dotnet restore "Aragas.QServer.Core/Aragas.QServer.Core.csproj"
+
 COPY ["Aragas.QServer.Metrics.PostgreSQL/Aragas.QServer.Metrics.PostgreSQL.csproj", "Aragas.QServer.Metrics.PostgreSQL/"]
 
 COPY ["MineLib/Executables/MineLib.Server.WebSite/MineLib.Server.WebSite.csproj", "MineLib/Executables/MineLib.Server.WebSite/"]

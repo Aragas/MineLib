@@ -11,9 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Aragas.QServer.Logging\Aragas.QServer.Logging.csproj" />
-    <ProjectReference Include="..\Aragas.QServer.Metrics\Aragas.QServer.Metrics.csproj" />
-    <ProjectReference Include="..\Aragas.QServer.NetworkBus\Aragas.QServer.NetworkBus.csproj" />
+    <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Logging\Aragas.QServer.Logging.csproj" />
+    <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Metrics\Aragas.QServer.Metrics.csproj" />
+    <ProjectReference Include="$(SolutionDir)\Aragas.QServer.NetworkBus\Aragas.QServer.NetworkBus.csproj" />
   </ItemGroup>
 
 </Project>

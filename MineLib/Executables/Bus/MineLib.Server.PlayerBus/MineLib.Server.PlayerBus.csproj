@@ -30,9 +30,6 @@
 
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Core\Aragas.QServer.Core.csproj" />
-    <ProjectReference Include="$(SolutionDir)\Third Party\Aragas.Network-2\src\Aragas.Network-2.Standard\Aragas.Network-2.csproj" />
-    <ProjectReference Include="$(SolutionDir)\Third Party\Aragas.TupleEventSystem\src\Aragas.TupleEventSystem\Aragas.TupleEventSystem.csproj" />
-    <ProjectReference Include="$(SolutionDir)\MineLib\Libraries\MineLib.Core\MineLib.Core.csproj" />
     <ProjectReference Include="$(SolutionDir)\MineLib\Libraries\MineLib.Server.Core\MineLib.Server.Core.csproj" />
     <ProjectReference Include="$(SolutionDir)\MineLib\Libraries\Protocol\MineLib.Protocol\MineLib.Protocol.csproj" />
     <ProjectReference Include="$(SolutionDir)\MineLib\Libraries\Protocol\MineLib.Protocol.Netty\MineLib.Protocol.Netty.csproj" />

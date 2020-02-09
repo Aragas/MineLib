@@ -14,6 +14,8 @@ COPY ["Aragas.QServer.Metrics/Aragas.QServer.Metrics.csproj", "Aragas.QServer.Me
 COPY ["Aragas.QServer.NetworkBus/Aragas.QServer.NetworkBus.csproj", "Aragas.QServer.NetworkBus/"]
 COPY ["Aragas.QServer.Core/Aragas.QServer.Core.csproj", "Aragas.QServer.Core/"]
 
+RUN dotnet restore "Aragas.QServer.Core/Aragas.QServer.Core.csproj"
+
 COPY ["MineLib/Libraries/MineLib.Core/MineLib.Core.csproj", "MineLib/Libraries/MineLib.Core/"]
 COPY ["MineLib/Libraries/MineLib.Server.Core/MineLib.Server.Core.csproj", "MineLib/Libraries/MineLib.Server.Core/"]
 COPY ["MineLib/Libraries/Protocol/MineLib.Protocol/MineLib.Protocol.csproj", "MineLib/Libraries/Protocol/MineLib.Protocol/"]

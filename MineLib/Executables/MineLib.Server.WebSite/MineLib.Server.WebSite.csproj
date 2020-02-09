@@ -27,11 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Core\Aragas.QServer.Core.csproj" />
     <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Metrics.PostgreSQL\Aragas.QServer.Metrics.PostgreSQL.csproj" />
-    <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Metrics\Aragas.QServer.Metrics.csproj" />
-    <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Logging\Aragas.QServer.Logging.csproj" />
-    <ProjectReference Include="$(SolutionDir)\Aragas.QServer.NetworkBus\Aragas.QServer.NetworkBus.csproj" />
-    <ProjectReference Include="..\..\..\Aragas.QServer.Hosting\Aragas.QServer.Hosting.csproj" />
   </ItemGroup>
 
 </Project>

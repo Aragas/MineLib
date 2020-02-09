@@ -22,7 +22,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Aragas.QServer.Hosting\Aragas.QServer.Hosting.csproj" />
+    <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Hosting\Aragas.QServer.Hosting.csproj" />
   </ItemGroup>
 
 </Project>

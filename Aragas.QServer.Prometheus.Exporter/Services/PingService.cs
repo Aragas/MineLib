@@ -54,7 +54,7 @@ namespace Aragas.QServer.Prometheus.Exporter.Services
                     _services.TryRemove(serviceEntryToRemove, out _);
 
                 await _networkBus.PublishAsync(new ServicesPingMessage());
-                await Task.Delay(2000, stoppingToken);
+                await Task.Delay(5000, stoppingToken);
             }
         }
     }

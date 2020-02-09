@@ -185,7 +185,7 @@ services:
       - minelib.server.entitybus
       - minelib.server.playerbus
       - minelib.server.worldbus
-      - minelib.server.website.nginx
+      #- minelib.server.website.nginx
     networks:
       - internal
       - website

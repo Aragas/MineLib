@@ -1,14 +1,14 @@
 {
   "Serilog": {
-    "Using": [ "Serilog.Sinks.Console", "Serilog.Sinks.Loki", "Aragas.QServer.Logging" ],
+    "Using": [ "Serilog.Sinks.Console", "Serilog.Sinks.Loki", "Aragas.QServer.Logging", "Serilog.Exceptions" ],
     "MinimumLevel": {
       "Default": "Information",
       "Override": {
         "Microsoft": "Warning",
-        "Microsoft.Hosting.Lifetime": "Information",
         "System": "Warning"
       }
     },
+    "Enrich": [ "FromLogContext", "WithApplicationInfo", "WithExceptionDetails", "WithLogLevel" ],
     "WriteTo": [
       {
         "Name": "Console",

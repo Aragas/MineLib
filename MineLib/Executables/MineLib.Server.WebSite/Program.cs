@@ -35,9 +35,7 @@ namespace MineLib.Server.WebSite
         {
             var configuration = new ConfigurationBuilder().AddJsonFile("loggerconfig.json").Build();
             Log.Logger = new LoggerConfiguration()
-                .ConfigureSerilog(Uid)
                 .ReadFrom.Configuration(configuration)
-                .Enrich.FromLogContext()
                 .CreateLogger();
 
             try

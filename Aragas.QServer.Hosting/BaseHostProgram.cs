@@ -28,9 +28,7 @@ namespace Aragas.QServer.Hosting
                 .AddJsonFile($"loggerconfig.{env}.json", true)
                 .Build();
             Log.Logger = new LoggerConfiguration()
-                .ConfigureSerilog(Uid)
                 .ReadFrom.Configuration(configuration)
-                .Enrich.FromLogContext()
                 .CreateLogger();
 
             try

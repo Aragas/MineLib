@@ -24,14 +24,16 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Core\Aragas.QServer.Core.csproj" />
     <ProjectReference Include="$(SolutionDir)\MineLib\Libraries\MineLib.Server.Core\MineLib.Server.Core.csproj" />
     <ProjectReference Include="$(SolutionDir)\MineLib\Libraries\Protocol\MineLib.Protocol\MineLib.Protocol.csproj" />
-    <ProjectReference Include="$(SolutionDir)\MineLib\Libraries\Protocol\MineLib.Protocol5\MineLib.Protocol.Netty5.csproj" />
+    <ProjectReference Include="$(SolutionDir)\MineLib\Libraries\Protocol\MineLib.Protocol.Netty\MineLib.Protocol.Netty.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="$(SolutionDir)\loggerconfig.json" Link="loggerconfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(SolutionDir)\loggerconfig.Development.json" Link="loggerconfig.Development.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

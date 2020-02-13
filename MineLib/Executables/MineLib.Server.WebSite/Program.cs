@@ -48,7 +48,7 @@ namespace MineLib.Server.WebSite
 
                 var host = hostBuilder.Build();
 
-                BeforeRun(host.Services);
+                BeforeRun(host);
 
                 await host.RunAsync();
             }
@@ -181,13 +181,12 @@ namespace MineLib.Server.WebSite
                     .UseKestrel(o => o.AllowSynchronousIO = true);
             });
 
-        private static void BeforeRun(IServiceProvider serviceProvider)
+        private static void BeforeRun(IHost host)
         {
-            using var scope = serviceProvider.CreateScope();
-            var services = scope.ServiceProvider;
-
             try
             {
+                using var scope = host.Services.CreateScope();
+                var services = scope.ServiceProvider;
                 var context0 = services.GetRequiredService<ClassicServersContext>();
                 context0.Database.EnsureDeleted();
                 context0.Database.EnsureCreated();
@@ -198,10 +197,9 @@ namespace MineLib.Server.WebSite
             }
             catch (Exception ex)
             {
-                var logger = services.GetRequiredService<ILogger<Program>>();
+                var logger = host.Services.GetRequiredService<ILogger<Program>>();
                 logger.LogError(ex, "An error occurred creating the DB.");
             }
-
         }
     }
 }

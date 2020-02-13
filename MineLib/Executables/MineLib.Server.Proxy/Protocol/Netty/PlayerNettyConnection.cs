@@ -4,7 +4,6 @@ using Aragas.QServer.Core;
 using Aragas.QServer.NetworkBus;
 using Aragas.QServer.NetworkBus.Messages;
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 

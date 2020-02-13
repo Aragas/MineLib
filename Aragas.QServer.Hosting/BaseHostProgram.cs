@@ -22,7 +22,11 @@ namespace Aragas.QServer.Hosting
             Action<IHost>? beforeRunAction = null,
             string[]? args = null)
         {
-            var configuration = new ConfigurationBuilder().AddJsonFile("loggerconfig.json").Build();
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("loggerconfig.json", false)
+                .AddJsonFile($"loggerconfig.{env}.json", true)
+                .Build();
             Log.Logger = new LoggerConfiguration()
                 .ConfigureSerilog(Uid)
                 .ReadFrom.Configuration(configuration)

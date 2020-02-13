@@ -79,6 +79,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Aragas.Network-2.Analyzer",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{C058E7CE-A790-4414-B6DD-F5ED92F4CDC4}"
 	ProjectSection(SolutionItems) = preProject
+		loggerconfig.Development.json = loggerconfig.Development.json
 		loggerconfig.json = loggerconfig.json
 		TODO.txt = TODO.txt
 	EndProjectSection

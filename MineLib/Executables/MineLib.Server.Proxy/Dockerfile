@@ -33,5 +33,6 @@ RUN dotnet publish "MineLib.Server.Proxy.csproj" -c Release -o /app/publish -p:S
 
 FROM base AS final
 WORKDIR /app
+RUN apt-get update && apt-get install -y procps
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "MineLib.Server.Proxy.dll"]

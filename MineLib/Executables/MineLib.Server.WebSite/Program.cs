@@ -1,6 +1,7 @@
 using App.Metrics.Health;
 
 using Aragas.QServer.Health;
+using Aragas.QServer.Logging.Serilog;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -20,6 +21,8 @@ using MineLib.Server.WebSite.Repositories;
 using MineLib.Server.WebSite.Services;
 
 using Serilog;
+using Serilog.Exceptions;
+using Serilog.Sinks.Loki;
 
 using System;
 using System.Net;
@@ -36,6 +39,11 @@ namespace MineLib.Server.WebSite
             var configuration = new ConfigurationBuilder().AddJsonFile("loggerconfig.json").Build();
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
+                //.Enrich.FromLogContext()
+                .Enrich.WithApplicationInfo(Uid)
+                //.Enrich.WithExceptionDetails()
+                //.Enrich.WithLogLevel()
+                //.WriteTo.LokiHttp(new NoAuthCredentials("http://ssh.khadas.aragas.org:43100"), new LogLabelProvider(Uid))
                 .CreateLogger();
 
             try
@@ -73,9 +81,6 @@ namespace MineLib.Server.WebSite
             {
                 services.AddNpgSqlMetrics("ClassicServers", hostContext.Configuration.GetConnectionString("ClassicServers"));
                 services.AddNpgSqlMetrics("Users", hostContext.Configuration.GetConnectionString("Users"));
-
-                services.AddSingleton<HealthCheck, CpuHealthCheck>();
-                services.AddSingleton<HealthCheck, RamHealthCheck>();
             })
             .ConfigureServices((hostContext, services) =>
             {

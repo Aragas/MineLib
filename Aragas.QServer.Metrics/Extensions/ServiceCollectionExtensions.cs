@@ -16,7 +16,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddHealthCheckPublisher(this IServiceCollection services, Func<IHealthBuilder, IHealthBuilder>? additional = null)
         {
             services.AddSingleton<HealthCheck, CpuHealthCheck>();
-            services.AddSingleton<HealthCheck, RamHealthCheck>();
+            //services.AddSingleton<HealthCheck, RamHealthCheck>();
 
             var builder = new HealthBuilder()
                 .OutputHealth.Using(new HealthStatusTextOutputFormatter())
@@ -51,7 +51,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddHostedService<StandardMetricsService>();
             services.AddHostedService<CpuUsageMetricsService>();
-            services.AddHostedService<MemoryUsageMetricsService>();
+            //services.AddHostedService<MemoryUsageMetricsService>();
 
             return services;
         }

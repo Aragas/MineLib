@@ -1,4 +1,5 @@
-﻿using Aragas.QServer.NetworkBus;
+﻿using Aragas.QServer.Logging.Serilog;
+using Aragas.QServer.NetworkBus;
 using Aragas.QServer.NetworkBus.Data;
 
 using Microsoft.Extensions.Configuration;
@@ -7,6 +8,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 using Serilog;
+using Serilog.Exceptions;
+using Serilog.Sinks.Loki;
 
 using System;
 using System.Threading.Tasks;
@@ -29,6 +32,9 @@ namespace Aragas.QServer.Hosting
                 .Build();
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
+                .Enrich.WithApplicationInfo(Uid)
+                //.Enrich.WithLogLevel()
+                //.WriteTo.LokiHttp(new NoAuthCredentials("http://ssh.khadas.aragas.org:43100"))
                 .CreateLogger();
 
             try

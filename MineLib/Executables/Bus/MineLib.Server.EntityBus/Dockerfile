@@ -32,5 +32,6 @@ RUN dotnet publish "MineLib.Server.EntityBus.csproj" -c Release -o /app/publish 
 
 FROM base AS final
 WORKDIR /app
+RUN apt-get update && apt-get install -y procps
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "MineLib.Server.EntityBus.dll"]

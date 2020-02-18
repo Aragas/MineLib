@@ -18,6 +18,7 @@ services:
     image: nats
     command:
       - '--cluster=nats://0.0.0.0:6222'
+      - '--routes=nats://ssh.khadas.aragas.org:46222' 
     volumes:
       - ./nats/nats-server.conf:/opt/bitnami/nats/nats-server.conf
     ports:
@@ -29,80 +30,80 @@ services:
       - website
 
 #Logging
-  loki:
-    image: grafana/loki:latest
-    command: -config.file=/etc/loki/local-config.yaml
-    ports:
-      - 3100:3100
-    networks:
-      - grafana
-      - internal
-      - website
-    volumes:
-      - ./loki:/etc/loki
+#  loki:
+#    image: grafana/loki:latest
+#    command: -config.file=/etc/loki/local-config.yaml
+#    ports:
+#      - 3100:3100
+#    networks:
+#      - grafana
+#      - internal
+#      - website
+#    volumes:
+#      - ./loki:/etc/loki
 
 #Metrics
-  grafana:
-    image: grafana/grafana
-    user: "104"
-    depends_on:
-      - prometheus
-      - loki
-    ports:
-      - 3000:3000
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=foobar
-      - GF_USERS_ALLOW_SIGN_UP=false
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./grafana/provisioning/:/etc/grafana/provisioning/
-    networks:
-      - grafana
-  prometheus:
-    image: prom/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--web.console.templates=/usr/share/prometheus/consoles'
-    volumes:
-      - ./prometheus/:/etc/prometheus/
-      - prometheus_data:/prometheus
-    ports:
-      - 9090:9090
-    networks:
-      - grafana
-      - prometheus
-  prometheus.nodeexporter:
-    image: prom/node-exporter:latest
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-    command:
-      - '--path.procfs=/host/proc'
-      - '--path.rootfs=/rootfs'
-      - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
-    networks:
-      - prometheus
-  prometheus.aragas_qserver_exporter:
-    image: ${DOCKER_REGISTRY-}aragas_qserver_prometheus_exporter
-    build:
-      context: ../..
-      dockerfile: Aragas.QServer.Prometheus.Exporter/Dockerfile
-    depends_on:
-      - nats
-    networks:
-      - internal
-      - prometheus
+#  grafana:
+#    image: grafana/grafana
+#    user: "104"
+#    depends_on:
+#      - prometheus
+#      - loki
+#    ports:
+#      - 3000:3000
+#    environment:
+#      - GF_SECURITY_ADMIN_PASSWORD=foobar
+#      - GF_USERS_ALLOW_SIGN_UP=false
+#    volumes:
+#      - grafana_data:/var/lib/grafana
+#      - ./grafana/provisioning/:/etc/grafana/provisioning/
+#    networks:
+#      - grafana
+#  prometheus:
+#    image: prom/prometheus
+#    command:
+#      - '--config.file=/etc/prometheus/prometheus.yml'
+#      - '--storage.tsdb.path=/prometheus'
+#      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+#      - '--web.console.templates=/usr/share/prometheus/consoles'
+#    volumes:
+#      - ./prometheus/:/etc/prometheus/
+#      - prometheus_data:/prometheus
+#    ports:
+#      - 9090:9090
+#    networks:
+#      - grafana
+#      - prometheus
+#  prometheus.nodeexporter:
+#    image: prom/node-exporter:latest
+#    volumes:
+#      - /proc:/host/proc:ro
+#      - /sys:/host/sys:ro
+#      - /:/rootfs:ro
+#    command:
+#      - '--path.procfs=/host/proc'
+#      - '--path.rootfs=/rootfs'
+#      - '--path.sysfs=/host/sys'
+#      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+#    networks:
+#      - prometheus
+#  prometheus.aragas_qserver_exporter:
+#    image: ${DOCKER_REGISTRY-}aragas_qserver_prometheus_exporter
+#    build:
+#      context: ../..
+#      dockerfile: Aragas.QServer.Prometheus.Exporter/Dockerfile
+#    depends_on:
+#      - nats
+#    networks:
+#      - internal
+#      - prometheus
 
 #WebSite
   minelib.server.website:
     image: ${DOCKER_REGISTRY-}minelib_server_website
     depends_on:
-      - loki
-      - postgres
+#      - loki
+#      - postgres
       - nats
     build:
       context: ../..
@@ -124,27 +125,27 @@ services:
 
 
 #Database
-  postgres:
-    image: postgres:alpine
-    container_name: minelib_postgres
-    environment:
-     POSTGRES_DB: minelib
-     POSTGRES_USER: minelib
-     POSTGRES_PASSWORD: minelib
-    volumes:
-      - postgresql_data:/var/lib/postgresql
-    ports:
-      - 5432:5432
-    networks:
-      - website
-      - internal
+#  postgres:
+#    image: postgres:alpine
+#    container_name: minelib_postgres
+#    environment:
+#     POSTGRES_DB: minelib
+#     POSTGRES_USER: minelib
+#     POSTGRES_PASSWORD: minelib
+#    volumes:
+#      - postgresql_data:/var/lib/postgresql
+#    ports:
+#      - 5432:5432
+#    networks:
+#      - website
+#      - internal
 
 #Server
   minelib.server.entitybus:
     image: ${DOCKER_REGISTRY-}minelib_server_entitybus
     depends_on:
-      - loki
-      - postgres
+#      - loki
+#      - postgres
       - nats
     build:
       context: ../..
@@ -157,8 +158,8 @@ services:
       context: ../..
       dockerfile: MineLib/Executables/Bus/MineLib.Server.PlayerBus/Dockerfile
     depends_on:
-      - loki
-      - postgres
+#      - loki
+#      - postgres
       - nats
     networks:
       - internal
@@ -168,8 +169,8 @@ services:
       context: ../..
       dockerfile: MineLib/Executables/Bus/MineLib.Server.WorldBus/Dockerfile
     depends_on:
-      - loki
-      - postgres
+#      - loki
+#      - postgres
       - nats
     networks:
       - internal
@@ -180,8 +181,8 @@ services:
       context: ../..
       dockerfile: MineLib/Executables/MineLib.Server.Proxy/Dockerfile
     depends_on:
-      - loki
-      - nats
+#      - loki
+ #     - nats
       - minelib.server.entitybus
       - minelib.server.playerbus
       - minelib.server.worldbus

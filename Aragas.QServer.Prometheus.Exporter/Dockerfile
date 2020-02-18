@@ -25,5 +25,6 @@ RUN dotnet publish "Aragas.QServer.Prometheus.Exporter.csproj" -c Release -o /ap
 
 FROM base AS final
 WORKDIR /app
+RUN apt-get update && apt-get install -y procps
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Aragas.QServer.Prometheus.Exporter.dll"]

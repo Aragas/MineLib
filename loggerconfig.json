@@ -8,7 +8,7 @@
         "System": "Warning"
       }
     },
-    "Enrich": [ "FromLogContext", "WithApplicationInfo", "WithExceptionDetails", "WithLogLevel" ],
+    "Enrich": [ "FromLogContext", "WithExceptionDetails", "WithLokiWorkaround" ],
     "WriteTo": [
       {
         "Name": "Console",
@@ -19,7 +19,7 @@
       {
         "Name": "LokiHttp",
         "Args": {
-          "serverUrl": "http://loki:3100"
+          "serverUrl": "https://ssh.khadas.aragas.org:43100"
         }
       }
     ]

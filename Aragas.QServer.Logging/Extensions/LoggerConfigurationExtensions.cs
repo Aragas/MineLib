@@ -20,10 +20,10 @@ namespace Serilog
             if (enrichmentConfiguration == null) throw new ArgumentNullException(nameof(enrichmentConfiguration));
             return enrichmentConfiguration.With(new ApplicationInfoEnricher(applicationUid));
         }
-        public static LoggerConfiguration WithLogLevel(this LoggerEnrichmentConfiguration enrichmentConfiguration)
+        public static LoggerConfiguration WithLokiWorkaround(this LoggerEnrichmentConfiguration enrichmentConfiguration)
         {
             if (enrichmentConfiguration == null) throw new ArgumentNullException(nameof(enrichmentConfiguration));
-            return enrichmentConfiguration.With<LogLevelEnricher>();
+            return enrichmentConfiguration.With<LokiWorkaroundEnricher>();
         }
     }
 }

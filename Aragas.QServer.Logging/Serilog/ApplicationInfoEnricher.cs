@@ -22,8 +22,8 @@ namespace Aragas.QServer.Logging.Serilog
 
         private readonly Guid _applicationUid;
 
-        private LogEventProperty _cachedApplicationNameProperty;
-        private LogEventProperty _cachedApplicationUidProperty;
+        private LogEventProperty? _cachedApplicationNameProperty;
+        private LogEventProperty? _cachedApplicationUidProperty;
 
         public ApplicationInfoEnricher(Guid applicationUid)
         {

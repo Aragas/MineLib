@@ -19,7 +19,7 @@
       {
         "Name": "LokiHttp",
         "Args": {
-          "serverUrl": "https://ssh.khadas.aragas.org:43100"
+          "serverUrl": "https://ssh.homeserver.aragas.org:43100"
         }
       }
     ]

@@ -18,7 +18,7 @@ services:
     image: nats
     command:
       - '--cluster=nats://0.0.0.0:6222'
-      - '--routes=nats://ssh.khadas.aragas.org:46222' 
+      - '--routes=nats://ssh.homeserver.aragas.org:46222' 
     volumes:
       - ./nats/nats-server.conf:/opt/bitnami/nats/nats-server.conf
     ports:

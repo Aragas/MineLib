@@ -1,14 +1,92 @@
 version: '3.7'
 
+networks:
+  internal:
+  website:
+
 services:
+#Network Bus
+  nats:
+    image: nats
+    command:
+      - '--cluster=nats://0.0.0.0:6222'
+      - '--routes=nats://nats.aragas.org:46222' 
+    volumes:
+      - ./nats/nats-server.conf:/opt/bitnami/nats/nats-server.conf
+    ports:
+      - 6222:6222
+    expose:
+      - 4222
+    networks:
+      - internal
+      - website
+
 #WebSite
   minelib.server.website:
     image: ${DOCKER_REGISTRY-}minelib_server_website
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - nats
     build:
       context: ../..
       dockerfile: MineLib/Executables/MineLib.Server.WebSite/Dockerfile
-    ports:
       - 12080:80
       - 12443:443
+    networks:
+      - website
+
+
+#Server
+  minelib.server.entitybus:
+    image: ${DOCKER_REGISTRY-}minelib_server_entitybus
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - nats
+    build:
+      context: ../..
+      dockerfile: MineLib/Executables/Bus/MineLib.Server.EntityBus/Dockerfile
+    networks:
+      - internal
+  minelib.server.playerbus:
+    image: ${DOCKER_REGISTRY-}minelib_server_playerbus
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    build:
+      context: ../..
+      dockerfile: MineLib/Executables/Bus/MineLib.Server.PlayerBus/Dockerfile
+    depends_on:
+      - nats
+    networks:
+      - internal
+  minelib.server.worldbus:
+    image: ${DOCKER_REGISTRY-}minelib_server_worldbus
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    build:
+      context: ../..
+      dockerfile: MineLib/Executables/Bus/MineLib.Server.WorldBus/Dockerfile
+    depends_on:
+      - nats
+    networks:
+      - internal
+
+  minelib.server.proxy:
+    image: ${DOCKER_REGISTRY-}minelib_server_proxy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    build:
+      context: ../..
+      dockerfile: MineLib/Executables/MineLib.Server.Proxy/Dockerfile
+    depends_on:
+      - minelib.server.entitybus
+      - minelib.server.playerbus
+      - minelib.server.worldbus
+      - minelib.server.website
+    ports:
+      - 25565:25565
+      - 56552:56552
+    networks:
+      - internal
+      - website

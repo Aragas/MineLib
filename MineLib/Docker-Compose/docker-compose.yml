@@ -31,6 +31,7 @@ services:
     build:
       context: ../..
       dockerfile: MineLib/Executables/MineLib.Server.WebSite/Dockerfile
+    ports:
       - 12080:80
       - 12443:443
     networks:

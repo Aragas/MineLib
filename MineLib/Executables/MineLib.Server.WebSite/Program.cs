@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 using MineLib.Server.WebSite.BackgroundServices;
 using MineLib.Server.WebSite.Data;
@@ -146,17 +147,19 @@ namespace MineLib.Server.WebSite
 
         private static void BeforeRun(IHost host)
         {
+            var serviceOptions = host.Services.GetRequiredService<IOptions<ServiceOptions>>().Value;
+
             try
             {
                 using var scope = host.Services.CreateScope();
                 var services = scope.ServiceProvider;
-                var context0 = services.GetRequiredService<ClassicServersContext>();
-                context0.Database.EnsureDeleted();
-                context0.Database.EnsureCreated();
+                var classicServersContext = services.GetRequiredService<ClassicServersContext>();
+                classicServersContext.Database.EnsureDeleted();
+                classicServersContext.Database.EnsureCreated();
 
-                var context1 = services.GetRequiredService<UserContext>();
-                //context1.Database.EnsureDeleted();
-                context1.Database.EnsureCreated();
+                var userContext = services.GetRequiredService<UserContext>();
+                //userContext.Database.EnsureDeleted();
+                userContext.Database.EnsureCreated();
             }
             catch (Exception ex)
             {

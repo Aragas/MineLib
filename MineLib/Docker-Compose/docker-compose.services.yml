@@ -11,7 +11,7 @@ services:
     container_name: nats_services
     command:
       - '--cluster=nats://0.0.0.0:6222'
-      - '--routes=nats://nats.aragas.org:46222' 
+      - '--routes=nats://nats.aragas.org:46222'
     volumes:
       - ./nats/nats-server.conf:/opt/bitnami/nats/nats-server.conf
     ports:
@@ -25,6 +25,8 @@ services:
   minelib.server.entitybus:
     image: ${DOCKER_REGISTRY-}minelib_server_entitybus
     restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
     depends_on:
       - nats
     build:
@@ -35,6 +37,8 @@ services:
   minelib.server.playerbus:
     image: ${DOCKER_REGISTRY-}minelib_server_playerbus
     restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
     build:
       context: ../..
       dockerfile: MineLib/Executables/Bus/MineLib.Server.PlayerBus/Dockerfile
@@ -45,6 +49,8 @@ services:
   minelib.server.worldbus:
     image: ${DOCKER_REGISTRY-}minelib_server_worldbus
     restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
     build:
       context: ../..
       dockerfile: MineLib/Executables/Bus/MineLib.Server.WorldBus/Dockerfile

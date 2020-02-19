@@ -25,6 +25,8 @@ services:
   minelib.server.website:
     image: ${DOCKER_REGISTRY-}minelib_server_website
     restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
     depends_on:
       - nats
     build:

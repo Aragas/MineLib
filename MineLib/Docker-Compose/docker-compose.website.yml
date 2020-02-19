@@ -1,0 +1,46 @@
+version: '3.7'
+
+networks:
+  website:
+
+services:
+#Network Bus
+  nats:
+    image: nats
+    command:
+      - '--cluster=nats://0.0.0.0:6222'
+      - '--routes=nats://nats.aragas.org:46222' 
+    volumes:
+      - ./nats/nats-server.conf:/opt/bitnami/nats/nats-server.conf
+    ports:
+      - 4222:4222
+      - 6222:6222
+      - 8222:8222
+    networks:
+      - website
+      
+#WebSite
+  minelib.server.website:
+    image: ${DOCKER_REGISTRY-}minelib_server_website
+    depends_on:
+      - nats
+    build:
+      context: ../..
+      dockerfile: MineLib/Executables/MineLib.Server.WebSite/Dockerfile
+    ports:
+      - 5280:80
+    networks:
+      - website
+      
+#  minelib.server.website.nginx:
+#    image: nginx:alpine
+#    depends_on:
+#      - minelib.server.website
+#    volumes:
+#      - ./nginx_website/nginx.conf:/etc/nginx/nginx.conf
+#      - ./nginx_website/logs:/var/log/nginx
+#    ports:
+#      - 12080:80
+#      - 12443:443
+#    networks:
+#      - website

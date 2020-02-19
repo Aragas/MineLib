@@ -7,6 +7,7 @@ services:
 #Network Bus
   nats:
     image: nats
+    restart: always
     command:
       - '--cluster=nats://0.0.0.0:6222'
       - '--routes=nats://nats.aragas.org:46222' 
@@ -22,6 +23,7 @@ services:
 #Server
   minelib.server.entitybus:
     image: ${DOCKER_REGISTRY-}minelib_server_entitybus
+    restart: always
     depends_on:
       - nats
     build:
@@ -31,6 +33,7 @@ services:
       - services
   minelib.server.playerbus:
     image: ${DOCKER_REGISTRY-}minelib_server_playerbus
+    restart: always
     build:
       context: ../..
       dockerfile: MineLib/Executables/Bus/MineLib.Server.PlayerBus/Dockerfile
@@ -40,6 +43,7 @@ services:
       - services
   minelib.server.worldbus:
     image: ${DOCKER_REGISTRY-}minelib_server_worldbus
+    restart: always
     build:
       context: ../..
       dockerfile: MineLib/Executables/Bus/MineLib.Server.WorldBus/Dockerfile

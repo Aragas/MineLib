@@ -7,6 +7,7 @@ services:
 #Network Bus
   nats:
     image: nats
+    restart: always
     command:
       - '--cluster=nats://0.0.0.0:6222'
       - '--routes=nats://nats.aragas.org:46222' 
@@ -22,6 +23,7 @@ services:
 #WebSite
   minelib.server.website:
     image: ${DOCKER_REGISTRY-}minelib_server_website
+    restart: always
     depends_on:
       - nats
     build:

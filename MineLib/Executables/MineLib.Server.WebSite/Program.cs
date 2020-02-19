@@ -1,7 +1,5 @@
-using App.Metrics.Health;
-
-using Aragas.QServer.Health;
-using Aragas.QServer.Logging.Serilog;
+using Aragas.QServer.Hosting;
+using Aragas.QServer.NetworkBus.Data;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -20,10 +18,6 @@ using MineLib.Server.WebSite.Models;
 using MineLib.Server.WebSite.Repositories;
 using MineLib.Server.WebSite.Services;
 
-using Serilog;
-using Serilog.Exceptions;
-using Serilog.Sinks.Loki;
-
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -32,51 +26,17 @@ namespace MineLib.Server.WebSite
 {
     public sealed class Program
     {
-        private static Guid Uid { get; } = Guid.NewGuid();
-
         public static async Task Main(string[] args)
         {
-            var configuration = new ConfigurationBuilder().AddJsonFile("loggerconfig.json").Build();
-            Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(configuration)
-                //.Enrich.FromLogContext()
-                .Enrich.WithApplicationInfo(Uid)
-                //.Enrich.WithExceptionDetails()
-                //.Enrich.WithLogLevel()
-                //.WriteTo.LokiHttp(new NoAuthCredentials("http://ssh.khadas.aragas.org:43100"), new LogLabelProvider(Uid))
-                .CreateLogger();
-
-            try
-            {
-                Log.Information("{TypeName}: Starting.", typeof(Program).FullName);
-
-                var hostBuilder = CreateHostBuilder(args ?? Array.Empty<string>());
-
-                var host = hostBuilder.Build();
-
-                BeforeRun(host);
-
-                await host.RunAsync();
-            }
-            catch (Exception ex)
-            {
-                Log.Fatal(ex, "{TypeName}: Fatal exception.", typeof(Program).FullName);
-                throw;
-            }
-            finally
-            {
-                Log.Information("{TypeName}: Stopped.", typeof(Program).FullName);
-                Log.CloseAndFlush();
-            }
+            await QServerHostProgram.Main<Program>(CreateHostBuilder, BeforeRun, args);
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) => Host
-            .CreateDefaultBuilder(args ?? Array.Empty<string>())
-            .UseSerilog()
-            .UseServiceOptions(Uid)
-            .UseNATSNetworkBus()
-            .UseMetricsWithDefault()
-            .UseHealthChecks()
+        public static IHostBuilder CreateHostBuilder(IHostBuilder hostBuilder) => hostBuilder
+            // Options
+            .ConfigureServices((hostContext, services) =>
+            {
+                services.Configure<ServiceOptions>(o => o.Name = "WebSite");
+            })
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddNpgSqlMetrics("ClassicServers", hostContext.Configuration.GetConnectionString("ClassicServers"));

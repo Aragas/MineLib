@@ -1,4 +1,8 @@
-﻿using NATS.Client;
+﻿using Aragas.QServer.NetworkBus.Options;
+
+using Microsoft.Extensions.Options;
+
+using NATS.Client;
 using NATS.Client.Rx;
 
 using Nito.AsyncEx;
@@ -18,13 +22,15 @@ namespace Aragas.QServer.NetworkBus
     {
         protected readonly IConnection Connection;
 
-        public NATSBus(Options options)
+        public NATSBus(IOptions<NATSOptions> options)
         {
-            Connection = new ConnectionFactory().CreateConnection(options);
-        }
-        public NATSBus()
-        {
-            Connection = new ConnectionFactory().CreateConnection(ConnectionFactory.GetDefaultOptions().SetDefaultArgs());
+            var natsOptions = ConnectionFactory.GetDefaultOptions();
+            natsOptions.Timeout = (int) TimeSpan.FromMilliseconds(10000).TotalMilliseconds;
+            natsOptions.AllowReconnect = true;
+            natsOptions.MaxReconnect = NATS.Client.Options.ReconnectForever;
+            natsOptions.Url = options.Value.Url;
+
+            Connection = new ConnectionFactory().CreateConnection(natsOptions);
         }
 
         public void Publish<TMessage>(TMessage message, Guid? referenceId = null) where TMessage : notnull, IMessage =>
@@ -99,8 +105,7 @@ namespace Aragas.QServer.NetworkBus
 
     public sealed class AsyncNATSBus : NATSBus, IAsyncNetworkBus
     {
-        public AsyncNATSBus(Options options) : base(options) { }
-        public AsyncNATSBus() : base() { }
+        public AsyncNATSBus(IOptions<NATSOptions> options) : base(options) { }
 
         public Task PublishAsync<TMessage>(TMessage message, Guid? referenceId) where TMessage : notnull, IMessage =>
             Task.Run(() => Connection.Publish(GetSubject(message, referenceId), message.GetData().ToArray()));

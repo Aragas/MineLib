@@ -25,7 +25,29 @@ namespace Aragas.QServer.Hosting
             Action<IHost>? beforeRunAction = null,
             string[]? args = null)
         {
-            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == null && Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") == null)
+            {
+                Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", "Development");
+                Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
+            }
+
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != null && Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") == null)
+            {
+                Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
+            }
+
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == null && Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") != null)
+            {
+                Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT"));
+            }
+
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != null && Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") != null)
+            {
+                Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
+            }
+
+
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile("loggerconfig.json", false)
                 .AddJsonFile($"loggerconfig.{env}.json", true)

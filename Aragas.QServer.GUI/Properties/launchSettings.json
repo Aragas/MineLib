@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Aragas.QServer.GUI": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT ": "Development"
+      }
+    }
+  }
+}

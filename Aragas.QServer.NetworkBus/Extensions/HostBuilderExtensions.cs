@@ -1,9 +1,8 @@
 ﻿using Aragas.QServer.NetworkBus;
 using Aragas.QServer.NetworkBus.Data;
+using Aragas.QServer.NetworkBus.Options;
 
 using Microsoft.Extensions.DependencyInjection;
-
-using NATS.Client;
 
 using System;
 
@@ -20,8 +19,9 @@ namespace Microsoft.Extensions.Hosting
         public static IHostBuilder UseNATSNetworkBus(this IHostBuilder hostBuilder) =>
             hostBuilder.ConfigureServices((hostContext, services) =>
             {
-                services.AddSingleton(ConnectionFactory.GetDefaultOptions().SetDefaultArgs());
-                services.AddSingleton<IAsyncNetworkBus>(sp => new AsyncNATSBus(sp.GetRequiredService<NATS.Client.Options>()));
+                services.Configure<NATSOptions>(hostContext.Configuration.GetSection("NATS"));
+
+                services.AddSingleton<IAsyncNetworkBus, AsyncNATSBus>();
                 services.AddSingleton<INetworkBus>(sp => sp.GetRequiredService<IAsyncNetworkBus>());
                 services.AddSingleton<SubscriptionStorage>();
             });

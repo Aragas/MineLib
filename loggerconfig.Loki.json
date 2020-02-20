@@ -1,6 +1,6 @@
 {
   "Serilog": {
-    "Using": [ "Serilog.Sinks.Console", "Serilog.Sinks.Seq", "Serilog.Exceptions", "Serilog.Sinks.Loki", "Aragas.QServer.Logging" ],
+    "Using": [ "Serilog.Sinks.Console", "Serilog.Sinks.Loki", "Aragas.QServer.Logging", "Serilog.Exceptions" ],
     "MinimumLevel": {
       "Default": "Information",
       "Override": {
@@ -11,18 +11,15 @@
     "Enrich": [ "FromLogContext", "WithExceptionDetails", "WithLokiWorkaround" ],
     "WriteTo": [
       {
-        "Name": "Console"
-      },
-      {
-        "Name": "Seq",
+        "Name": "Console",
         "Args": {
-          "serverUrl": "https://seq-minelib.aragas.org"
+          "restrictedToMinimumLevel": "Information"
         }
       },
       {
         "Name": "LokiHttp",
         "Args": {
-          "serverUrl": "https://loki-minelib.aragas.org"
+          "serverUrl": "https://ssh.homeserver.aragas.org:43100"
         }
       }
     ]

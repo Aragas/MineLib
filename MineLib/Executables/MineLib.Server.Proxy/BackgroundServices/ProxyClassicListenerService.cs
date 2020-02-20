@@ -41,7 +41,7 @@ namespace MineLib.Server.Proxy.BackgroundServices
 
         public override Task StartAsync(CancellationToken cancellationToken)
         {
-            _hearthbeat = HearthbeatAsync(_stoppingCts.Token);
+            _hearthbeat = HeartbeatAsync(_stoppingCts.Token);
 
             return base.StartAsync(cancellationToken);
         }
@@ -66,7 +66,7 @@ namespace MineLib.Server.Proxy.BackgroundServices
             await base.StopAsync(cancellationToken);
         }
 
-        private async Task HearthbeatAsync(CancellationToken stoppingToken)
+        private async Task HeartbeatAsync(CancellationToken stoppingToken)
         {
             var heartbeat = ActivatorUtilities.CreateInstance<Heartbeat>(ServiceProvider, new object[] { BeatType.Minecraft, (ushort) Port });
             heartbeat.Beat(true);

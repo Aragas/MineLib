@@ -20,7 +20,7 @@
       {
         "Name": "LokiHttp",
         "Args": {
-          "serverUrl": "https://loki-minelib.aragas.org"
+          "serverUrl": "http://loki-minelib.aragas.org"
         }
       }
     ]

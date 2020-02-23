@@ -8,8 +8,8 @@
       }
     },
 
-    "Using": [ "Serilog.Sinks.Seq", "Serilog.Exceptions", "Serilog.Sinks.Loki", "Aragas.QServer.Logging" ],
-    "Enrich": [ "FromLogContext", "WithExceptionDetails", "WithLokiWorkaround" ],
+    "Using": [ "Serilog.Sinks.Seq", "Serilog.Exceptions", "Serilog.Sinks.Loki" ],
+    "Enrich": [ "FromLogContext", "WithExceptionDetails" ],
     "WriteTo": [
       {
         "Name": "Seq",

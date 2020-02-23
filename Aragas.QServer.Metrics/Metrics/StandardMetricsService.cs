@@ -1,6 +1,9 @@
 ﻿using App.Metrics;
 using App.Metrics.Counter;
 using App.Metrics.Gauge;
+using App.Metrics.Histogram;
+
+using Aragas.QServer.Metrics.BackgroundServices;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -18,6 +21,11 @@ namespace Aragas.QServer.Metrics
         {
             Name = "Process Start Time Milliseconds",
             MeasurementUnit = Unit.Custom("Milliseconds")
+        };
+        private readonly HistogramOptions process_cpu_usage_percent = new HistogramOptions()
+        {
+            Name = "Process CPU Usage Percent",
+            MeasurementUnit = Unit.Percent
         };
         private readonly GaugeOptions process_private_memory_bytes = new GaugeOptions()
         {
@@ -46,13 +54,15 @@ namespace Aragas.QServer.Metrics
         };
 
         private readonly IMetrics _metrics;
+        private readonly ICpuUsageMonitor _cpuUsageMonitor;
         private readonly ILogger _logger;
         private readonly int _delay;
         private readonly Process _process;
 
-        public StandardMetricsService(IMetrics metrics, ILogger<StandardMetricsService> logger, int delay = 3000)
+        public StandardMetricsService(IMetrics metrics, ICpuUsageMonitor cpuUsageMonitor, ILogger<StandardMetricsService> logger, int delay = 3000)
         {
             _metrics = metrics;
+            _cpuUsageMonitor = cpuUsageMonitor;
             _logger = logger;
             _delay = delay;
             _process = Process.GetCurrentProcess();
@@ -78,6 +88,7 @@ namespace Aragas.QServer.Metrics
                 _metrics.Measure.Gauge.SetValue(dotnet_total_memory_bytes, GC.GetTotalMemory(false));
                 _metrics.Measure.Gauge.SetValue(process_private_memory_bytes, _process.PrivateMemorySize64);
                 _metrics.Measure.Gauge.SetValue(process_working_set_bytes, _process.WorkingSet64);
+                _metrics.Measure.Histogram.Update(process_cpu_usage_percent, (long) _cpuUsageMonitor.CpuUsagePercent * 100 * 10);
 
                 await Task.Delay(_delay, stoppingToken);
             }

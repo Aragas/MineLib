@@ -10,3 +10,6 @@
 [submodule "Aragas.TupleEventSystem"]
 	path = Aragas.TupleEventSystem
 	url = https://github.com/Aragas/Aragas.TupleEventSystem
+[submodule "Aragas.QServer.Logging"]
+	path = Aragas.QServer.Logging
+	url = https://github.com/Aragas/Aragas.QServer.Logging.git

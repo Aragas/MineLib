@@ -16,3 +16,6 @@
 [submodule "Aragas.QServer.Metrics"]
 	path = Aragas.QServer.Metrics
 	url = https://github.com/Aragas/Aragas.QServer.Metrics.git
+[submodule "Aragas.QServer.Metrics.PostgreSQL"]
+	path = Aragas.QServer.Metrics.PostgreSQL
+	url = https://github.com/Aragas/Aragas.QServer.Metrics.PostgreSQL

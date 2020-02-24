@@ -29,10 +29,10 @@ namespace Aragas.QServer.Core.Protocol
             PlayerId = playerId;
             DefaultFactory = defaultFactory;
 
-            Events.Add(_networkBus.Subscribe<PlayerDataToBusMessage>(message => DataReceivedQueue.Enqueue(message.Data), PlayerId));
+            Events.Add(_networkBus.Subscribe<SocketDataToBusMessage>(message => DataReceivedQueue.Enqueue(message.Data), PlayerId));
         }
 
-        protected override void Send(in ReadOnlySpan<byte> span) => _networkBus.Publish(new PlayerDataToProxyMessage() { Data = span.ToArray() }, PlayerId);
+        protected override void Send(in ReadOnlySpan<byte> span) => _networkBus.Publish(new SocketDataToProxyMessage() { Data = span.ToArray() }, PlayerId);
         protected override Span<byte> Receive(long length) => DataReceivedQueue.TryDequeue(out var data) ? data : Array.Empty<byte>();
 
         public override void SendPacket(TPacketType packet)

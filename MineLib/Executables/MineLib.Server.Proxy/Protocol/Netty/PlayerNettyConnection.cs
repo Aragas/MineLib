@@ -173,7 +173,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty
                 else
                 {
                     PlayerBusId = playerBusId;
-                    Events.Add(NetworkBus.Subscribe<PlayerDataToProxyMessage>(message =>
+                    Events.Add(NetworkBus.Subscribe<SocketDataToProxyMessage>(message =>
                     {
                         try
                         {
@@ -189,7 +189,7 @@ namespace MineLib.Server.Proxy.Protocol.Netty
             else
             {
                 while (Stream.DataToSend.TryDequeue(out var data))
-                    NetworkBus.Publish(new PlayerDataToBusMessage() { Data = data }, PlayerId);
+                    NetworkBus.Publish(new SocketDataToBusMessage() { Data = data }, PlayerId);
             }
         }
 

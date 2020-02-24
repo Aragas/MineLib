@@ -13,3 +13,6 @@
 [submodule "Aragas.QServer.Logging"]
 	path = Aragas.QServer.Logging
 	url = https://github.com/Aragas/Aragas.QServer.Logging.git
+[submodule "Aragas.QServer.Metrics"]
+	path = Aragas.QServer.Metrics
+	url = https://github.com/Aragas/Aragas.QServer.Metrics.git

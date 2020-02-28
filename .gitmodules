@@ -25,3 +25,6 @@
 [submodule "Aragas.QServer.Health"]
 	path = Aragas.QServer.Health
 	url = https://github.com/Aragas/Aragas.QServer.Health.git
+[submodule "Aragas.QServer.Core"]
+	path = Aragas.QServer.Core
+	url = https://github.com/Aragas/Aragas.QServer.Core.git

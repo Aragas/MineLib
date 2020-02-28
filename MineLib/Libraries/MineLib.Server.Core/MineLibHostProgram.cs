@@ -14,7 +14,7 @@ namespace MineLib.Server.Core
             MineLib.Core.Extensions.PacketExtensions.Init();
             MineLib.Server.Core.Extensions.PacketExtensions.Init();
 
-            await QServerHostProgram.Main<TProgram>(hostBuilderFunc, beforeRunAction, args);
+            await QServerHostProgram.Main<TProgram>(hostBuilderFunc: hostBuilderFunc, beforeRunAction: beforeRunAction, args: args);
         }
     }
 }

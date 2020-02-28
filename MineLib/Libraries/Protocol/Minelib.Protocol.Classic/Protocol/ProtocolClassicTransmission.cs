@@ -9,7 +9,7 @@ using System;
 
 namespace MineLib.Protocol.Classic.Protocol
 {
-    public class ProtocolClassicTransmission : SocketPacketINetworkBusTransmission<ClassicPacket, byte, StandardSerializer, StandardDeserializer>
+    public class ProtocolClassicTransmission : SocketPacketNetworkBusTransmission<ClassicPacket, byte, StandardSerializer, StandardDeserializer>
     {
         public new ClientClassicFactory Factory = new ClientClassicFactory();
 

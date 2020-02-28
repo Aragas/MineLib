@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)\Third Party\Aragas.Network-2\src\Aragas.Network-2.Standard\Aragas.Network-2.csproj" />
+    <ProjectReference Include="$(SolutionDir)\Aragas.Network-2\src\Aragas.Network-2.Standard\Aragas.Network-2.csproj" />
   </ItemGroup>
 
 </Project>

@@ -19,7 +19,7 @@ namespace Aragas.QServer.GUI
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            var _ = QServerHostProgram.Main<App>(CreateHostBuilder, BeforeRun);
+            var _ = QServerHostProgram.Main<App>(hostBuilderFunc: CreateHostBuilder, beforeRunAction: BeforeRun);
 
             var window = ServiceProvider.GetRequiredService<MainWindow>();
             window.Show();

@@ -1,15 +1,9 @@
-[submodule "ProtocolModern_1.7.10"]
-	path = ProtocolModern_1.7.10
-	url = https://github.com/MineLib/ProtocolModern_1.7.10
 [submodule "Aragas.Network-2"]
 	path = Aragas.Network-2
 	url = https://github.com/Aragas/Aragas.Network-2.git
-[submodule "TinyIpc"]
-	path = TinyIpc
-	url = https://github.com/MineLib/TinyIpc
 [submodule "Aragas.TupleEventSystem"]
 	path = Aragas.TupleEventSystem
-	url = https://github.com/Aragas/Aragas.TupleEventSystem
+	url = https://github.com/Aragas/Aragas.TupleEventSystem.git
 [submodule "Aragas.QServer.Logging"]
 	path = Aragas.QServer.Logging
 	url = https://github.com/Aragas/Aragas.QServer.Logging.git
@@ -18,7 +12,16 @@
 	url = https://github.com/Aragas/Aragas.QServer.Metrics.git
 [submodule "Aragas.QServer.Metrics.PostgreSQL"]
 	path = Aragas.QServer.Metrics.PostgreSQL
-	url = https://github.com/Aragas/Aragas.QServer.Metrics.PostgreSQL
+	url = https://github.com/Aragas/Aragas.QServer.Metrics.PostgreSQL.git
 [submodule "Aragas.QServer.NetworkBus"]
 	path = Aragas.QServer.NetworkBus
 	url = https://github.com/Aragas/Aragas.QServer.NetworkBus.git
+[submodule "Aragas.QServer.Hosting"]
+	path = Aragas.QServer.Hosting
+	url = https://github.com/Aragas/Aragas.QServer.Hosting.git
+[submodule "App.Metrics.DotNetRuntime"]
+	path = App.Metrics.DotNetRuntime
+	url = https://github.com/Aragas/App.Metrics.DotNetRuntime.git
+[submodule "Aragas.QServer.Health"]
+	path = Aragas.QServer.Health
+	url = https://github.com/Aragas/Aragas.QServer.Health.git

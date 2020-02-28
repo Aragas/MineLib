@@ -45,9 +45,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MineLib.Protocol.Netty5", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MineLib.Protocol.Forge", "MineLib\Libraries\Protocol\MineLib.Protocol.Forge\MineLib.Protocol.Forge.csproj", "{AFF0DBE4-B9CC-4B87-9FF7-C1AD787F59A7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aragas.TupleEventSystem", "Third Party\Aragas.TupleEventSystem\src\Aragas.TupleEventSystem\Aragas.TupleEventSystem.csproj", "{2C7DEE35-6FD9-4FAC-8BE2-B12D44CF60BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aragas.TupleEventSystem", "Aragas.TupleEventSystem\src\Aragas.TupleEventSystem\Aragas.TupleEventSystem.csproj", "{2C7DEE35-6FD9-4FAC-8BE2-B12D44CF60BE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aragas.Network-2", "Third Party\Aragas.Network-2\src\Aragas.Network-2.Standard\Aragas.Network-2.csproj", "{2A920B74-8959-4903-808F-7FD1557D7D36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aragas.Network-2", "Aragas.Network-2\src\Aragas.Network-2.Standard\Aragas.Network-2.csproj", "{2A920B74-8959-4903-808F-7FD1557D7D36}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "MineLib.Server", "MineLib\Docker-Compose\MineLib.Server.dcproj", "{2CE8B254-1FE3-4691-8941-0A49644EB98A}"
 EndProject
@@ -69,11 +69,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BedrockProxy", "BedrockProx
 		MineLib\BedrockProxy\Dockerfile = MineLib\BedrockProxy\Dockerfile
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aragas.Network.Analyzer", "Third Party\Aragas.Network.Analyzer\Aragas.Network.Analyzer\Aragas.Network.Analyzer.csproj", "{0B582BE9-0908-41B9-83B6-B9F839385090}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aragas.Network.Analyzer", "Aragas.Network.Analyzer\Aragas.Network.Analyzer\Aragas.Network.Analyzer.csproj", "{0B582BE9-0908-41B9-83B6-B9F839385090}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aragas.Network.Analyzer.Test", "Third Party\Aragas.Network.Analyzer\Aragas.Network.Analyzer.Test\Aragas.Network.Analyzer.Test.csproj", "{42E1B388-12BF-4B45-AFA8-E4AB5D70D833}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aragas.Network.Analyzer.Test", "Aragas.Network.Analyzer\Aragas.Network.Analyzer.Test\Aragas.Network.Analyzer.Test.csproj", "{42E1B388-12BF-4B45-AFA8-E4AB5D70D833}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aragas.Network.Analyzer.Vsix", "Third Party\Aragas.Network.Analyzer\Aragas.Network.Analyzer.Vsix\Aragas.Network.Analyzer.Vsix.csproj", "{B937AEE7-0504-48C6-9494-1080A97F849F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aragas.Network.Analyzer.Vsix", "Aragas.Network.Analyzer\Aragas.Network.Analyzer.Vsix\Aragas.Network.Analyzer.Vsix.csproj", "{B937AEE7-0504-48C6-9494-1080A97F849F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Aragas.Network-2.Analyzer", "Aragas.Network-2.Analyzer", "{14184E58-7251-45CB-A8A2-063FA1166F46}"
 EndProject
@@ -99,6 +99,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aragas.QServer.Logging", "Aragas.QServer.Logging\Aragas.QServer.Logging.csproj", "{54ED921A-52EE-4CF6-9992-A616C430B299}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aragas.QServer.Hosting", "Aragas.QServer.Hosting\Aragas.QServer.Hosting.csproj", "{BF387A5B-CF3E-4BD5-9DD6-E1759889C9CC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Metrics.DotNetRuntime", "App.Metrics.DotNetRuntime\App.Metrics.DotNetRuntime.csproj", "{66A78F20-9F7C-49FA-B6A6-633AC839CB96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aragas.QServer.Health", "Aragas.QServer.Health\Aragas.QServer.Health.csproj", "{33F0AA12-72C3-4B5E-A642-EC6F7448BD6F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -230,6 +234,14 @@ Global
 		{BF387A5B-CF3E-4BD5-9DD6-E1759889C9CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF387A5B-CF3E-4BD5-9DD6-E1759889C9CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF387A5B-CF3E-4BD5-9DD6-E1759889C9CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66A78F20-9F7C-49FA-B6A6-633AC839CB96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66A78F20-9F7C-49FA-B6A6-633AC839CB96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66A78F20-9F7C-49FA-B6A6-633AC839CB96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66A78F20-9F7C-49FA-B6A6-633AC839CB96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33F0AA12-72C3-4B5E-A642-EC6F7448BD6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33F0AA12-72C3-4B5E-A642-EC6F7448BD6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33F0AA12-72C3-4B5E-A642-EC6F7448BD6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33F0AA12-72C3-4B5E-A642-EC6F7448BD6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -267,6 +279,7 @@ Global
 		{4C299609-DACB-4BA7-8198-6F54B7398D72} = {AEA09901-59EF-45A9-88C2-6CD9D5FE4907}
 		{4C9DB2A5-1DE0-4A0E-ADC3-2C3E9F70FCBA} = {AEA09901-59EF-45A9-88C2-6CD9D5FE4907}
 		{225B0EFE-C1E1-4FBE-9689-90D6A346373A} = {61966323-4B2E-48A1-A794-B719F0845F8E}
+		{66A78F20-9F7C-49FA-B6A6-633AC839CB96} = {3EC3A2F3-1EF4-4072-8C30-620948809175}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CE7EEC09-C11D-4199-B674-5D6D6015EDC4}

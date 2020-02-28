@@ -7,7 +7,7 @@ using System;
 
 namespace MineLib.Protocol.Protocol
 {
-    public class MinecraftEnumINetworkBusTransmission : ProtobufINetworkBusTransmission<MinecraftEnumPacket>
+    public class MinecraftEnumINetworkBusTransmission : ProtobufNetworkBusTransmission<MinecraftEnumPacket>
     {
         public MinecraftEnumINetworkBusTransmission(IAsyncNetworkBus networkBus, Guid playerId) : base(networkBus, playerId) { }
     }

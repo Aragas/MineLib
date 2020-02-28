@@ -1,8 +1,0 @@
-if($isWindows)
-{
-
-}
-if($isLinux)
-{
-
-}

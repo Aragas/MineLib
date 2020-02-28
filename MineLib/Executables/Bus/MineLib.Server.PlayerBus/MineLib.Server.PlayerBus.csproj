@@ -48,6 +48,7 @@
     </Content>
     <Content Include="$(SolutionDir)\loggerconfig.Development.json" Link="loggerconfig.Development.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <DependentUpon>loggerconfig.json</DependentUpon>
     </Content>
   </ItemGroup>
 

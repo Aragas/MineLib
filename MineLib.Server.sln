@@ -9,8 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Third Party Libraries", "Th
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bus", "Bus", "{075AF74D-193F-4C8C-B8FD-104233645CA1}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Trash Libraries", "Trash Libraries", "{59AC411A-1EBB-4574-93A4-7C249BC91138}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{8D5CB239-11F1-4BB6-B66B-E54C0D07992A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{BFFE36AA-15D7-40A7-B327-044D71A47E87}"
@@ -102,7 +100,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aragas.QServer.Hosting", "A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Metrics.DotNetRuntime", "App.Metrics.DotNetRuntime\App.Metrics.DotNetRuntime.csproj", "{66A78F20-9F7C-49FA-B6A6-633AC839CB96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aragas.QServer.Health", "Aragas.QServer.Health\Aragas.QServer.Health.csproj", "{33F0AA12-72C3-4B5E-A642-EC6F7448BD6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aragas.QServer.Health", "Aragas.QServer.Health\Aragas.QServer.Health.csproj", "{33F0AA12-72C3-4B5E-A642-EC6F7448BD6F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

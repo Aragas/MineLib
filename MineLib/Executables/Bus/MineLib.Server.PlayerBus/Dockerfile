@@ -15,7 +15,7 @@ COPY ["Aragas.QServer.Health/Aragas.QServer.Health.csproj", "Aragas.QServer.Heal
 COPY ["Aragas.QServer.NetworkBus/Aragas.QServer.NetworkBus.csproj", "Aragas.QServer.NetworkBus/"]
 COPY ["Aragas.QServer.Core/Aragas.QServer.Core.csproj", "Aragas.QServer.Core/"]
 
-RUN dotnet restore "Aragas.QServer.Core/Aragas.QServer.Core.csproj"
+RUN dotnet restore "Aragas.QServer.Core/Aragas.QServer.Core.csproj" -p:SolutionDir='/src'
 
 COPY ["Aragas.QServer.Metrics.PostgreSQL/Aragas.QServer.Metrics.PostgreSQL.csproj", "Aragas.QServer.Metrics.PostgreSQL/"]
 
@@ -27,7 +27,7 @@ COPY ["MineLib/Libraries/Protocol/MineLib.Protocol5/MineLib.Protocol.Netty5.cspr
 COPY ["MineLib/Libraries/Protocol/MineLib.Protocol575/MineLib.Protocol.Netty575.csproj", "MineLib/Libraries/Protocol/MineLib.Protocol575/"]
 COPY ["MineLib/Executables/Bus/MineLib.Server.PlayerBus/MineLib.Server.PlayerBus.csproj", "MineLib/Executables/Bus/MineLib.Server.PlayerBus/"]
 
-RUN dotnet restore "MineLib/Executables/Bus/MineLib.Server.PlayerBus/MineLib.Server.PlayerBus.csproj"
+RUN dotnet restore "MineLib/Executables/Bus/MineLib.Server.PlayerBus/MineLib.Server.PlayerBus.csproj" -p:SolutionDir='/src'
 COPY . .
 WORKDIR "/src/MineLib/Executables/Bus/MineLib.Server.PlayerBus"
 RUN dotnet build "MineLib.Server.PlayerBus.csproj" -c Release -o /app/build -p:SolutionDir='/src'

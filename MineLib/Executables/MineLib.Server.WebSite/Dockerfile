@@ -15,13 +15,13 @@ COPY ["Aragas.QServer.Health/Aragas.QServer.Health.csproj", "Aragas.QServer.Heal
 COPY ["Aragas.QServer.NetworkBus/Aragas.QServer.NetworkBus.csproj", "Aragas.QServer.NetworkBus/"]
 COPY ["Aragas.QServer.Core/Aragas.QServer.Core.csproj", "Aragas.QServer.Core/"]
 
-RUN dotnet restore "Aragas.QServer.Core/Aragas.QServer.Core.csproj"
+RUN dotnet restore "Aragas.QServer.Core/Aragas.QServer.Core.csproj" -p:SolutionDir='/src'
 
 COPY ["Aragas.QServer.Metrics.PostgreSQL/Aragas.QServer.Metrics.PostgreSQL.csproj", "Aragas.QServer.Metrics.PostgreSQL/"]
 
 COPY ["MineLib/Executables/MineLib.Server.WebSite/MineLib.Server.WebSite.csproj", "MineLib/Executables/MineLib.Server.WebSite/"]
 
-RUN dotnet restore "MineLib/Executables/MineLib.Server.WebSite/MineLib.Server.WebSite.csproj"
+RUN dotnet restore "MineLib/Executables/MineLib.Server.WebSite/MineLib.Server.WebSite.csproj" -p:SolutionDir='/src'
 COPY . .
 WORKDIR "/src/MineLib/Executables/MineLib.Server.WebSite"
 RUN dotnet build "MineLib.Server.WebSite.csproj" -c Release -o /app/build -p:SolutionDir='/src'

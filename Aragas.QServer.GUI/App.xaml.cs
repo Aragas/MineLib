@@ -61,9 +61,6 @@ namespace Aragas.QServer.GUI
         {
             _host = host;
             ServiceProvider = host.Services;
-
-            var metrics = ServiceProvider.GetRequiredService<IMetrics>();
-            DotNetRuntimeStatsBuilder.Default(metrics).StartCollecting();
         }
     }
 }

@@ -36,9 +36,13 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="[3.1.*,)" />
     <PackageReference Include="PropertyChanged.Fody" Version="3.2.1" />
   </ItemGroup>
-  
+
   <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Hosting\Aragas.QServer.Hosting.csproj" />
+    <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Hosting\Aragas.QServer.Hosting.csproj" Condition="Exists('$(SolutionDir)\Aragas.QServer.Hosting\Aragas.QServer.Hosting.csproj')" />
+    <PackageReference Include="Aragas.QServer.Hosting" Version="[*, )" Condition="!Exists('$(SolutionDir)\Aragas.QServer.Hosting\Aragas.QServer.Hosting.csproj')" />
+
+    <ProjectReference Include="$(SolutionDir)\App.Metrics.DotNetRuntime\App.Metrics.DotNetRuntime.csproj" Condition="Exists('$(SolutionDir)\App.Metrics.DotNetRuntime\App.Metrics.DotNetRuntime.csproj')" />
+    <PackageReference Include="App.Metrics.DotNetRuntime" Version="[*, )" Condition="!Exists('$(SolutionDir)\App.Metrics.DotNetRuntime\App.Metrics.DotNetRuntime.csproj')" />
   </ItemGroup>
 
 </Project>

@@ -76,6 +76,11 @@ namespace MineLib.Server.PlayerBus
                 services.AddSingleton<PlayerTest>();
             })
 
+            // Metrics
+            .ConfigureServices(services =>
+            {
+                services.AddDotNetRuntimeStats();
+            })
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddNpgSqlMetrics("Database", hostContext.Configuration["PostgreSQLConnectionString"]);

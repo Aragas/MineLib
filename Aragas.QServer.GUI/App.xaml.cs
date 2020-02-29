@@ -49,6 +49,10 @@ namespace Aragas.QServer.GUI
                 // Register all the Windows of the applications.
                 services.AddTransient<MainWindow>();
                 services.AddTransient<ServicesView>();
+            })
+            .ConfigureServices(services =>
+            {
+                services.AddDotNetRuntimeStats();
             });
 
         private void BeforeRun(IHost host)

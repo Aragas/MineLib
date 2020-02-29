@@ -30,6 +30,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)\App.Metrics.DotNetRuntime\App.Metrics.DotNetRuntime.csproj" Condition="Exists('$(SolutionDir)\App.Metrics.DotNetRuntime\App.Metrics.DotNetRuntime.csproj')" />
+    <PackageReference Include="App.Metrics.DotNetRuntime" Version="[*, )" Condition="!Exists('$(SolutionDir)\App.Metrics.DotNetRuntime\App.Metrics.DotNetRuntime.csproj')" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Protocol\Classic\" />
     <Folder Include="Protocol\RakNet\" />
 

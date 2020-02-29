@@ -26,10 +26,6 @@ namespace MineLib.Server.WorldBus
             })
 
             // Metrics
-            .ConfigureServices(services =>
-            {
-                services.AddDotNetRuntimeStats();
-            })
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddNpgSqlMetrics("Database", hostContext.Configuration["PostgreSQLConnectionString"]);

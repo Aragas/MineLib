@@ -41,8 +41,11 @@
     <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Hosting\Aragas.QServer.Hosting.csproj" Condition="Exists('$(SolutionDir)\Aragas.QServer.Hosting\Aragas.QServer.Hosting.csproj')" />
     <PackageReference Include="Aragas.QServer.Hosting" Version="[*, )" Condition="!Exists('$(SolutionDir)\Aragas.QServer.Hosting\Aragas.QServer.Hosting.csproj')" />
 
+    <PackageReference Include="App.Metrics.DotNetRuntime" Version="[*, )" />
+    <!--
     <ProjectReference Include="$(SolutionDir)\App.Metrics.DotNetRuntime\App.Metrics.DotNetRuntime.csproj" Condition="Exists('$(SolutionDir)\App.Metrics.DotNetRuntime\App.Metrics.DotNetRuntime.csproj')" />
     <PackageReference Include="App.Metrics.DotNetRuntime" Version="[*, )" Condition="!Exists('$(SolutionDir)\App.Metrics.DotNetRuntime\App.Metrics.DotNetRuntime.csproj')" />
+    -->
   </ItemGroup>
 
 </Project>

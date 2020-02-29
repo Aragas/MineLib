@@ -26,10 +26,6 @@ namespace MineLib.Server.EntityBus
             })
 
             // Metrics
-            .ConfigureServices(services =>
-            {
-                services.AddDotNetRuntimeStats();
-            })
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddNpgSqlMetrics("Database", hostContext.Configuration["PostgreSQLConnectionString"]);

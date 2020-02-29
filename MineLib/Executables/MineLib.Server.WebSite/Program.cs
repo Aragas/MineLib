@@ -39,10 +39,6 @@ namespace MineLib.Server.WebSite
                 services.Configure<ServiceOptions>(o => o.Name = "WebSite");
             })
             // Metrics
-            .ConfigureServices(services =>
-            {
-                services.AddDotNetRuntimeStats();
-            })
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddNpgSqlMetrics("ClassicServers", hostContext.Configuration.GetConnectionString("ClassicServers"));

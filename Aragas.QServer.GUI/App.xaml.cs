@@ -1,4 +1,6 @@
-﻿using Aragas.QServer.GUI.ViewModels;
+﻿using App.Metrics;
+using App.Metrics.DotNetRuntime;
+using Aragas.QServer.GUI.ViewModels;
 using Aragas.QServer.GUI.Views;
 using Aragas.QServer.Hosting;
 using Aragas.QServer.NetworkBus.Data;
@@ -52,13 +54,16 @@ namespace Aragas.QServer.GUI
             })
             .ConfigureServices(services =>
             {
-                services.AddDotNetRuntimeStats();
+                //services.AddDotNetRuntimeStats();
             });
 
         private void BeforeRun(IHost host)
         {
             _host = host;
             ServiceProvider = host.Services;
+
+            var metrics = ServiceProvider.GetRequiredService<IMetrics>();
+            DotNetRuntimeStatsBuilder.Default(metrics).StartCollecting();
         }
     }
 }

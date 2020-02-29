@@ -69,12 +69,6 @@ namespace MineLib.Server.Proxy
                 services.AddI18NextLocalization(i18N => i18N.AddBackend(new JsonFileBackend("locales")));
             })
 
-            // Metrics
-            .ConfigureServices(services =>
-            {
-                services.AddDotNetRuntimeStats();
-            })
-
             // Netty Listener
             .ConfigureServices(services  =>
             {

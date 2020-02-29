@@ -24,9 +24,6 @@
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Metrics.PostgreSQL\Aragas.QServer.Metrics.PostgreSQL.csproj" Condition="Exists('$(SolutionDir)\Aragas.QServer.Metrics.PostgreSQL\Aragas.QServer.Metrics.PostgreSQL.csproj')" />
     <PackageReference Include="Aragas.QServer.Metrics.PostgreSQL" Version="[*, )" Condition="!Exists('$(SolutionDir)\Aragas.QServer.Metrics.PostgreSQL\Aragas.QServer.Metrics.PostgreSQL.csproj')" />
-
-    <ProjectReference Include="$(SolutionDir)\App.Metrics.DotNetRuntime\App.Metrics.DotNetRuntime.csproj" Condition="Exists('$(SolutionDir)\App.Metrics.DotNetRuntime\App.Metrics.DotNetRuntime.csproj')" />
-    <PackageReference Include="App.Metrics.DotNetRuntime" Version="[*, )" Condition="!Exists('$(SolutionDir)\App.Metrics.DotNetRuntime\App.Metrics.DotNetRuntime.csproj')" />
   </ItemGroup>
 
   <ItemGroup>

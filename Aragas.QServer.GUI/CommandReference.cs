@@ -24,15 +24,11 @@ namespace Aragas.QServer.GUI
             }
         }
 
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged;
 
-        public ICommand Command
-        {
-            get => (ICommand) GetValue(CommandProperty);
-            set => SetValue(CommandProperty, value);
-        }
+        public ICommand Command { get => (ICommand) GetValue(CommandProperty); set => SetValue(CommandProperty, value); }
 
-        public bool CanExecute(object parameter) => Command?.CanExecute(parameter) == true;
+        public bool CanExecute(object parameter) => Command.CanExecute(parameter);
         public void Execute(object parameter) => Command.Execute(parameter);
 
         protected override Freezable CreateInstanceCore() => new CommandReference();

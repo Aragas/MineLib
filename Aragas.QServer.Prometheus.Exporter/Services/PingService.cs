@@ -12,7 +12,8 @@ using System.Threading.Tasks;
 
 namespace Aragas.QServer.Prometheus.Exporter.Services
 {
-    public class PingService : BackgroundService, IPingService, IMessageReceiver<ServicesPongMessage>
+    public class PingService : BackgroundService, IPingService,
+        IMessageReceiver<ServicesPongMessage>
     {
         public List<ServiceEntry> Services => _services.Select(kp => kp.Key).ToList();
 

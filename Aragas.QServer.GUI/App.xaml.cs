@@ -1,6 +1,4 @@
-﻿using App.Metrics;
-using App.Metrics.DotNetRuntime;
-using Aragas.QServer.GUI.ViewModels;
+﻿using Aragas.QServer.GUI.ViewModels;
 using Aragas.QServer.GUI.Views;
 using Aragas.QServer.Hosting;
 using Aragas.QServer.NetworkBus.Data;
@@ -15,9 +13,8 @@ namespace Aragas.QServer.GUI
 {
     public partial class App
     {
-        public static IServiceProvider ServiceProvider { get; private set; }
-
-        private IHost _host;
+        private static IHost? _host;
+        public static IServiceProvider? ServiceProvider => _host?.Services;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -32,7 +29,7 @@ namespace Aragas.QServer.GUI
         protected override async void OnExit(ExitEventArgs e)
         {
             await _host.StopAsync(TimeSpan.FromSeconds(5));
-            _host.Dispose();
+            _host?.Dispose();
 
             base.OnExit(e);
         }
@@ -41,6 +38,11 @@ namespace Aragas.QServer.GUI
             .ConfigureServices(services =>
             {
                 services.Configure<ServiceOptions>(o => o.Name = "GUI");
+            })
+            // Metrics
+            .ConfigureServices((hostContext, services) =>
+            {
+                services.AddNpgSqlMetrics("Database", "Host=postgresql-minelib.aragas.org;Port=65432;Database=world;Username=minelib;Password=minelib");
             })
             .ConfigureServices(services =>
             {
@@ -51,16 +53,11 @@ namespace Aragas.QServer.GUI
                 // Register all the Windows of the applications.
                 services.AddTransient<MainWindow>();
                 services.AddTransient<ServicesView>();
-            })
-            .ConfigureServices(services =>
-            {
-                //services.AddDotNetRuntimeStats();
             });
 
-        private void BeforeRun(IHost host)
+        private static void BeforeRun(IHost host)
         {
             _host = host;
-            ServiceProvider = host.Services;
         }
     }
 }

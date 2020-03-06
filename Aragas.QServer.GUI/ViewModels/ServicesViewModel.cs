@@ -14,12 +14,12 @@ namespace Aragas.QServer.GUI.ViewModels
 {
     public class ServicesViewModel : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged = default!;
 
         public ObservableCollection<Entry> ComboBoxItems { get; } = new ObservableCollection<Entry>();
-        public Entry ComboBoxSelectedItem { get; set; }
+        public Entry? ComboBoxSelectedItem { get; set; }
 
-        public string Text { get; set; }
+        public string? Text { get; set; }
 
         public ICommand MenuItemPrometheusCommand => new TaskCommand(async _ =>
         {

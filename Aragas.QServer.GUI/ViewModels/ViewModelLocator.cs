@@ -4,8 +4,8 @@ namespace Aragas.QServer.GUI.ViewModels
 {
     public class ViewModelLocator
     {
-        public MainViewModel MainViewModel => App.ServiceProvider.GetRequiredService<MainViewModel>();
+        public static MainViewModel MainViewModel => App.ServiceProvider.GetRequiredService<MainViewModel>();
 
-        public ServicesViewModel ServicesViewModel => App.ServiceProvider.GetRequiredService<ServicesViewModel>();
+        public static ServicesViewModel ServicesViewModel => App.ServiceProvider.GetRequiredService<ServicesViewModel>();
     }
 }

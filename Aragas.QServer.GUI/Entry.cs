@@ -5,7 +5,7 @@ namespace Aragas.QServer.GUI
 {
     public class Entry : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged = default!;
 
         public string ServiceType { get; set; }
         public Guid ServiceId { get; set; }

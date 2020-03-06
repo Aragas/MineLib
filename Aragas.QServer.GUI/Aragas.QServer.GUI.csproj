@@ -2,8 +2,10 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -40,12 +42,11 @@
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Hosting\Aragas.QServer.Hosting.csproj" Condition="Exists('$(SolutionDir)\Aragas.QServer.Hosting\Aragas.QServer.Hosting.csproj')" />
     <PackageReference Include="Aragas.QServer.Hosting" Version="[*, )" Condition="!Exists('$(SolutionDir)\Aragas.QServer.Hosting\Aragas.QServer.Hosting.csproj')" />
+  </ItemGroup>
 
-    <PackageReference Include="App.Metrics.DotNetRuntime" Version="[*, )" />
-    <!--
-    <ProjectReference Include="$(SolutionDir)\App.Metrics.DotNetRuntime\App.Metrics.DotNetRuntime.csproj" Condition="Exists('$(SolutionDir)\App.Metrics.DotNetRuntime\App.Metrics.DotNetRuntime.csproj')" />
-    <PackageReference Include="App.Metrics.DotNetRuntime" Version="[*, )" Condition="!Exists('$(SolutionDir)\App.Metrics.DotNetRuntime\App.Metrics.DotNetRuntime.csproj')" />
-    -->
+  <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Metrics.PostgreSQL\Aragas.QServer.Metrics.PostgreSQL.csproj" Condition="Exists('$(SolutionDir)\Aragas.QServer.Metrics.PostgreSQL\Aragas.QServer.Metrics.PostgreSQL.csproj')" />
+    <PackageReference Include="Aragas.QServer.Metrics.PostgreSQL" Version="[*, )" Condition="!Exists('$(SolutionDir)\Aragas.QServer.Metrics.PostgreSQL\Aragas.QServer.Metrics.PostgreSQL.csproj')" />
   </ItemGroup>
 
 </Project>

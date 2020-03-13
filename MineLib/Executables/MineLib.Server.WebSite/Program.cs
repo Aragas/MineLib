@@ -1,4 +1,5 @@
 using Aragas.QServer.Hosting;
+using Aragas.QServer.Hosting.Extensions;
 using Aragas.QServer.NetworkBus.Data;
 
 using Microsoft.AspNetCore.Builder;
@@ -27,6 +28,21 @@ namespace MineLib.Server.WebSite
 {
     public sealed class Program
     {
+        /*
+        public static async Task Main(string[] args)
+        {
+            await CreateHostBuilder(args).Build().RunQServerAbpAsync();
+        }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) => Host
+            .CreateDefaultBuilder(args)
+            .ConfigureServices(services => services.AddApplication<WebSiteModule>())
+            .ConfigureWebHostDefaults(webBuilder => webBuilder
+                .Configure(app => app.InitializeApplication())
+                .UseKestrel(o => o.AllowSynchronousIO = true)
+            );
+        */
+
         public static async Task Main(string[] args)
         {
             await QServerHostProgram.Main<Program>(hostBuilderFunc: CreateHostBuilder, beforeRunAction: BeforeRun, args: args);
@@ -53,7 +69,7 @@ namespace MineLib.Server.WebSite
 
                 services.AddTransient<IEmailSender, AuthMessageSender>();
 
-                services.AddHostedService<MetricsHttpListenerMonitor>();
+                //services.AddHostedService<MetricsHttpListenerMonitor>();
             })
             .ConfigureWebHostDefaults(webBuilder =>
             {
@@ -85,44 +101,40 @@ namespace MineLib.Server.WebSite
                         })
                         .AddIdentityCookies();
 
-                        /*
-                        services.Configure<IdentityOptions>(options =>
-                        {
-                            // Password settings.
-                            options.Password.RequireDigit = true;
-                            options.Password.RequireLowercase = true;
-                            options.Password.RequireNonAlphanumeric = true;
-                            options.Password.RequireUppercase = true;
-                            options.Password.RequiredLength = 6;
-                            options.Password.RequiredUniqueChars = 1;
-
-                            // Lockout settings.
-                            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-                            options.Lockout.MaxFailedAccessAttempts = 5;
-                            options.Lockout.AllowedForNewUsers = true;
-
-                            // User settings.
-                            options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@._+";
-                            options.User.RequireUniqueEmail = false;
-                        });
-                        */
+                        //services.Configure<IdentityOptions>(options =>
+                        //{
+                        //    // Password settings.
+                        //    options.Password.RequireDigit = true;
+                        //    options.Password.RequireLowercase = true;
+                        //    options.Password.RequireNonAlphanumeric = true;
+                        //    options.Password.RequireUppercase = true;
+                        //    options.Password.RequiredLength = 6;
+                        //    options.Password.RequiredUniqueChars = 1;
+                        //
+                        //    // Lockout settings.
+                        //    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                        //    options.Lockout.MaxFailedAccessAttempts = 5;
+                        //    options.Lockout.AllowedForNewUsers = true;
+                        //
+                        //    // User settings.
+                        //    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@._+";
+                        //    options.User.RequireUniqueEmail = false;
+                        //});
 
                         //services.AddControllersWithViews();
                         //services.AddControllers();
                     })
                     .Configure(app =>
                     {
-                        /*
-                        if (env.IsDevelopment())
-                        {
-                            app.UseDeveloperExceptionPage();
-                            app.UseDatabaseErrorPage();
-                        }
-                        else
-                        {
-                            app.UseExceptionHandler("/Home/Error");
-                        }
-                        */
+                        //if (env.IsDevelopment())
+                        //{
+                        //    app.UseDeveloperExceptionPage();
+                        //    app.UseDatabaseErrorPage();
+                        //}
+                        //else
+                        //{
+                        //    app.UseExceptionHandler("/Home/Error");
+                        //}
 
                         app.UseForwardedHeaders(new ForwardedHeadersOptions
                         {

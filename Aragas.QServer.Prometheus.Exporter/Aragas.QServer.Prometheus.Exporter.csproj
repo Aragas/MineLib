@@ -17,14 +17,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc" Version="2.2.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\Aragas.QServer.Core\Aragas.QServer.Core.csproj" Condition="Exists('$(SolutionDir)\Aragas.QServer.Core\Aragas.QServer.Core.csproj')" />
     <PackageReference Include="Aragas.QServer.Core" Version="[*, )" Condition="!Exists('$(SolutionDir)\Aragas.QServer.Core\Aragas.QServer.Core.csproj')" />
-
-    <ProjectReference Include="$(SolutionDir)\App.Metrics.DotNetRuntime\App.Metrics.DotNetRuntime.csproj" Condition="Exists('$(SolutionDir)\App.Metrics.DotNetRuntime\App.Metrics.DotNetRuntime.csproj')" />
-    <PackageReference Include="App.Metrics.DotNetRuntime" Version="[*, )" Condition="!Exists('$(SolutionDir)\App.Metrics.DotNetRuntime\App.Metrics.DotNetRuntime.csproj')" />
   </ItemGroup>
 
 </Project>

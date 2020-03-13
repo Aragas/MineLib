@@ -102,6 +102,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Metrics.DotNetRuntime",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aragas.QServer.Health", "Aragas.QServer.Health\Aragas.QServer.Health.csproj", "{33F0AA12-72C3-4B5E-A642-EC6F7448BD6F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aragas.QServer.Hosting.Abp", "Aragas.QServer.Hosting.Abp\Aragas.QServer.Hosting.Abp.csproj", "{1D64DD99-8DCA-4514-B5A0-2A4497391A17}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -240,6 +242,10 @@ Global
 		{33F0AA12-72C3-4B5E-A642-EC6F7448BD6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33F0AA12-72C3-4B5E-A642-EC6F7448BD6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33F0AA12-72C3-4B5E-A642-EC6F7448BD6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D64DD99-8DCA-4514-B5A0-2A4497391A17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D64DD99-8DCA-4514-B5A0-2A4497391A17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D64DD99-8DCA-4514-B5A0-2A4497391A17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D64DD99-8DCA-4514-B5A0-2A4497391A17}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

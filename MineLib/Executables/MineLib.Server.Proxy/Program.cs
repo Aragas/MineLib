@@ -1,18 +1,11 @@
-﻿using Aragas.QServer.NetworkBus.Data;
-
-using I18Next.Net.Backends;
-using I18Next.Net.Extensions;
+﻿using Aragas.QServer.Hosting;
+using Aragas.QServer.Hosting.Extensions;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 
-using MineLib.Server.Core;
-using MineLib.Server.Proxy.BackgroundServices;
-using MineLib.Server.Proxy.Data;
-
-using System.Net;
 using System.Threading.Tasks;
+using Volo.Abp;
 
 namespace MineLib.Server.Proxy
 {
@@ -43,44 +36,21 @@ namespace MineLib.Server.Proxy
     /// Based on that response, either attempt to fill the biggest PlayerHandler
     /// or fill the smallest one (Player.Count context).
     /// </summary>
-    public sealed class Program
+    public static class Program
     {
         public static async Task Main(string[] args)
         {
-            //ServicePointManager.UseNagleAlgorithm = false;
             MineLib.Server.Proxy.Extensions.PacketExtensions.Init();
-            await MineLibHostProgram.Main<Program>(CreateHostBuilder, BeforeRun, args);
+
+            using var application = QServerAbpApplicationFactory.Create<ProxyModule>();
+            await application.RunQServerAsync();
+
+            //IEnvironmentSetup.SetEnvironment();
+            //return CreateHostBuilder(args).Build().RunQServerAbpAsync();
         }
 
-        public static IHostBuilder CreateHostBuilder(IHostBuilder hostBuilder) => hostBuilder
-            // Options
-            .ConfigureServices((hostContext, services) =>
-            {
-                services.Configure<ServiceOptions>(o => o.Name = "Proxy");
-                services.Configure<MineLibOptions>(hostContext.Configuration.GetSection("MineLib"));
-
-                services.AddSingleton<ServerInfo>();
-                services.AddSingleton<ClassicServerInfo>();
-            })
-
-            // Localization
-            .ConfigureServices(services =>
-            {
-                services.AddI18NextLocalization(i18N => i18N.AddBackend(new JsonFileBackend("locales")));
-            })
-
-            // Netty Listener
-            .ConfigureServices(services  =>
-            {
-                services.AddHostedService<ProxyNettyListenerService>();
-                services.AddHostedService<ProxyClassicListenerService>();
-            })
-
-            .UseConsoleLifetime();
-
-        private static void BeforeRun(IHost host)
-        {
-            var serviceOptions = host.Services.GetRequiredService<IOptions<ServiceOptions>>().Value;
-        }
+        public static IHostBuilder CreateHostBuilder(string[] args) => Host
+            .CreateDefaultBuilder(args)
+            .ConfigureServices(services => services.AddApplication<ProxyModule>());
     }
 }

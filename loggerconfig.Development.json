@@ -4,7 +4,8 @@
       "Default": "Debug",
       "Override": {
         "System": "Debug",
-        "Microsoft": "Debug"
+        "Microsoft": "Debug",
+        "Volo.Abp": "Debug" 
       }
     },
 

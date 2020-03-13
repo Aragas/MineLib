@@ -1,13 +1,12 @@
-﻿using Aragas.QServer.NetworkBus;
-using Aragas.QServer.NetworkBus.Data;
+﻿using Aragas.QServer.Hosting;
+using Aragas.QServer.Hosting.Extensions;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
-
-using MineLib.Server.Core;
 
 using System.Threading.Tasks;
+
+using Volo.Abp;
 
 namespace MineLib.Server.PlayerBus
 {
@@ -60,40 +59,13 @@ namespace MineLib.Server.PlayerBus
     {
         public static async Task Main(string[] args)
         {
-            await MineLibHostProgram.Main<Program>(CreateHostBuilder, BeforeRun, args);
+            using var application = QServerAbpApplicationFactory.Create<PlayerBusModule>();
+            await application.RunQServerAsync();
+            //await CreateHostBuilder(args).Build().RunQServerAbpAsync();
         }
 
-        public static IHostBuilder CreateHostBuilder(IHostBuilder hostBuilder) => hostBuilder
-            // Options
-            .ConfigureServices((hostContext, services) =>
-            {
-                services.Configure<ServiceOptions>(o => o.Name = "PlayerBus");
-            })
-
-            .ConfigureServices(services =>
-            {
-                services.AddSingleton<PlayerHandlerManager>();
-                services.AddSingleton<PlayerTest>();
-            })
-
-            // Metrics
-            .ConfigureServices((hostContext, services) =>
-            {
-                services.AddNpgSqlMetrics("Database", hostContext.Configuration["PostgreSQLConnectionString"]);
-            })
-
-            .UseConsoleLifetime();
-
-        private static void BeforeRun(IHost host)
-        {
-            var serviceOptions = host.Services.GetRequiredService<IOptions<ServiceOptions>>().Value;
-            var subscriptionStorage = host.Services.GetRequiredService<SubscriptionStorage>();
-
-            subscriptionStorage.HandleGetExistingPlayerHandler<PlayerHandlerManager>();
-            subscriptionStorage.HandleGetNewPlayerHandler<PlayerHandlerManager>(serviceOptions.Uid);
-
-            subscriptionStorage.HandlePlayerPosition<PlayerTest>();
-            subscriptionStorage.HandlePlayerLook<PlayerTest>();
-        }
+        public static IHostBuilder CreateHostBuilder(string[] args) => Host
+            .CreateDefaultBuilder(args)
+            .ConfigureServices(services => services.AddApplication<PlayerBusModule>());
     }
 }

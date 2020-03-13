@@ -1,7 +1,10 @@
 {
   "profiles": {
     "MineLib.Server.Proxy": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT ": "Development"
+      }
     },
     "Docker": {
       "commandName": "Docker"
